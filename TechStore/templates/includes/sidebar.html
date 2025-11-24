@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="../../static/css/filter.css">
-    <link rel="stylesheet" href="../../static/css/root.css">
-</head>
-<body>
-    <main>
-        <div class="container">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/filter.css' %}">
+      <div class="container">
             <div class="filter-group filter open-btn" onclick="openFilter()"><i class="fa-solid fa-filter"></i><span>Lọc</span></div>
             <div class="filter-group"><div class="label-group"><img src="https://cdnv2.tgdd.vn/mwg-static/common/Category/57/03/5703d996359650c57421b72f3f7ff5cd.png" alt=""></div></div>
             <div class="filter-group"><div class="label-group"><img src="https://cdnv2.tgdd.vn/mwg-static/common/Category/9d/f7/9df70915705114c97ae7be059d2c7887.png" alt=""></div></div>
@@ -70,8 +61,6 @@
                 </div>
             </div>
         </div>
-    </main>
-</body>
 <script>
 function openFilter() {
     document.getElementById("filterPopup").style.display = "block";
@@ -83,4 +72,3 @@ function closeFilter() {
     document.getElementById("filterOverlay").style.display = "none";
 }
 </script>
-</html>
