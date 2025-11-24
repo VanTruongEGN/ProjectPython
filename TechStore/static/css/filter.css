@@ -1,4 +1,4 @@
-main .container {
+.container {
     width: 974px;
     height: fit-content;
     display: flex;
@@ -6,13 +6,13 @@ main .container {
     background-color: #ffffff;
     gap: 10px;
 }
-main .container .filter-group{
+.container .filter-group{
     width: fit-content;
     height: fit-content;
     background-color: #F2F4F7;
     border-radius: 3px;
 }
-main .container .filter{
+.container .filter{
     display: flex;
     width: fit-content;
     height: fit-content;
@@ -21,21 +21,21 @@ main .container .filter{
     font-size: 20px;
     padding: 8px 12px;
 }
-main .container .filter i{
+.container .filter i{
     float: left;
 }
-main .container .filter span{
+.container .filter span{
     float: right;
 }
-main .container .filter-group .label-group{
+.container .filter-group .label-group{
     padding: 6px;
 }
-main .container .filter-group img{
+.container .filter-group img{
     display: flex;
     width: fit-content;
     height: 20px;
 }
-main .container .filter-group:hover{
+.container .filter-group:hover{
    cursor: pointer;
 }
 /* Overlay */
