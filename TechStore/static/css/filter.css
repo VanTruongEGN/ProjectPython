@@ -1,0 +1,134 @@
+main .container {
+    width: 974px;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    background-color: #ffffff;
+    gap: 10px;
+}
+main .container .filter-group{
+    width: fit-content;
+    height: fit-content;
+    background-color: #F2F4F7;
+    border-radius: 3px;
+}
+main .container .filter{
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    background-color: #F2F4F7;
+    gap: 10px;
+    font-size: 20px;
+    padding: 8px 12px;
+}
+main .container .filter i{
+    float: left;
+}
+main .container .filter span{
+    float: right;
+}
+main .container .filter-group .label-group{
+    padding: 6px;
+}
+main .container .filter-group img{
+    display: flex;
+    width: fit-content;
+    height: 20px;
+}
+main .container .filter-group:hover{
+   cursor: pointer;
+}
+/* Overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 99;
+}
+
+/* Popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-height: 85%;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+/* Header */
+.popup-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    justify-content: space-between;
+}
+.popup-header h2{
+    margin-left: 700px;
+    font-size: 25px;
+    font-family: var(--primary-font),sans-serif;
+}
+
+.close-btn {
+    font-size: 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 0;
+}
+
+.section {
+    margin-top: 20px;
+}
+
+.brand-list, .price-list, .type-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.brand-item, .price-list button, .type-list button {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #f8f8f8;
+    cursor: pointer;
+}
+
+.brand-item:hover, .price-list button:hover, .type-list button:hover {
+    background: #eee;
+}
+
+/* Slider */
+.slider-container {
+    margin: 15px 0;
+    display: flex;
+    gap: 15px;
+}
+
+.slider {
+    width: 100%;
+}
+
+.price-value {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.price-value input {
+    width: 45%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
