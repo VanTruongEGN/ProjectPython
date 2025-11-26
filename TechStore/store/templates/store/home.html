@@ -4,10 +4,21 @@
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <link rel="stylesheet" href="{% static 'css/filter.css' %}">  <!-- thêm đây -->
+   
+    <link rel="stylesheet" href="{% static 'css/filter.css' %}"> 
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}"> 
+     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <!-- thêm đây -->
 </head>
 <body>
+    <div class="wrapper">
     {% include 'includes/sidebar.html' %}
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    {% include 'includes/footer.html' %}
+    <div/>
+    
 </body>
 </html>
