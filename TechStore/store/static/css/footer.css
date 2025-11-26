@@ -1,0 +1,58 @@
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+    width: 100%;
+    margin-top: auto;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+}
+
+.footer-column {
+    flex: 1;
+    padding: 0 15px;
+}
+
+.footer-column h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #000;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.footer-column a {
+    text-decoration: none;
+    color: #333;
+}
+
+.footer-column a:hover {
+    color: #2f80ed;
+}
+
+.phone-number {
+    color: #2f80ed;
+    font-weight: bold;
+}
+
+.see-more {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.see-more i {
+    margin-left: 5px;
+    font-size: 12px;
+}
