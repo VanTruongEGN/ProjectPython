@@ -1,19 +1,21 @@
 {% load static %}
-<div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-
-    <div class="carousel-inner">
-        {% for img in images %}
-        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <img src="{{ img }}" class="d-block w-100" alt="carousel-image">
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}">
+<div class="main-carousel">
+    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for img in images %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{% static img %}" class="d-block" alt="Ảnh Carousel">
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span> </button>
+
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span> </button>
     </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-    </button>
-
 </div>
