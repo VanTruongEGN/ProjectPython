@@ -1,17 +1,16 @@
-
-    body {
+    .header {
       margin: 0;
       font-family: var(--primary-font), sans-serif;
       background: #fff;
     }
 
     /* TOP BAR */
-    .topbar {
+    .header .topbar {
       background: var(--primary-color);
       padding: 12px 0;
     }
 
-    .container {
+    .header .container {
       max-width: 1380px;
       margin: auto;
       display: flex;
@@ -25,19 +24,19 @@ a {
     display: flex;
 
 }
-    .logo img {
+    .header .logo img {
       height: 40px;
         justify-content: flex-end;
     }
 
     /* SEARCH */
-    .search-box {
+    .header .search-box {
       flex: 1;
       display: flex;
       justify-content: flex-start;
     }
 
-    .search {
+    .header .search {
       width: 90%;
       display: flex;
       background: #fff;
@@ -47,7 +46,7 @@ a {
       box-shadow: 0 2px 3px rgba(0,0,0,0.1);
     }
 
-    .search input {
+    .header .search input {
       flex: 1;
       border: none;
       outline: none;
@@ -55,13 +54,13 @@ a {
     }
 
     /* ACTIONS */
-    .actions {
+    .header .actions {
       display: flex;
       gap: 18px;
       align-items: center;
     }
 
-    .actions div {
+    .header .actions div {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -71,18 +70,18 @@ a {
     }
 
     /* NAVIGATION ROW */
-    .nav {
+    .header .nav {
       background: var(--primary-color);
       padding: 8px 0;
     }
 
-    .nav .container {
+    .header .nav .container {
       display: flex;
       gap: 18px;
       overflow-x: auto;
     }
 
-    .nav a {
+    .header .nav a {
       text-decoration: none;
       padding: 6px 10px;
       border-radius: 6px;
@@ -91,11 +90,11 @@ a {
       white-space: nowrap;
     }
 
-    .nav a:hover {
+    .header .nav a:hover {
       background: rgba(0,0,0,0.08);
     }
 
-    .actions a i,
+    .header .actions a i,
     .nav a i {
     margin-right: 5px;
 
