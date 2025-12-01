@@ -8,3 +8,8 @@ def home(request):
 
     # Trả về một template HTML
     return render(request, 'store/home.html', context)
+def carousel(request):
+    images=[
+        "TechStore/store/img/img1.png"
+    ]
+    return render(request, 'TechStore/templates/includes/carousel.html')

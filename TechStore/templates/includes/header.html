@@ -1,12 +1,10 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/header.css' %}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<body>
-  <div class="topbar">
+<!-- TOP BAR -->
+  <div class="header">
+      <div class="topbar">
     <div class="container">
-
       <div class="logo">
-        <img src="/TechStore/store/img/img.png" />
+        <img src="{% static 'img/img.png' %}" alt="logo">
       </div>
 
          <div class="search-box">
@@ -26,20 +24,17 @@
     </div>
   </div>
 
+  <!-- NAV MENU -->
   <div class="nav">
     <div class="container">
-      <a href="#"><i class="bi bi-phone"></i> Điện thoại</a>
       <a href="#"><i class="bi bi-laptop"></i> Laptop</a>
       <a href="#"><i class="bi bi-earbuds"></i> Phụ kiện</a>
-      <a href="#"><i class="bi bi-smartwatch"></i> Smartwatch</a>
-      <a href="#"><i class="bi bi-watch"></i> Đồng hồ</a>
+      <a href="#"><i class="bi bi-keyboard"></i> Bàn phím</a>
+      <a href="#"><i class="bi bi-mouse"></i> Chuột</a>
       <a href="#"><i class="bi bi-tablet"></i> Tablet</a>
-      <a href="#"><i class="bi bi-arrow-repeat"></i> Máy cũ, Thu cũ</a>
-      <a href="#"><i class="bi bi-display"></i> Màn hình, Máy in</a>
-      <a href="#"><i class="bi bi-sim"></i> Sim, Thẻ cào</a>
-      <a href="#"><i class="bi bi-receipt"></i> Dịch vụ tiện ích</a>
+      <a href="#"><i class="bi bi-display"></i> Màn hình</a>
+      <a href="#"><i class="bi bi-printer"></i> Máy in</a>
     </div>
   </div>
-
-</body>
+  </div>
 
