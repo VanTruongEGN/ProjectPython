@@ -12,12 +12,14 @@
     }
 
     .container {
-      max-width: 1380px;
-      margin: auto;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 0 12px;
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+        width: 100%;
+        margin-top: auto;
+        font-size: 14px;
+        color: #333;
+        background-color: #fff;
     }
 a {
     text-decoration: none;
