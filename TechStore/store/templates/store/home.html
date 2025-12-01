@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="{% static 'css/filter.css' %}"> 
     <link rel="stylesheet" href="{% static 'css/footer.css' %}"> 
      <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
     <!-- thêm đây -->
 </head>
 <body>
+
     <div class="wrapper">
+        {% include 'includes/header.html' %}
     {% include 'includes/sidebar.html' %}
     <main>
         {% block content %}
