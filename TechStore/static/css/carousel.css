@@ -1,0 +1,39 @@
+/* Carousel tổng thể */
+#mainCarousel {
+    width: 100%;
+    max-height: 500px; /* điều chỉnh chiều cao */
+    overflow: hidden;
+    border-radius: 10px; /* bo góc nhẹ */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* bóng mờ nhẹ */
+}
+
+/* Ảnh trong carousel */
+#mainCarousel .carousel-item img {
+    object-fit: cover; /* ảnh vừa vặn, không méo */
+    height: 500px; /* chiều cao cố định */
+}
+
+/* Nút điều hướng */
+#mainCarousel .carousel-control-prev,
+#mainCarousel .carousel-control-next {
+    width: 5%; /* nút nhỏ gọn hơn */
+    color: #000;
+}
+
+#mainCarousel .carousel-control-prev-icon,
+#mainCarousel .carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.4); /* nền trong suốt như TGDD */
+    border-radius: 50%; /* bo tròn icon */
+    padding: 10px; /* khoảng cách icon */
+}
+
+/* Ẩn indicator nếu muốn giống TGDD */
+#mainCarousel .carousel-indicators {
+    display: none;
+}
+
+/* Khi hover thì hiện icon rõ hơn */
+#mainCarousel:hover .carousel-control-prev-icon,
+#mainCarousel:hover .carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.6);
+}
