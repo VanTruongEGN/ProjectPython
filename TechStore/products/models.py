@@ -101,3 +101,10 @@ class ProductImage(models.Model):
         
         if self.is_main:
              Product.objects.filter(pk=self.product.pk).update(image_main=self.image)
+class ProductAttribute(models.Model):
+     product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+     )
+     attribute = models.CharField("Tên thuộc tính", max_length=100)
+     value = models.CharField("Thông tin thuộc tính",max_length=100)
