@@ -1,19 +1,20 @@
 {% load static %}
-<div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+<link rel="stylesheet" href="{% static 'css/carousel-event.css' %}">
 
-    <div class="carousel-inner">
-        {% for img in images %}
-        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <img src="{{ img }}" class="d-block w-100" alt="carousel-image">
+<div class="main-carousel">
+    <div id="mainCarousel" class="carousel-box">
+
+        <div class="carousel-inner">
+            {% for img in images %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{% static img %}" class="carousel-img" alt="carousel">
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        <button class="prev">&#10094;</button>
+        <button class="next">&#10095;</button>
     </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-    </button>
-
 </div>
+
+<script src="{% static 'js/carousel.js' %}"></script>

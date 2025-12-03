@@ -1,0 +1,104 @@
+.main-carousel{
+    width: 100%;
+    background-color: #47D7AC;
+    height: 200px;
+}
+.main-carousel {
+    position: relative;
+    max-width: 1100px;
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-carousel .slides {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
+    flex-direction: row;
+}
+
+.main-carousel .slide {
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-carousel .slide img {
+    width: 100%;
+    height: 70vh;
+    object-fit: cover;
+    border-radius: 20px;
+    transition: transform 0.4s ease;
+}
+.main-carousel {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.carousel-box {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;      /* giới hạn khung carousel */
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.carousel-item {
+    min-width: 100%;
+    transition: opacity 0.5s ease;
+    display: none;
+}
+
+.carousel-item.active {
+    display: block;
+}
+
+.carousel-img {
+    width: 100%;
+    height: 350px;     /* chỉnh tùy ý */
+    object-fit: cover; /* giúp ảnh không méo, crop đẹp */
+    border-radius: 12px;
+}
+
+/* Nút chuyển ảnh */
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.45);
+    border: none;
+    color: white;
+    font-size: 32px;
+    padding: 8px 14px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: 0.3s;
+    z-index: 10;
+}
+
+.prev:hover, .next:hover {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.prev {
+    left: 10px;
+}
+
+.next {
+    right: 10px;
+}
+
+
