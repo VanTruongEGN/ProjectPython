@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, Product, ProductImage
+from .models import Category, Product, ProductImage, ProductAttribute
+
 
 
 @admin.register(Category)
@@ -17,7 +18,6 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 2
     fields = ['image', 'is_main']
-
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -48,3 +48,16 @@ class ProductAdmin(admin.ModelAdmin):
     def formatted_price(self, obj):
         return f"{int(obj.price):,} ₫".replace(",", ".")
     formatted_price.short_description = "Giá bán"
+
+@admin.register(ProductAttribute)
+class ProductAttributeAdmin(admin.ModelAdmin):
+    list_display = ['product','attribute', 'value']
+    search_fields = ['product', 'attribute', 'value']
+    list_filter = ['product', 'attribute']
+try:
+    admin.site.unregister(ProductAttribute)
+except admin.sites.NotRegistered:
+    pass
+
+# Đăng ký lại
+admin.site.register(ProductAttribute, ProductAttributeAdmin)

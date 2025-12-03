@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+        <option value="CSS File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Footer" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="35BZmoScbPvQwebVIcUuYfK0TuR" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "vantruong",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/hoc tap/ProjectPY_Nhom6",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store\css" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\hoc tap\ProjectPY_Nhom6\TechStore" />
+      <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store" />
+      <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static" />
+      <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store" />
+      <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store\css" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.130" />
+        <option value="bundled-python-sdk-1bde30d8e611-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.130" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="" />
+      <created>1762585586792</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1762585586792</updated>
+      <workItem from="1763540734478" duration="1686000" />
+      <workItem from="1763714412822" duration="2957000" />
+      <workItem from="1763818872047" duration="115000" />
+      <workItem from="1763819254729" duration="1478000" />
+      <workItem from="1763968458145" duration="11639000" />
+      <workItem from="1764056215239" duration="92000" />
+      <workItem from="1764148431258" duration="150000" />
+      <workItem from="1764148694950" duration="1302000" />
+      <workItem from="1764150060237" duration="79000" />
+      <workItem from="1764150784487" duration="21000" />
+      <workItem from="1764572507605" duration="7876000" />
+      <workItem from="1764599130860" duration="3895000" />
+      <workItem from="1764692636666" duration="1989000" />
+      <workItem from="1764694662530" duration="135000" />
+      <workItem from="1764740888287" duration="5633000" />
+      <workItem from="1764760734046" duration="1367000" />
+      <workItem from="1764762128977" duration="2110000" />
+      <workItem from="1764765859717" duration="6302000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/TechStore/products/admin.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
