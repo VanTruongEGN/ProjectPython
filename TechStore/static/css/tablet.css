@@ -1,0 +1,226 @@
+:root {
+      --primary-color: #47D7AC;
+      --primary-font: Arial, sans-serif;
+      --primary-text-color: #1A1A1A;
+      --background-color: #ffffff;
+      --muted-color: #666666;
+      --card-bg: #f9f9f9;
+      --border-color: #e0e0e0;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0 0 80px;
+      background-color: var(--background-color);
+      color: var(--primary-text-color);
+      font-family: var(--primary-font);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .product-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s ease;
+      min-height: 360px;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .thumb {
+      position: relative;
+      background: #fff;
+      border: 1px dashed var(--border-color);
+      border-radius: 10px;
+      padding: 8px;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      margin-bottom: 10px;
+    }
+
+    .thumb img {
+      width: 80%;
+      height: auto;
+      object-fit: contain;
+      max-width: 150px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      font-size: 12px;
+      background: #ffd54f;
+      color: #000;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .title {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 4px 0 8px;
+    }
+
+    .specs {
+      list-style: none;
+      margin: 0 0 10px;
+      padding: 0;
+      font-size: 13px;
+      color: var(--muted-color);
+    }
+
+    .specs li {
+      margin: 4px 0;
+    }
+
+    .price-row {
+      margin-top: auto;
+      padding-top: 8px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    .price {
+      color: #e53935;
+      font-size: 16px;
+    }
+
+    .price-old {
+      color: #999;
+      text-decoration: line-through;
+      font-size: 13px;
+    }
+
+    .rating {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted-color);
+      display: flex;
+      justify-content: space-between;
+    }
+    .product-grid {
+       display: grid;
+        grid-template-columns: repeat(5, 1fr); /* đúng 5 cột */
+      gap: 24px;
+      justify-content: center;
+      margin: 32px auto;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+        .filter-toolbar {
+      width: 90%;
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 12px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .filter-group, .sort-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .filter-label {
+      font-weight: bold;
+      margin-right: 8px;
+      color: var(--primary-text-color);
+    }
+
+    .filter-button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .filter-options button,
+    .sort-group button {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s ease;
+    }
+
+    .filter-options button:hover,
+    .sort-group button:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+        .pagination {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 32px 0;
+    }
+
+    .pagination ul {
+      list-style: none;
+      display: flex;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .pagination li a {
+      display: block;
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--primary-text-color);
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.2s ease;
+    }
+
+    .pagination li a:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .pagination li a.active {
+      background: var(--primary-color);
+      color: white;
+      pointer-events: none;
+    }
+
+
+
