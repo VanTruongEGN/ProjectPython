@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,13 +5,12 @@
     {% block head %}{% endblock %}
 </head>
 <body>
+    {% include 'includes/header.html' %}
 
-    {% include 'store/components/header.html' %}
-
-    {% include 'store/components/carousel.html' %}
+    {% include 'includes/carousel.html' %}
 
     {% block content %} {% endblock %}
 
-    {% include 'store/components/footer.html' %}
+    {% include 'includes/footer.html' %}
 </body>
 </html>
