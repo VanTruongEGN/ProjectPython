@@ -1,27 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>TechStore</title>
-
-    <!-- CSS Global -->
-    <link rel="stylesheet" href="{% static 'css/root.css' %}">
-    <link rel="stylesheet" href="{% static 'css/filter.css' %}">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    {% load static %}
+    {% block head %}{% endblock %}
 </head>
-
 <body>
-    {% include 'includes/sidebar.html' %}
-    <main>
-        {% block content %}
-        {% endblock %}
-        a
-    </main>
+    {% include 'includes/header.html' %}
+
+    {% include 'includes/carousel.html' %}
+
+    {% block content %} {% endblock %}
 
     {% include 'includes/footer.html' %}
 </body>
-
 </html>
