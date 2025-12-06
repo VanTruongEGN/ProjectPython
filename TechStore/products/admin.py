@@ -19,12 +19,17 @@ class ProductImageInline(admin.TabularInline):
     extra = 2
     fields = ['image', 'is_main']
 
+class ProductInfoInline(admin.TabularInline):
+    model = ProductAttribute
+    extra = 1
+    fields = ['attribute','value']
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'brand', 'formatted_price', 'category', 'status', 'created_at']
     list_filter = ['status', 'category', 'brand', 'created_at']
     search_fields = ['name', 'brand', 'model']
-    inlines = [ProductImageInline]
+    inlines = [ProductImageInline,ProductInfoInline]
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ("Thông tin cơ bản", {
