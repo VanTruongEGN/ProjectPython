@@ -3,7 +3,8 @@
 <head>
     {% load static %}
     {% block head %}{% endblock %}
-    <link rel="stylesheet" href="../../static/css/tablet.css">
+    <link rel="stylesheet" href="{%static 'css/tablet.css'%}">
+    <link rel="stylesheet" href="{%static 'css/base.css'%}">
 </head>
 <body>
     {% include 'includes/header.html' %}
@@ -451,10 +452,7 @@
   </ul>
 </nav>
 
-
-
     {% block content %} {% endblock %}
-
     {% include 'includes/footer.html' %}
 </body>
 </html>
