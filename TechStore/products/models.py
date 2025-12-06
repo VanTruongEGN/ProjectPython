@@ -32,6 +32,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    id = models.CharField("ID", primary_key=True, max_length=100)
     name = models.CharField("Tên sản phẩm", max_length=300)
     description = models.TextField("Mô tả", blank=True)
     price = models.DecimalField("Giá", max_digits=12, decimal_places=0)
@@ -101,10 +102,19 @@ class ProductImage(models.Model):
         
         if self.is_main:
              Product.objects.filter(pk=self.product.pk).update(image_main=self.image)
+
 class ProductAttribute(models.Model):
-     product = models.ForeignKey(
-        Product,
-        on_delete=models.CASCADE,
-     )
+     product = models.ForeignKey(Product,verbose_name="Mã sản phẩm",on_delete=models.CASCADE)
      attribute = models.CharField("Tên thuộc tính", max_length=100)
      value = models.CharField("Thông tin thuộc tính",max_length=100)
+
+
+class ProductDiscount(models.Model):
+    id = models.CharField(primary_key=True, editable=False)
+    product = models.ForeignKey(Product,verbose_name="Mã sản phẩm",on_delete=models.SET_NULL,null=True)
+    original_price = models.DecimalField(verbose_name="Giá gốc",max_digits=12, decimal_places=2, null=True, blank=True)
+    discounted_price = models.DecimalField(verbose_name="Giá đã giảm",max_digits=12, decimal_places=2)
+    start_date = models.DateTimeField(verbose_name="Ngày bắt đầu",null=True, blank=True)
+    end_date = models.DateTimeField(verbose_name="Ngày kết thúc",null=True, blank=True)
+    created_at = models.DateTimeField(verbose_name="Ngày thêm vào",auto_now_add=True)
+

@@ -20,5 +20,5 @@ from django.urls import path,include
 urlpatterns = [
 
     path('admin/', admin.site.urls),
-    path('', include('store.urls')),  # <--- THÊM DÒNG NÀY (Định tuyến tất cả về app 'store')
+    path('', include('stores.urls')),  # <--- THÊM DÒNG NÀY (Định tuyến tất cả về app 'stores')
 ]
