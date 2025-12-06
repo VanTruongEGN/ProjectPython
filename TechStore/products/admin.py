@@ -19,12 +19,17 @@ class ProductImageInline(admin.TabularInline):
     extra = 2
     fields = ['image', 'is_main']
 
+class ProductInfoInline(admin.TabularInline):
+    model = ProductAttribute
+    extra = 1
+    fields = ['attribute','value']
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'brand', 'formatted_price', 'category', 'status', 'created_at']
     list_filter = ['status', 'category', 'brand', 'created_at']
     search_fields = ['name', 'brand', 'model']
-    inlines = [ProductImageInline]
+    inlines = [ProductImageInline,ProductInfoInline]
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ("Thông tin cơ bản", {
@@ -49,15 +54,3 @@ class ProductAdmin(admin.ModelAdmin):
         return f"{int(obj.price):,} ₫".replace(",", ".")
     formatted_price.short_description = "Giá bán"
 
-@admin.register(ProductAttribute)
-class ProductAttributeAdmin(admin.ModelAdmin):
-    list_display = ['product','attribute', 'value']
-    search_fields = ['product', 'attribute', 'value']
-    list_filter = ['product', 'attribute']
-try:
-    admin.site.unregister(ProductAttribute)
-except admin.sites.NotRegistered:
-    pass
-
-# Đăng ký lại
-admin.site.register(ProductAttribute, ProductAttributeAdmin)

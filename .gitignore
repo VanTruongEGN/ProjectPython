@@ -1,3 +1,6 @@
 # Ignore all files in the 'venv' directory
-/venv/
 *.sqlite3
+venv/
+__pycache__/
+*.pyc
+*.pyo
