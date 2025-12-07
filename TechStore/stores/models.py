@@ -39,7 +39,7 @@ class StoreInventory(models.Model):
 
 
 class StoreReservation(models.Model):
-    id = models.CharField(primary_key=True, editable=False, verbose_name="ID đặt hàng")
+    id = models.CharField(primary_key=True, verbose_name="ID đặt hàng")
     store = models.ForeignKey(Store, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Cửa hàng")
     customer = models.ForeignKey(Customer, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Khách hàng")
     product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Sản phẩm")
