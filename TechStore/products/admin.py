@@ -18,10 +18,11 @@ class ProductImageInline(admin.TabularInline):
     extra = 2
     fields = ['image', 'is_main']
 
-@admin.register(ProductAttribute)
-class ProductAttributeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product_name', 'value')
-    search_fields = ('name', 'value', 'product__name')
+class ProductAttributeInline(admin.TabularInline):
+    model = ProductAttribute
+    fk_name = "product"   # QUAN TRỌNG
+    extra = 1
+    fields = ['attribute', 'value']
 
     def product_name(self, obj):
         return obj.product.name
@@ -46,11 +47,11 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'brand', 'formatted_price', 'category', 'status', 'created_at']
     list_filter = ['status', 'category', 'brand', 'created_at']
     search_fields = ['name', 'brand', 'model']
-    inlines = [ProductImageInline]
-    readonly_fields = ['created_at', 'updated_at']
+    inlines = [ProductImageInline, ProductAttributeInline]
+    readonly_fields = ['created_at','updated_at']
     fieldsets = (
         ("Thông tin cơ bản", {
-            'fields': ('name', 'brand', 'model', 'category', 'status')
+            'fields': ('id','name', 'brand', 'model', 'category', 'status')
         }),
         ("Giá & Bảo hành", {
             'fields': ('price', 'warranty_month')
@@ -61,9 +62,7 @@ class ProductAdmin(admin.ModelAdmin):
         ("Ảnh chính", {
             'fields': ('image_main',)
         }),
-        ("Thời gian", {
-            'fields': ('created_at', 'updated_at')
-        }),
+
     )
 
 

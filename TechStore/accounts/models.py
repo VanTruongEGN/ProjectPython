@@ -4,7 +4,7 @@ from django.db import models
 
 # Create your models here.
 class Customer(models.Model):
-    id = models.CharField(primary_key=True, verbose_name="ID",editable=False)
+    id = models.CharField(primary_key=True, verbose_name="ID")
     email = models.EmailField(verbose_name="Email",unique=True)
     password_hash = models.CharField(verbose_name="Passwork_hash",max_length=255)
     full_name = models.CharField(verbose_name="Họ và tên",max_length=255, null=True, blank=True)
@@ -19,7 +19,7 @@ class Customer(models.Model):
 
 
 class Address(models.Model):
-    id = models.CharField(verbose_name="ID",primary_key=True, editable=False)
+    id = models.CharField(verbose_name="ID",primary_key=True)
     customer = models.ForeignKey(Customer, verbose_name="Mã khách hàng",on_delete=models.CASCADE, editable=False)
     recipient_name = models.CharField(verbose_name="Tên người nhận",max_length=255)
     phone = models.CharField(verbose_name="Số điện thoại",max_length=20)
@@ -44,7 +44,7 @@ class Wishlist(models.Model):
 
 
 class Cart(models.Model):
-    id = models.CharField(primary_key=True, editable=False, verbose_name="ID")
+    id = models.CharField(primary_key=True, verbose_name="ID")
     customer = models.OneToOneField(Customer, verbose_name="Mã khách hàng", on_delete=models.CASCADE)
     class Meta:
         unique_together = ('customer', 'id')

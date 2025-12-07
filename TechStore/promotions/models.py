@@ -5,7 +5,7 @@ from django.db import models
 # Create your models here.
 
 class Promotion(models.Model):
-    id = models.CharField(primary_key=True, editable=False, verbose_name="ID")
+    id = models.CharField(primary_key=True, verbose_name="ID")
     code = models.CharField(max_length=255, unique=True, verbose_name="Mã code")
     name = models.CharField(max_length=255, verbose_name="Tên khuyến mãi")
     description = models.TextField(null=True, blank=True, verbose_name="Mô tả")
@@ -41,7 +41,7 @@ class PromotionProduct(models.Model):
 
 
 class PromotionUsageLog(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID")
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID")
     promotion = models.ForeignKey(Promotion, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Khuyến mãi")
     customer = models.ForeignKey('accounts.Customer', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Khách hàng")
     order = models.ForeignKey('orders.Order', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Đơn hàng")
