@@ -4,7 +4,7 @@ from django.db import models
 
 # Create your models here.
 class ShippingPartner(models.Model):
-    id = models.CharField(primary_key=True, editable=False, verbose_name="Mã ĐVVC")
+    id = models.CharField(primary_key=True, verbose_name="Mã ĐVVC")
     name = models.CharField(max_length=255, verbose_name="Tên đơn vị vận chuyển")
     code = models.CharField(max_length=255, null=True, blank=True, verbose_name="Mã code")
     logo_url = models.CharField(max_length=500, null=True, blank=True, verbose_name="Logo")

@@ -15,7 +15,7 @@ class AddressInline(admin.TabularInline):
 class WishlistInline(admin.TabularInline):
     model = Wishlist
     extra = 1
-    fields = ('product','added_at')
+    fields = ('product','customer')
 
 
 class CartItemInline(admin.TabularInline):
@@ -32,7 +32,23 @@ class OrderInline(admin.TabularInline):
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('email', 'full_name', 'phone', 'status')
-    search_fields = ('email', 'full_name', 'phone')
-    list_filter = ('status',)
+    search_fields = ('id','email', 'full_name', 'phone')
+    list_filter = ('status','id')
+    fieldsets = (
+        ("Mã khách hàng", {
+            'fields': ('id',)
+        }),
+        ("Thông tin đăng nhập", {
+            'fields': ('email', 'password_hash')
+        }),
+
+        ("Thông tin cá nhân", {
+            'fields': ('full_name', 'phone')
+        }),
+
+        ("Trạng thái tài khoản", {
+            'fields': ('status',)
+        }),
+    )
     inlines = [AddressInline, WishlistInline, OrderInline]
 

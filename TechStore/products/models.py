@@ -32,7 +32,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    id = models.CharField("ID", primary_key=True, max_length=100)
+    id = models.CharField("ID", primary_key=True, max_length=100,)
     name = models.CharField("Tên sản phẩm", max_length=300)
     description = models.TextField("Mô tả", blank=True)
     price = models.DecimalField("Giá", max_digits=12, decimal_places=0)
@@ -108,9 +108,12 @@ class ProductAttribute(models.Model):
      attribute = models.CharField("Tên thuộc tính", max_length=100)
      value = models.CharField("Thông tin thuộc tính",max_length=100)
 
+     class Meta:
+         unique_together = ('product', 'attribute')
+
 
 class ProductDiscount(models.Model):
-    id = models.CharField(primary_key=True, editable=False)
+    id = models.CharField(primary_key=True,verbose_name="Mã chương trình")
     product = models.ForeignKey(Product,verbose_name="Mã sản phẩm",on_delete=models.SET_NULL,null=True)
     original_price = models.DecimalField(verbose_name="Giá gốc",max_digits=12, decimal_places=2, null=True, blank=True)
     discounted_price = models.DecimalField(verbose_name="Giá đã giảm",max_digits=12, decimal_places=2)

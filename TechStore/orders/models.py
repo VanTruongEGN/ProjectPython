@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Payment(models.Model):
-    id = models.CharField(verbose_name="ID",primary_key=True, editable=False)
+    id = models.CharField(verbose_name="ID",primary_key=True)
     method = models.CharField(verbose_name="Phương thức tt",max_length=100)
     gateway_transaction_id = models.CharField(verbose_name="Cổng thanh toán",max_length=255, null=True, blank=True)
     amount = models.DecimalField(verbose_name="Tổng tiền",max_digits=12, decimal_places=2)
@@ -14,7 +14,7 @@ class Payment(models.Model):
 
 
 class Order(models.Model):
-    id = models.CharField(primary_key=True, editable=False, verbose_name="Mã đơn hàng")
+    id = models.CharField(primary_key=True, verbose_name="Mã đơn hàng")
     customer = models.ForeignKey('accounts.Customer', on_delete=models.CASCADE, verbose_name="Khách hàng")
     address = models.ForeignKey('accounts.Address' , null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Mã địa chỉ")
     payment = models.ForeignKey(Payment, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Mã PTTT")

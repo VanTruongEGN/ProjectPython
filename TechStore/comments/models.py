@@ -4,7 +4,7 @@ from django.db import models
 
 # Create your models here.
 class Comment(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID")
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, verbose_name="ID")
     customer = models.ForeignKey('accounts.Customer', on_delete=models.SET_NULL, null=True, verbose_name="Mã khách hàng")
     product = models.ForeignKey('products.Product', on_delete=models.SET_NULL , null=True, verbose_name="Mã sản phẩm")
     rating = models.IntegerField(verbose_name="Số sao")
