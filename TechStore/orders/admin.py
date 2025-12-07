@@ -5,7 +5,7 @@ from .models import Order, OrderItem, Shipping, Payment
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 1
-    fields = ('product', 'quantity', 'unit_price', 'discount_amount')
+    fields = ('product_id', 'quantity', 'unit_price', 'discount_amount')
 
 class ShippingInline(admin.TabularInline):
     model = Shipping
