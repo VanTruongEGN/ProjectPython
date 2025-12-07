@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, Product, ProductImage, ProductAttribute
-
+from .models import Category, Product, ProductImage, ProductAttribute, ProductDiscount
 
 
 @admin.register(Category)
@@ -19,16 +18,40 @@ class ProductImageInline(admin.TabularInline):
     extra = 2
     fields = ['image', 'is_main']
 
+class ProductAttributeInline(admin.TabularInline):
+    model = ProductAttribute
+    fk_name = "product"   # QUAN TRỌNG
+    extra = 1
+    fields = ['attribute', 'value']
+
+    def product_name(self, obj):
+        return obj.product.name
+    product_name.short_description = 'Product Name'
+
+    def category_name(self, obj):
+        return obj.category.name if obj.category else None
+    category_name.short_description = 'Category'
+
+@admin.register(ProductDiscount)
+class ProductDiscountAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product_name', 'original_price', 'discounted_price', 'start_date', 'end_date', 'created_at')
+    list_filter = ('start_date', 'end_date')
+
+    def product_name(self, obj):
+        return obj.product.name
+    product_name.short_description = 'Product Name'
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'brand', 'formatted_price', 'category', 'status', 'created_at']
     list_filter = ['status', 'category', 'brand', 'created_at']
     search_fields = ['name', 'brand', 'model']
-    inlines = [ProductImageInline]
-    readonly_fields = ['created_at', 'updated_at']
+    inlines = [ProductImageInline, ProductAttributeInline]
+    readonly_fields = ['created_at','updated_at']
     fieldsets = (
         ("Thông tin cơ bản", {
-            'fields': ('name', 'brand', 'model', 'category', 'status')
+            'fields': ('id','name', 'brand', 'model', 'category', 'status')
         }),
         ("Giá & Bảo hành", {
             'fields': ('price', 'warranty_month')
@@ -39,9 +62,7 @@ class ProductAdmin(admin.ModelAdmin):
         ("Ảnh chính", {
             'fields': ('image_main',)
         }),
-        ("Thời gian", {
-            'fields': ('created_at', 'updated_at')
-        }),
+
     )
 
 
@@ -49,15 +70,3 @@ class ProductAdmin(admin.ModelAdmin):
         return f"{int(obj.price):,} ₫".replace(",", ".")
     formatted_price.short_description = "Giá bán"
 
-@admin.register(ProductAttribute)
-class ProductAttributeAdmin(admin.ModelAdmin):
-    list_display = ['product','attribute', 'value']
-    search_fields = ['product', 'attribute', 'value']
-    list_filter = ['product', 'attribute']
-try:
-    admin.site.unregister(ProductAttribute)
-except admin.sites.NotRegistered:
-    pass
-
-# Đăng ký lại
-admin.site.register(ProductAttribute, ProductAttributeAdmin)

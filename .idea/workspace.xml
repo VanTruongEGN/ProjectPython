@@ -4,8 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push orders">
+    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push trang tablet">
+      <change beforePath="$PROJECT_DIR$/.idea/ProjectPY_Nhom6.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ProjectPY_Nhom6.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/accounts/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/accounts/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/accounts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/comments/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/comments/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/orders/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/orders/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/orders/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/orders/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/migrations/0002_productimage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/migrations/0003_rename_image_productimage_image_url_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/migrations/0004_remove_productimage_product_id_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/promotions/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/promotions/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/shippings/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/shippings/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/stores/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/stores/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +40,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Footer" />
+        <entry key="$PROJECT_DIR$" value="sub" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -50,29 +65,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "django.template.preview.state": "SHOW_EDITOR_AND_PREVIEW",
-    "git-widget-placeholder": "lehuuphuoc",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/hoc tap/ProjectPY_Nhom6",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;vantruong&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/hoc tap/ProjectPY_Nhom6&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store\css" />
@@ -85,7 +99,31 @@
       <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store\css" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Django Server.ProjectPY_Nhom6">
+    <configuration name="ProjectPY_Nhom6" type="Python.DjangoServer" factoryName="Django server">
+      <module name="ProjectPY_Nhom6" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="ProjectPython1" type="Python.DjangoServer" factoryName="Django server">
       <module name="ProjectPython1" />
       <option name="ENV_FILES" value="" />
@@ -114,8 +152,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PY-251.25410.159" />
-        <option value="bundled-python-sdk-e0ed3721d81e-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.159" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.130" />
+        <option value="bundled-python-sdk-1bde30d8e611-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.130" />
       </set>
     </attachedChunks>
   </component>
@@ -147,26 +185,16 @@
       <workItem from="1764773557404" duration="138000" />
       <workItem from="1764773704901" duration="31000" />
       <workItem from="1764773784523" duration="114000" />
-      <workItem from="1764773907905" duration="673000" />
-      <workItem from="1764815713843" duration="322000" />
+      <workItem from="1764834815673" duration="2889000" />
+      <workItem from="1765013034599" duration="152000" />
+      <workItem from="1765013198992" duration="65000" />
+      <workItem from="1765013283649" duration="17882000" />
+      <workItem from="1765072721210" duration="5331000" />
     </task>
-    <task id="LOCAL-00001" summary="push orders">
-      <option name="closed" value="true" />
-      <created>1764773984079</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1764773984079</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="push orders" />
-    <option name="LAST_COMMIT_MESSAGE" value="push orders" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
