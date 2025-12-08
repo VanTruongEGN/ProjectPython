@@ -5,11 +5,11 @@ from .models import Promotion, PromotionProduct, PromotionUsageLog
 class PromotionProductInline(admin.TabularInline):
     model = PromotionProduct
     extra = 1
-    fields = ('product',)
+    fields = ('product_id',)
 
 class PromotionUsageLogInline(admin.TabularInline):
     model = PromotionUsageLog
-    extra = 0
+    extra = 1
     readonly_fields = ('used_at',)
     fields = ('customer', 'order', 'used_at')
 
