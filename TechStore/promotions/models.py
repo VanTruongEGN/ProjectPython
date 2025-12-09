@@ -26,6 +26,25 @@ class Promotion(models.Model):
     def __str__(self):
         return f"{self.name} ({self.code})"
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'KM' 
+            PADDING_LENGTH = 3
+
+            last_record = Promotion.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
+
 
 class PromotionProduct(models.Model):
     promotion = models.ForeignKey(Promotion, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Mã khuyến mãi")

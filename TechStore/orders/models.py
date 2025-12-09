@@ -12,6 +12,25 @@ class Payment(models.Model):
     paid_at = models.DateTimeField(verbose_name="Ngày thanh toán",null=True, blank=True)
     created_at = models.DateTimeField(verbose_name="Ngày thêm vào",auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'TT' 
+            PADDING_LENGTH = 3
+
+            last_record = Payment.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
+
 
 class Order(models.Model):
     id = models.CharField(primary_key=True, verbose_name="Mã đơn hàng")
@@ -32,6 +51,25 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Đơn hàng {self.id}"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'DH' 
+            PADDING_LENGTH = 3
+
+            last_record = Order.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
 
 
 class OrderItem(models.Model):

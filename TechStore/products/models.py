@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-
+from django.utils import timezone
 class Category(models.Model):
     name = models.CharField("Tên danh mục", max_length=150)
     description = models.TextField("Mô tả", blank=True)
@@ -55,8 +55,8 @@ class Product(models.Model):
     )
 
     warranty_month = models.IntegerField("Bảo hành (tháng)", default=12)
-    created_at = models.DateTimeField("Ngày tạo", auto_now_add=True)
-    updated_at = models.DateTimeField("Ngày cập nhật", auto_now=True)
+    created_at = models.DateTimeField("Ngày tạo", auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField("Ngày cập nhật", auto_now=True, editable=False)
     status = models.BooleanField("Hiển thị", default=True)
 
     class Meta:
@@ -67,7 +67,25 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'SP' 
+            PADDING_LENGTH = 3
 
+            last_product = Product.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_product:
+                last_number_str = last_product.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
+        
 class ProductImage(models.Model):
     product = models.ForeignKey(
         Product, 
@@ -120,4 +138,23 @@ class ProductDiscount(models.Model):
     start_date = models.DateTimeField(verbose_name="Ngày bắt đầu",null=True, blank=True)
     end_date = models.DateTimeField(verbose_name="Ngày kết thúc",null=True, blank=True)
     created_at = models.DateTimeField(verbose_name="Ngày thêm vào",auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'CT' 
+            PADDING_LENGTH = 3
+
+            last_record = ProductDiscount.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
 
