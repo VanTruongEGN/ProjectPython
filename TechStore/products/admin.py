@@ -20,7 +20,7 @@ class ProductImageInline(admin.TabularInline):
 
 class ProductAttributeInline(admin.TabularInline):
     model = ProductAttribute
-    fk_name = "product"   # QUAN TRỌNG
+    fk_name = "product"
     extra = 1
     fields = ['attribute', 'value']
 
@@ -34,6 +34,7 @@ class ProductAttributeInline(admin.TabularInline):
 
 @admin.register(ProductDiscount)
 class ProductDiscountAdmin(admin.ModelAdmin):
+    readonly_fields = ['id']
     list_display = ('id', 'product_name', 'original_price', 'discounted_price', 'start_date', 'end_date', 'created_at')
     list_filter = ('start_date', 'end_date')
 
@@ -44,14 +45,14 @@ class ProductDiscountAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'brand', 'formatted_price', 'category', 'status', 'created_at']
+    list_display = ['id','name', 'brand', 'formatted_price', 'category', 'status', 'created_at']
     list_filter = ['status', 'category', 'brand', 'created_at']
     search_fields = ['name', 'brand', 'model']
     inlines = [ProductImageInline, ProductAttributeInline]
-    readonly_fields = ['created_at','updated_at']
+    readonly_fields = ['id','created_at','updated_at']
     fieldsets = (
         ("Thông tin cơ bản", {
-            'fields': ('id','name', 'brand', 'model', 'category', 'status')
+            'fields': ('name', 'brand', 'model', 'category', 'status')
         }),
         ("Giá & Bảo hành", {
             'fields': ('price', 'warranty_month')
