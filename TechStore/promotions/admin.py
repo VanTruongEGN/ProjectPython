@@ -15,7 +15,8 @@ class PromotionUsageLogInline(admin.TabularInline):
 
 @admin.register(Promotion)
 class PromotionAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'discount_type', 'discount_value', 'status')
+    readonly_fields = ['id']
+    list_display = ('id','code', 'name', 'discount_type', 'discount_value', 'status')
     search_fields = ('code', 'name')
     list_filter = ('discount_type', 'status', 'start_date', 'end_date','name')
     inlines = [PromotionProductInline, PromotionUsageLogInline]

@@ -14,6 +14,7 @@ class ShippingInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    readonly_fields = ['id']
     list_display = ('id', 'customer_email', 'status', 'total_amount', 'order_date')
     search_fields = ('id', 'customer__email')
     list_filter = ('status', 'order_date','id')
@@ -26,6 +27,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
+    readonly_fields = ['id']
     list_display = ('method', 'amount', 'status', 'paid_at')
     search_fields = ('method', 'gateway_transaction_id')
     list_filter = ('status','method')

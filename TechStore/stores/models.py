@@ -23,6 +23,25 @@ class Store(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'CH' 
+            PADDING_LENGTH = 3
+
+            last_record = Store.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
+
 class StoreInventory(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, verbose_name="Mã cửa hàng")
     product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Mã sản phẩm")
@@ -54,3 +73,22 @@ class StoreReservation(models.Model):
 
     def __str__(self):
         return f"Giữ hàng {self.product} tại {self.store}"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'PD' 
+            PADDING_LENGTH = 3
+
+            last_record = StoreReservation.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
