@@ -31,6 +31,7 @@ class OrderInline(admin.TabularInline):
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
+    readonly_fields = ['id']
     list_display = ('email', 'full_name', 'phone', 'status')
     search_fields = ('id','email', 'full_name', 'phone')
     list_filter = ('status','id')
