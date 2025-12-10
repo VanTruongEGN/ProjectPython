@@ -35,13 +35,29 @@ class ProductAttributeInline(admin.TabularInline):
 @admin.register(ProductDiscount)
 class ProductDiscountAdmin(admin.ModelAdmin):
     readonly_fields = ['id']
-    list_display = ('id', 'product_name', 'original_price', 'discounted_price', 'start_date', 'end_date', 'created_at')
+    list_display = ('id', 'product_name', 'formatted_price', 'formatted_priceD', 'start_date', 'end_date', 'created_at')
     list_filter = ('start_date', 'end_date')
+    fieldsets = (
+        ("Thông tin sản phẩm", {
+            'fields': ('product',)
+        }),
+        ("Giá & Thời gian", {
+            'fields': ('discounted_price', 'start_date', 'end_date')
+        }),
+
+    )
 
     def product_name(self, obj):
         return obj.product.name
     product_name.short_description = 'Product Name'
 
+    def formatted_price(self, obj):
+        return f"{int(obj.original_price):,} ₫".replace(",", ".")
+    formatted_price.short_description = "Giá gốc"
+
+    def formatted_priceD(self, obj):
+        return f"{int(obj.discounted_price):,} ₫".replace(",", ".")
+    formatted_priceD.short_description = "Giá đã giảm"
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

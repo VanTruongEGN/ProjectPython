@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('expired_at', models.DateTimeField(blank=True, null=True, verbose_name='Thời điểm hết hạn')),
                 ('customer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='accounts.customer', verbose_name='Khách hàng')),
                 ('product', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='products.product', verbose_name='Sản phẩm')),
-                ('store', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='stores.store', verbose_name='Cửa hàng')),
+                ('products', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='stores.products', verbose_name='Cửa hàng')),
             ],
             options={
                 'verbose_name': 'Cửa hàng nhận hàng',
@@ -54,12 +54,12 @@ class Migration(migrations.Migration):
                 ('stock', models.IntegerField(default=0, verbose_name='Tồn kho')),
                 ('reserved_stock', models.IntegerField(default=0, verbose_name='Đã giữ (reserved)')),
                 ('product', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='products.product', verbose_name='Mã sản phẩm')),
-                ('store', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stores.store', verbose_name='Mã cửa hàng')),
+                ('products', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stores.products', verbose_name='Mã cửa hàng')),
             ],
             options={
                 'verbose_name': 'Kho',
                 'verbose_name_plural': 'Danh sách tồn kho cửa hàng',
-                'unique_together': {('store', 'product')},
+                'unique_together': {('products', 'product')},
             },
         ),
     ]

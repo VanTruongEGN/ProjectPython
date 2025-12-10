@@ -1,0 +1,325 @@
+
+{% load static %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/personal-page.css' %}">
+{% endblock %}
+
+{% block content %}
+<body>
+
+   {% include 'includes/header.html' %}
+<div class="container">
+    <aside class="sidebar">
+        <div class="user-info">
+            <!-- Avatar -->
+            <div class="avatar-wrapper">
+                <img src="/image/logoTCN.png" alt="Avatar" class="avatar-img">
+                <span class="avatar-camera">
+        <i class="bi bi-camera-fill"></i>
+    </span>
+            </div>
+            <input type="file" id="avatar-upload" accept="image/*" hidden>
+
+
+            <p class="username">phclhu632</p>
+            <a href="#" class="edit-profile">Sửa Hồ Sơ</a>
+        </div>
+
+
+        <nav class="menu">
+            <ul>
+                <li class="active" data-section="profile-section"><a href="#">Tài Khoản Của Tôi</a></li>
+                <li data-section="repass-section"><a href="#">Đổi mật khẩu</a></li>
+                <li data-section="orders-section"><a href="#">Đơn Mua</a></li>
+                <li data-section="addresses-section"><a href="#">Địa Chỉ Nhận Hàng</a></li>
+            </ul>
+        </nav>
+
+        <!-- 🧾 Nút đăng xuất -->
+        <div class="logout-section">
+            <a href="purchasehistory.jsp">
+                <button id="logoutBtn1">Lịch sử mua hàng</button>
+            </a>
+            <a href="homepage-visitors.jsp">
+                <button id="logoutBtn">Đăng Xuất</button>
+            </a>
+        </div>
+    </aside>
+
+    <main class="content">
+        <!-- === Tài khoản của tôi === -->
+        <section id="profile-section" class="section active">
+            <h2>Hồ Sơ Của Tôi</h2>
+            <p class="desc">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+
+            <form class="profile-form">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label>Tên đăng nhập</label>
+                        <input type="text" value="phclhu632" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tên</label>
+                        <input type="text" value="Phước">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" value="23******@st.hcmuaf.edu.vn" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="tel" value="0901234567" maxlength="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Giới tính</label>
+                        <select name="gender">
+                            <option value="" disabled selected>Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group birthday">
+                        <label>Ngày sinh</label>
+                        <div class="date-select">
+                            <select name="day">
+                                <option value="" disabled selected>Ngày</option>
+                                <script>
+                                    for (let i = 1; i <= 31; i++) document.write(`<option value="${i}">${i}</option>`);
+                                </script>
+                            </select>
+                            <select name="month">
+                                <option value="" disabled selected>Tháng</option>
+                                <script>
+                                    for (let i = 1; i <= 12; i++) document.write(`<option value="${i}">${i}</option>`);
+                                </script>
+                            </select>
+                            <select name="year">
+                                <option value="" disabled selected>Năm</option>
+                                <script>
+                                    const year = new Date().getFullYear();
+                                    for (let i = year; i >= 1950; i--) document.write(`<option value="${i}">${i}</option>`);
+                                </script>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="save-btn" type="button">Lưu</button>
+                </div>
+            </form>
+        </section>
+        <!-- === Đổi mật khẩu có OTP === -->
+        <section id="repass-section" class="section">
+            <h2>Đổi Mật Khẩu</h2>
+            <p class="desc">Vui lòng xác minh qua mã OTP để đảm bảo an toàn cho tài khoản của bạn</p>
+
+            <form id="passwordForm" class="password-form">
+                <div class="form-group">
+                    <label for="currentPassword">Mật khẩu hiện tại</label>
+                    <input type="password" id="currentPassword" placeholder="Nhập mật khẩu hiện tại">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">Mật khẩu mới</label>
+                    <input type="password" id="newPassword" placeholder="Nhập mật khẩu mới">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Nhập lại mật khẩu mới</label>
+                    <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu mới">
+                </div>
+
+                <div class="otp-group" style="display: none;">
+                    <label for="otpInput">Nhập mã OTP (đã gửi đến email/số điện thoại của bạn)</label>
+                    <input type="text" id="otpInput" placeholder="Nhập mã OTP 6 chữ số" maxlength="6">
+                </div>
+
+                <a href="personal-page.html">
+                    <div class="btn-group">
+                        <button type="button" id="sendOtpBtn" class="save-btn">Lưa thay đổi</button>
+                        <button type="button" id="confirmChangeBtn" class="save-btn" style="display: none;">Xác nhận đổi
+                            mật khẩu
+                        </button>
+                    </div>
+                </a>
+            </form>
+        </section>
+
+
+        <!-- === Đơn Mua === -->
+        <section id="orders-section" class="section">
+            <h2>Đơn Mua</h2>
+            <!-- BẢNG DANH SÁCH HÓA ĐƠN -->
+            <div id="order-list" class="order-table">
+                <!-- TABS LỌC TRẠNG THÁI -->
+                <div class="order-tabs">
+                    <button class="order-tab tab-cho active" data-status="cho">
+                        <i class="bi bi-clock-history"></i> Chờ xác nhận
+                    </button>
+
+                    <button class="order-tab tab-dang-giao" data-status="dang-giao">
+                        <i class="bi bi-truck"></i> Đang giao
+                    </button>
+
+                    <button class="order-tab tab-da-giao" data-status="da-giao">
+                        <i class="bi bi-check2-circle"></i> Đã giao
+                    </button>
+
+                    <button class="order-tab tab-da-huy" data-status="da-huy">
+                        <i class="bi bi-x-circle"></i> Đã huỷ
+                    </button>
+                </div>
+                <h3>Hóa đơn gần đây</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Mã hóa đơn</th>
+                        <th>Thời gian cập nhật</th>
+                        <th>Trạng thái</th>
+                        <th>Tổng giá trị</th>
+                        <th class="text-center">Thao Tác</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td>51</td>
+                        <td>2024-01-03 23:21:41</td>
+                        <td class="delivered">Đang giao</td>
+                        <td>70.999.990 ₫</td>
+                        <td class="thao-tac-col">
+                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </button>
+
+                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
+                                <i class="bi bi-trash"></i> Huỷ đơn hàng
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>51</td>
+                        <td>2024-01-03 23:21:41</td>
+                        <td class="delivered">Chờ xác nhận</td>
+                        <td>70.999.990 ₫</td>
+                        <td class="thao-tac-col">
+                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </button>
+
+                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
+                                <i class="bi bi-trash"></i> Huỷ đơn hàng
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>50</td>
+                        <td>2024-01-02 22:24:02</td>
+                        <td class="delivered">Đang giao</td>
+                        <td>70.999.990 ₫</td>
+                        <td class="thao-tac-col">
+                            <button class="btn btn-view btn-sm" onclick="showOrderDetail(51)">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </button>
+
+                            <button class="btn btn-cancel btn-sm" onclick="cancelOrder(51)">
+                                <i class="bi bi-trash"></i> Huỷ đơn hàng
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- 🔹 CHI TIẾT ĐƠN HÀNG (ẩn mặc định) -->
+            <div id="order-detail" class="order-card" style="display: none;">
+                <button class="back-btn" onclick="showOrderList()">Quay lại danh sách</button>
+                <p class="order-date">Mã vận chuyển: <strong> Z001 </strong></p>
+                <p class="order-date">Ngày nhận hàng dự kiến: <strong>03 tháng 11 năm 2025</strong></p>
+
+                <div class="order-progress">
+                    <div class="step active">ĐANG XỬ LÝ</div>
+                    <div class="step">ĐANG VẬN CHUYỂN</div>
+                    <div class="step">ĐÃ GIAO</div>
+                </div>
+
+                <div class="order-item">
+                    <img src="../image/content/Flycam%20DJI%20Air%203.png" alt="Flycam DJI Air 3">
+                    <div class="item-info">
+                        <h4>Flycam DJI Air 3</h4>
+                        <p>Số lượng: 1</p>
+                        <p>Giá: <strong>31.000.000 ₫</strong></p>
+                    </div>
+                </div>
+
+                <div class="order-item">
+                    <img src="../image/content/Flycam%20DJl%20Inspire%203.png" alt="Flycam DJl Inspire 3">
+                    <div class="item-info">
+                        <h4>Flycam DJl Inspire 3</h4>
+                        <p>Số lượng: 1</p>
+                        <p>Giá: <strong>39.999.990 ₫</strong></p>
+                    </div>
+                </div>
+
+                <div class="order-summary-box">
+                    <div class="summary-left">
+                        <h4>Địa chỉ giao hàng</h4>
+                        <p><strong>Chí Nguyên</strong></p>
+                        <p>Tòa B, Ký túc xá Khu B</p>
+                        <p>033332234</p>
+                    </div>
+
+                    <div class="summary-right">
+                        <p>Tổng phụ thu: <strong>70.999.990 ₫</strong></p>
+                        <p>Phí vận chuyển: <strong>0 ₫</strong></p>
+                        <hr>
+                        <p><strong>Tổng: 70.999.990 ₫</strong></p>
+                        <p class="payment-note">Thanh toán bằng tiền mặt khi giao hàng</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === Địa chỉ nhận hàng === -->
+        <section id="addresses-section" class="section">
+            <h2>Địa Chỉ Nhận Hàng</h2>
+            <div class="address-header">
+                <button type="button" id="addAddressBtn">+ Thêm địa chỉ mới</button>
+            </div>
+
+            <div class="address-list" id="addressList"></div>
+
+            <div class="address-form" id="addressForm">
+                <input type="text" id="nameInput" placeholder="Họ và tên người nhận">
+                <input type="text" id="phoneInput" placeholder="Số điện thoại">
+                <input type="text" id="detailAddress" placeholder="Số nhà, tên đường...">
+                <div class="address-select-group">
+                    <select id="province">
+                        <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                    </select>
+                    <select id="ward">
+                        <option value="">-- Chọn Phường/Xã --</option>
+                    </select>
+                </div>
+                <label class="default-check">
+                    <input type="checkbox" id="defaultAddress">
+                    Đặt làm địa chỉ mặc định
+                </label>
+                <div>
+                    <button type="button" class="save-address" id="saveAddressBtn">Lưu</button>
+                    <button type="button" class="cancel-address" id="cancelAddressBtn">Hủy</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}
