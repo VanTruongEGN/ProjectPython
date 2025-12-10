@@ -4,9 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push trang tablet">
+    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push db">
+      <change afterPath="$PROJECT_DIR$/.idea/ProjectPythonEnd.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TechStore/products/templatetags/custom_filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/TechStore/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/TechStore/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/TechStore/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/TechStore/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TechStore/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/static/products/css/tablet.css" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/static/products/css/tablet.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/templates/products/phukien.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/templates/products/phukien.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/templates/products/tablet.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/templates/products/tablet.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,15 +34,15 @@
       <list>
         <option value="HTML File" />
         <option value="JavaScript File" />
-        <option value="CSS File" />
         <option value="Python Script" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="sub" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -44,6 +57,16 @@
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/VanTruongEGN/ProjectPython.git&quot;,
     &quot;accountId&quot;: &quot;9b4dc48f-a95d-413c-8b5f-5d8b70491c9a&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;VanTruongEGN&quot;,
+    &quot;repository&quot;: &quot;ProjectPython&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -66,8 +89,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "django.template.preview.state": "SHOW_EDITOR_AND_PREVIEW",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "#24 on lhphuocccc",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/hoc tap/ProjectPY_Nhom6/TechStore/accounts/templates/accounts",
     "list.type.of.created.stylesheet": "CSS",
@@ -95,7 +119,7 @@
       <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static" />
     </key>
   </component>
-  <component name="RunManager" selected="Django Server.ProjectPy">
+  <component name="RunManager" selected="Django Server.ProjectPythonEnd">
     <configuration name="ProjectPY_Nhom6" type="Python.DjangoServer" factoryName="Django server">
       <module name="ProjectPY_Nhom6" />
       <option name="ENV_FILES" value="" />
@@ -169,7 +193,32 @@
       <option name="customRunCommand" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="ProjectPythonEnd" type="Python.DjangoServer" factoryName="Django server">
+      <module name="ProjectPythonEnd" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
     <list>
+      <item itemvalue="Django Server.ProjectPythonEnd" />
       <item itemvalue="Django Server.ProjectPy" />
       <item itemvalue="Django Server.ProjectPY_Nhom6" />
       <item itemvalue="Django Server.ProjectPython1" />
@@ -219,8 +268,18 @@
       <workItem from="1765078781760" duration="199000" />
       <workItem from="1765336778816" duration="2656000" />
       <workItem from="1765350749813" duration="10246000" />
-      <workItem from="1765361748173" duration="975000" />
+      <workItem from="1765361748173" duration="4134000" />
+      <workItem from="1765371129737" duration="10505000" />
     </task>
+    <task id="LOCAL-00001" summary="push db">
+      <option name="closed" value="true" />
+      <created>1765366652046</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1765366652046</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -228,7 +287,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix product discounts" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix product discounts" />
+    <MESSAGE value="push db" />
+    <option name="LAST_COMMIT_MESSAGE" value="push db" />
     <option name="LAST_CHUNK_COMMIT_MESSAGE" value="fix product discounts" />
   </component>
   <component name="XDebuggerManager">
@@ -241,6 +301,11 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/TechStore/stores/urls.py</url>
           <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/TechStore/products/models.py</url>
+          <line>46</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="django-line">
           <url>file://$PROJECT_DIR$/TechStore/stores/templates/store/home.html</url>
