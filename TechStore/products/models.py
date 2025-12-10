@@ -66,7 +66,7 @@ class Product(models.Model):
         db_table = 'Product'
 
     def __str__(self):
-        return f"{self.id} - {self.name}"
+        return f"{self.id} - {self.name} - {self.price}"
     def save(self, *args, **kwargs):
         if not self.id:
             PREFIX = 'SP' 
@@ -157,7 +157,7 @@ class ProductDiscount(models.Model):
                 new_number = 1
             self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
 
-        if not self.pk:
+        if self.product:
             self.original_price = self.product.price
         super().save(*args, **kwargs)
 
