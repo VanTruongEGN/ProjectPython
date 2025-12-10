@@ -85,7 +85,13 @@ class Product(models.Model):
                 new_number = 1
             self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
         super().save(*args, **kwargs)
-        
+
+    def formatted_price(self):
+        try:
+            return f"{int(self.price):,}".replace(",", ".")
+        except (ValueError, TypeError):
+            return self.price
+
 class ProductImage(models.Model):
     product = models.ForeignKey(
         Product, 
