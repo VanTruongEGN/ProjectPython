@@ -11,11 +11,12 @@ class StoreInventoryInline(admin.TabularInline):
 class StoreReservationInline(admin.TabularInline):
     model = StoreReservation
     extra = 1
-    fields = ('customer', 'product', 'quantity', 'status', 'reserved_at', 'expired_at')
-
+    fields = ('customer', 'product', 'quantity', 'status', 'expired_at')
+    readonly_fields = ('reserved_at',) 
 @admin.register(Store)
 class StoreAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city', 'district', 'phone')
+    readonly_fields = ['id']
+    list_display = ('id','name', 'city', 'district', 'phone')
     search_fields = ('name', 'city', 'district')
     list_filter = ('city', 'district')
     inlines = [StoreInventoryInline, StoreReservationInline]

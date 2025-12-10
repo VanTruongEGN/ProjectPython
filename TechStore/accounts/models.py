@@ -17,6 +17,25 @@ class Customer(models.Model):
     def __str__(self):
         return self.email
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'KH' 
+            PADDING_LENGTH = 3
+
+            last_record = Customer.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
+
 
 class Address(models.Model):
     id = models.CharField(verbose_name="ID",primary_key=True)
@@ -32,6 +51,25 @@ class Address(models.Model):
 
     def __str__(self):
         return f"{self.recipient_name} - {self.address_line}"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'DC' 
+            PADDING_LENGTH = 3
+
+            last_record = Address.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
 
 
 class Wishlist(models.Model):
@@ -50,6 +88,25 @@ class Cart(models.Model):
         unique_together = ('customer', 'id')
     def __str__(self):
         return f"Cart of {self.customer.email}"
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            PREFIX = 'GH' 
+            PADDING_LENGTH = 3
+
+            last_record = Cart.objects.filter(id__startswith=PREFIX).order_by('-id').first()
+
+            if last_record:
+                last_number_str = last_record.id.replace(PREFIX, '')
+                try:
+                    last_number = int(last_number_str)
+                except ValueError:
+                    last_number = 0
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+        super().save(*args, **kwargs)
 
 
 class CartItem(models.Model):
