@@ -5,22 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push trang tablet">
-      <change beforePath="$PROJECT_DIR$/.idea/ProjectPY_Nhom6.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ProjectPY_Nhom6.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/accounts/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/accounts/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/accounts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/comments/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/comments/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TechStore/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/orders/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/orders/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/orders/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/orders/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/products/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/products/migrations/0002_productimage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/products/migrations/0003_rename_image_productimage_image_url_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/products/migrations/0004_remove_productimage_product_id_and_more.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TechStore/products/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/promotions/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/promotions/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/shippings/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/shippings/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/stores/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/stores/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/stores/templates/store/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/stores/templates/store/home.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +45,9 @@
     &quot;accountId&quot;: &quot;9b4dc48f-a95d-413c-8b5f-5d8b70491c9a&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -190,6 +181,8 @@
       <workItem from="1765013198992" duration="65000" />
       <workItem from="1765013283649" duration="17882000" />
       <workItem from="1765072721210" duration="5331000" />
+      <workItem from="1765078781760" duration="199000" />
+      <workItem from="1765336778816" duration="2123000" />
     </task>
     <servers />
   </component>
