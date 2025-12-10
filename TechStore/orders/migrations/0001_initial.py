@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('note', models.TextField(blank=True, null=True, verbose_name='Ghi chú')),
                 ('address', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='accounts.address', verbose_name='Mã địa chỉ')),
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accounts.customer', verbose_name='Khách hàng')),
-                ('pickup_store_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='stores.store', verbose_name='Cửa hàng nhận hàng')),
+                ('pickup_store_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='stores.products', verbose_name='Cửa hàng nhận hàng')),
             ],
             options={
                 'verbose_name': 'Đơn hàng',
