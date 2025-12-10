@@ -1,0 +1,107 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fff;
+}
+
+.page-container {
+    display: flex;
+    justify-content: center; /* từ flex-end -> center */
+    align-items: center;
+    height: 100vh;
+}
+
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* để logo trái - form phải */
+    width: 90%;
+    max-width: 1100px;
+    gap: 60px;
+}
+
+.logo-section {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start; /* căn trái */
+    align-items: center;
+}
+
+.logo-section .mascot {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+}
+
+/* --- Form đăng nhập --- */
+.login-container {
+    flex: 1;
+    max-width: 420px;
+    background: #fff;
+    padding: 40px 35px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.login-container h2 {
+    color: #0051c6;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.form-control {
+    height: 50px;
+    border-radius: 8px;
+}
+
+.btn-login {
+    background-color: #0051c6;
+    color: #fff;
+    border: none;
+    height: 50px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-login:hover {
+    background-color: #003a8c;
+    color: #fff;
+}
+
+.forgot-pass {
+    display: block;
+    margin: 12px 0;
+    color: #1a73e8;
+    text-decoration: none;
+    text-align: center;
+}
+
+.forgot-pass:hover {
+    text-decoration: underline;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    color: #777;
+}
+
+.divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+    margin: 0 10px;
+}
+
+.page-container {
+    background-image: url("../image/img1.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+

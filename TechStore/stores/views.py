@@ -12,4 +12,7 @@ def home(request):
 
 def tablet_page(request):
     return render(request, 'includes/tablet.html')
-
+def register(request):
+    return render(request, 'includes/register.html')
+def personal(request):
+    return render(request, 'includes/personal-page.html')
