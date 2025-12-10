@@ -4,11 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push trang tablet">
+    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="&#10;&#10;# Conflicts:&#10;#&#9;TechStore/TechStore/settings.py&#10;#&#9;TechStore/db.sqlite3">
+      <change afterPath="$PROJECT_DIR$/TechStore/products/templates/includes/keyboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TechStore/products/templates/includes/manhinh.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TechStore/products/templates/includes/mayin.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TechStore/products/templates/includes/mouse.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TechStore/products/templates/includes/phukien.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/products/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TechStore/stores/templates/store/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/stores/templates/store/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/accounts/templates/includes/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/accounts/templates/includes/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/accounts/templates/includes/personal-page.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/accounts/templates/includes/personal-page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/accounts/templates/includes/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/accounts/templates/includes/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/static/css/login.css" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/static/css/login.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/stores/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/stores/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/stores/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/stores/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/templates/includes/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/templates/includes/header.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/templates/includes/tablet.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/templates/includes/tablet.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,9 +29,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -38,6 +48,17 @@
     &quot;state&quot;: &quot;OPEN&quot;,
     &quot;assignee&quot;: &quot;LeeHuuPhuoc&quot;
   }
+}</component>
+  <component name="GitHubPullRequestState">{
+  &quot;prStates&quot;: [
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOQRmCUM63alog&quot;,
+        &quot;number&quot;: 17
+      },
+      &quot;lastSeen&quot;: 1765340693032
+    }
+  ]
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
@@ -65,7 +86,7 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;vantruong&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#17 on lehuuphuoc&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/hoc tap/ProjectPY_Nhom6&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
@@ -90,7 +111,7 @@
       <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store\css" />
     </key>
   </component>
-  <component name="RunManager" selected="Django Server.ProjectPY_Nhom6">
+  <component name="RunManager" selected="Django Server.ProjectPython1">
     <configuration name="ProjectPY_Nhom6" type="Python.DjangoServer" factoryName="Django server">
       <module name="ProjectPY_Nhom6" />
       <option name="ENV_FILES" value="" />
@@ -143,8 +164,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.130" />
-        <option value="bundled-python-sdk-1bde30d8e611-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.130" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PY-251.25410.159" />
+        <option value="bundled-python-sdk-e0ed3721d81e-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.159" />
       </set>
     </attachedChunks>
   </component>
@@ -183,11 +204,28 @@
       <workItem from="1765072721210" duration="5331000" />
       <workItem from="1765078781760" duration="199000" />
       <workItem from="1765336778816" duration="2123000" />
+      <workItem from="1765348640556" duration="2064000" />
+      <workItem from="1765355939706" duration="790000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="push nè" />
+    <option name="LAST_COMMIT_MESSAGE" value="push nè" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
