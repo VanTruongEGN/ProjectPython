@@ -3,7 +3,7 @@
 <head>
     {% load static %}
     {% block head %}{% endblock %}
-    <link rel="stylesheet" href="{%static 'css/tablet.css'%}">
+    <link rel="stylesheet" href="{%static 'products/css/tablet.css' %}">
     <link rel="stylesheet" href="{%static 'css/base.css'%}">
 </head>
 <body>
@@ -11,24 +11,7 @@
 
     {% include 'includes/carousel.html' %}
 <section class="filter-toolbar">
-  <div class="filter-group">
-    <button class="filter-button">Lọc</button>
-    <div class="filter-options">
-      <span class="filter-label">Hãng:</span>
-      <button>SAMSUNG</button>
-      <button>iPad</button>
-      <button>Xiaomi</button>
-      <button>OPPO</button>
-      <button>Lenovo</button>
-      <button>HONOR</button>
-    </div>
-    <div class="filter-options">
-      <span class="filter-label">Mục đích:</span>
-      <button>Chơi game</button>
-      <button>Nghe gọi</button>
-      <button>Android</button>
-    </div>
-  </div>
+
 
   <div class="sort-group">
     <span class="filter-label">Sắp xếp theo:</span>
