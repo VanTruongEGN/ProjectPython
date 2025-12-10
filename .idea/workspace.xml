@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push trang cá nhân" />
+    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push trang tablet">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/products/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/products/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TechStore/stores/templates/store/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/TechStore/stores/templates/store/home.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,9 +18,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="Python Script" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
         <option value="CSS File" />
       </list>
     </option>
@@ -40,6 +45,9 @@
     &quot;accountId&quot;: &quot;9b4dc48f-a95d-413c-8b5f-5d8b70491c9a&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -57,7 +65,7 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#17 on lehuuphuoc&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;vantruong&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/hoc tap/ProjectPY_Nhom6&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
@@ -68,12 +76,6 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  },
-  &quot;keyToStringList&quot;: {
-    &quot;ChangesTree.GroupingKeys&quot;: [
-      &quot;directory&quot;,
-      &quot;repository&quot;
-    ]
   }
 }</component>
   <component name="RecentsManager">
@@ -81,14 +83,14 @@
       <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store\css" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\lhphu\PycharmProjects\ProjectPython1\TechStore\accounts\templates\includes" />
       <recent name="D:\hoc tap\ProjectPY_Nhom6\TechStore" />
       <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store" />
       <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static" />
       <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store" />
+      <recent name="C:\hoc tap\ProjectPY_Nhom6\TechStore\store\static\store\css" />
     </key>
   </component>
-  <component name="RunManager" selected="Django Server.ProjectPython1">
+  <component name="RunManager" selected="Django Server.ProjectPY_Nhom6">
     <configuration name="ProjectPY_Nhom6" type="Python.DjangoServer" factoryName="Django server">
       <module name="ProjectPY_Nhom6" />
       <option name="ENV_FILES" value="" />
@@ -141,8 +143,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PY-251.25410.159" />
-        <option value="bundled-python-sdk-e0ed3721d81e-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.159" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.130" />
+        <option value="bundled-python-sdk-1bde30d8e611-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.130" />
       </set>
     </attachedChunks>
   </component>
@@ -179,32 +181,13 @@
       <workItem from="1765013198992" duration="65000" />
       <workItem from="1765013283649" duration="17882000" />
       <workItem from="1765072721210" duration="5331000" />
-      <workItem from="1765108779103" duration="3622000" />
-      <workItem from="1765171364297" duration="597000" />
-      <workItem from="1765185831913" duration="1785000" />
-      <workItem from="1765199607185" duration="1603000" />
-      <workItem from="1765225016613" duration="433000" />
-      <workItem from="1765233469824" duration="2165000" />
-      <workItem from="1765330076797" duration="1066000" />
-      <workItem from="1765335753567" duration="873000" />
+      <workItem from="1765078781760" duration="199000" />
+      <workItem from="1765336778816" duration="2123000" />
     </task>
-    <task id="LOCAL-00001" summary="push trang cá nhân">
-      <option name="closed" value="true" />
-      <created>1765336613339</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1765336613339</updated>
-    </task>
-    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="push trang cá nhân" />
-    <option name="LAST_COMMIT_MESSAGE" value="push trang cá nhân" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
