@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'orders',
     'shippings',
     'comments',
+
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #Media
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
