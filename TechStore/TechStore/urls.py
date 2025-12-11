@@ -20,8 +20,10 @@ from products import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('products/', include('products.urls')),
-    path('tablet/', views.tablet_page, name='tablet'),  # ✅ thêm dòng này
+    path('tablet/', views.tablet_page, name='tablet'),
+    path('laptop/', views.laptop_page, name='laptop'),
     path('', include('stores.urls')),
+
 ]
 
 from django.conf import settings
