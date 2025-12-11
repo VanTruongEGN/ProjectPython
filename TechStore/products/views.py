@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Product, ProductDiscount
+from .models import Product, ProductDiscount, Category
 
 def product_list(request):
     products = Product.objects.filter(status=True).select_related('category').prefetch_related('images')
@@ -12,8 +12,7 @@ def product_list(request):
         'products': products,
         'discount_map': discount_map
     })
-from django.shortcuts import render
-from .models import Product, ProductDiscount, Category
+
 
 def tablet_page(request):
     tablet_category = Category.objects.filter(name__iexact="Tablet").first()
@@ -26,5 +25,17 @@ def tablet_page(request):
         'products': products,
         'discount_map': discount_map
     })
+
+def laptop_page(request):
+    laptop_category = Category.objects.filter(name__iexact="Laptop").first()
+    products = Product.objects.filter(category=laptop_category, status=True)
+    discounts = ProductDiscount.objects.all()
+    discount_map = {d.product.id: d for d in discounts}
+
+    return render(request, 'products/laptop.html', {
+        'products': products,
+        'discount_map': discount_map
+    })
+
 
 
