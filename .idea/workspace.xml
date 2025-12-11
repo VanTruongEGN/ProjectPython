@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push trang tablet">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="72f8b6e1-4d2b-4e18-aa52-d1465f65c493" name="Changes" comment="push trang tablet" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -143,6 +141,10 @@
       <option name="customRunCommand" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Django Server.ProjectPY_Nhom6" />
+      <item itemvalue="Django Server.ProjectPython1" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
