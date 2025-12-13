@@ -14,7 +14,7 @@ def tablet_page(request):
     return render(request, 'products/tablet.html')
 
 def laptop_page(request):
-    return render(request, 'products/laptop.html')
+    return render(request, 'products/product.html')
 
 def phukien_page(request):
     return render(request, 'products/phukien.html')
