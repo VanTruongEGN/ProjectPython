@@ -1,35 +1,36 @@
 # Create your views here.
 # stores/views.py
-
 from django.shortcuts import render
+
+from products.models import ProductDiscount, ProductImage, Category, ProductAttribute
+
+
 def home(request):
-    images = [
-        "stores/images/img1.png",
-        "stores/images/img2.png",
-        "stores/images/img3.png",
-    ]
-    return render(request, 'store/home.html', {"images": images})
-#products
-def tablet_page(request):
-    return render(request, 'products/tablet.html')
+    categories = Category.objects.all()
 
-def laptop_page(request):
-    return render(request, 'products/product.html')
+    discount_by_category = {}
 
-def phukien_page(request):
-    return render(request, 'products/phukien.html')
+    for cat in categories:
+        discounts = (
+            ProductDiscount.objects
+            .select_related('product', 'product__category')
+            .filter(
+                product__category=cat,
+                product__status=True,
+            )
+            .order_by('-created_at')[:8]
+        )
+        for d in discounts:
+            d.attrs = ProductAttribute.objects.filter(
+                product=d.product
+            )[:2]
 
-def mouse_page(request):
-    return render(request, 'products/mouse.html')
+        if discounts.exists():
+            discount_by_category[cat] = discounts
 
-def keyboard_page(request):
-    return render(request, 'products/keyboard.html')
-
-def mayin_page(request):
-    return render(request, 'products/mayin.html')
-
-def manhinh_page(request):
-    return render(request, 'products/manhinh.html')
+    return render(request, 'store/home.html', {
+        'discount_by_category': discount_by_category
+    })
 
 #accounts
 def login_page(request):

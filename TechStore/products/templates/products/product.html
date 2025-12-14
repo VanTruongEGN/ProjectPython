@@ -5,20 +5,21 @@
     <link rel="stylesheet" href="{% static 'products/css/tablet1.css' %}">
 {% endblock %}
 {% block content %}
- <div class="sort-group">
-    <span class="filter-label">Sắp xếp theo:</span>
-    <button>Nổi bật</button>
-    <button>Bán chạy</button>
-    <button>Giảm giá</button>
-    <button>Mới</button>
-    <button>Giá</button>
-  </div>
+    <div class="sort-group">
+        <span class="filter-label">Sắp xếp theo:</span>
+        <button>Nổi bật</button>
+        <button>Bán chạy</button>
+        <button>Giảm giá</button>
+        <button>Mới</button>
+        <button>Giá</button>
+    </div>
     <div class="container mt-4">
         <div class="row">
             {% if products %}
                 {% for product in products %}
                     <div class="col">
-                        <div class="card">
+                        <a href="{% url 'productDetail' product.id %}">
+                            <div class="card">
                             {% if product.image_main %}
                                 <img src="{{ product.image_main.url }}" class="card-img-top" alt="{{ product.name }}">
                             {% else %}
@@ -30,15 +31,15 @@
                                 {% with discount=discount_map|dict_key:product.id %}
                                     {% if discount %}
                                         <p class="text-danger fw-bold">Giá giảm: {{ discount.discounted_price }} VNĐ</p>
-                                       <p class="fw-bold">{{ product.formatted_price }} VNĐ</p>
+                                        <p class="fw-bold">{{ product.formatted_price }} VNĐ</p>
 
                                     {% else %}
-                                       <p class="fw-bold">{{ product.formatted_price }} VNĐ</p>
-
+                                        <p class="fw-bold">{{ product.formatted_price }} VNĐ</p>
                                     {% endif %}
                                 {% endwith %}
                             </div>
                         </div>
+                        </a>
                     </div>
                 {% endfor %}
             {% else %}

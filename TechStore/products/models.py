@@ -1,6 +1,5 @@
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 class Category(models.Model):
     name = models.CharField("Tên danh mục", max_length=150)
     description = models.TextField("Mô tả", blank=True)
@@ -166,4 +165,12 @@ class ProductDiscount(models.Model):
         if self.product:
             self.original_price = self.product.price
         super().save(*args, **kwargs)
+
+    def formatted_price(self):
+        return f"{int(self.original_price):,} ₫".replace(",", ".")
+    formatted_price.short_description = "Giá gốc"
+
+    def formatted_priceD(self):
+        return f"{int(self.discounted_price):,} ₫".replace(",", ".")
+    formatted_priceD.short_description = "Giá đã giảm"
 
