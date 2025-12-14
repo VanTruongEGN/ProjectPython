@@ -1,0 +1,82 @@
+{% extends "productDetailBase.html" %}
+{% block head %}
+    {% load static %}
+    {% load custom_filters %}
+    <link rel="stylesheet" href="{% static 'products/css/productDetails.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="product-wrapper">
+
+        <div class="product-left">
+            {% if main_image %}
+                <img id="mainImage" src="{{ main_image.url }}" class="main-image">
+            {% endif %}
+
+            <div class="thumbnail-list">
+                {% for img in images %}
+                    <img src="{{ img.image.url }}"
+                         onclick="changeImage(this)">
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="product-right">
+            <h1>{{ product.name }}</h1>
+
+            <!-- Giá -->
+            {% if discount %}
+                <div class="price">
+                <span class="price-old">
+                    {{ discount.original_price }} ₫
+                </span>
+                    <span class="price-new">
+                    {{ discount.discounted_price }} ₫
+                </span>
+                </div>
+            {% else %}
+                <div class="price">
+                    {{ product.formatted_price }} ₫
+                </div>
+            {% endif %}
+
+            <ul class="info">
+                <li>Hãng: {{ product.brand }}</li>
+                <li>Model: {{ product.model }}</li>
+                <li>Bảo hành: {{ product.warranty_month }} tháng</li>
+            </ul>
+
+            <div class="actions">
+                <input type="number" value="1" min="1">
+                <button class="btn-cart">Thêm vào giỏ hàng</button>
+                <button class="btn-buy">Mua ngay</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="product-section">
+        <h2>Mô tả sản phẩm</h2>
+        <div class="content">
+            {{ product.description|safe }}
+        </div>
+    </div>
+
+    <div class="product-section">
+        <h2>Thông số kỹ thuật</h2>
+
+        <table class="spec-table">
+            {% for attr in attributes %}
+                <tr>
+                    <th>{{ attr.attribute }}</th>
+                    <td>{{ attr.value }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">Chưa có thông số kỹ thuật</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'products/js/productDetails.js' %}"></script>
+{% endblock %}
