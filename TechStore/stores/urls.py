@@ -13,4 +13,6 @@ urlpatterns = [
     path('personal/', views.personal_page, name='personal'),
 
 
+
+
 ]
