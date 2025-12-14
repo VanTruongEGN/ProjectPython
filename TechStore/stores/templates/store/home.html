@@ -1,28 +1,56 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block head %}
-<link rel="stylesheet" href="{% static 'css/root.css' %}">
-<link rel="stylesheet" href="{% static 'store/css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/root.css' %}">
+    <link rel="stylesheet" href="{% static 'store/css/home.css' %}">
 {% endblock %}
 
 {% block content %}
     <div class="content-home">
-        <div class="section accessories">
-            <article class="product-card">
-                <div class="thumb">
-                    <img src="images/ipad-pro-m5-11.png" alt="iPad Pro M5 11 inch WiFi 256GB" />
-                </div>
-                <h3 class="title">iPad Pro M5 11 inch WiFi 256GB</h3>
-                <div class="price-row">
-                    <div class="price-old">30.000.000đ</div>
-                    <div class="price">29.990.000₫</div>
-                </div>
-                <div class="buy">Mua ngay</div>
-            </article>
-        </div>
-        <div class="section"></div>
-        <div class="section"></div>
-        <div class="section"></div>
+
+        {% for category, discounts in discount_by_category.items %}
+            <div class="section">
+
+                <h2>{{ category.name }}</h2>
+
+                {% for d in discounts %}
+                    <a href="{% url 'productDetail' d.product.id %}" class="product-link">
+
+                        <article class="product-card">
+
+                            <div class="thumb">
+                                {% if d.product.image_main %}
+                                    <img src="{{ d.product.image_main.url }}" alt="{{ d.product.name }}">
+                                {% else %}
+                                    <img src="{% static 'images/no-image.png' %}">
+                                {% endif %}
+                            </div>
+
+                            <h3 class="title">{{ d.product.name }}</h3>
+                            <ul class="specs">
+                                {% for a in d.attrs %}
+                                    <li>{{ a.attribute }}: {{ a.value }}</li>
+                                {% endfor %}
+                            </ul>
+                            <div class="price-row">
+                                <div class="price-old">
+                                    {{ d.formatted_price }}
+                                </div>
+                                <div class="price">
+                                    {{ d.formatted_priceD }}
+                                </div>
+                            </div>
+
+                            <div class="buy">Mua ngay</div>
+
+                        </article>
+                    </a>
+                {% endfor %}
+
+            </div>
+        {% empty %}
+            <p>Chưa có sản phẩm giảm giá</p>
+        {% endfor %}
+
     </div>
 {% endblock %}
