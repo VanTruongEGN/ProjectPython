@@ -1,172 +1,174 @@
 :root {
-  --primary-color: #47D7AC;
-  --primary-font: Arial, sans-serif;
-  --primary-text-color: #1A1A1A;
-  --background-color: #ffffff;
-  --muted-color: #666666;
-  --card-bg: #ffffff;
-  --border-color: #e0e0e0;
+    --primary-color: #47D7AC;
+    --primary-font: Arial, sans-serif;
+    --primary-text-color: #1A1A1A;
+    --background-color: #ffffff;
+    --muted-color: #666666;
+    --card-bg: #ffffff;
+    --border-color: #e0e0e0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--background-color);
-  color: var(--primary-text-color);
-  font-family: var(--primary-font);
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--primary-text-color);
+    font-family: var(--primary-font);
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
 }
 
 /* ép row thành grid 5 cột, các item cao bằng nhau */
 .row {
-  display: grid !important;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 24px;
-  align-items: stretch;   /* ép các cột kéo giãn cùng chiều cao */
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    align-items: stretch; /* ép các cột kéo giãn cùng chiều cao */
 }
 
 /* mỗi cột là flex item để card giãn đều */
 .col-md-3 {
-  display: flex;
+    display: flex;
 }
 
 /* card kéo giãn đầy chiều cao cột */
 .card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* nội dung dàn đều, giá/nút xuống đáy */
-  height: 100%;
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* nội dung dàn đều, giá/nút xuống đáy */
+    height: 100%;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
 
 .card-img-top {
-  width: 90%;          /* nhỏ hơn 100% để cách viền */
-  height: 180px;       /* giảm chiều cao một chút */
-  object-fit: contain;
-  background: #fff;
-  padding: 16px;       /* tăng padding để tạo khoảng cách */
-  margin: 0 auto;      /* căn giữa ảnh trong khung */
-  border-radius: 8px;  /* bo góc nhẹ cho đẹp */
+    width: 90%; /* nhỏ hơn 100% để cách viền */
+    height: 180px; /* giảm chiều cao một chút */
+    object-fit: contain;
+    background: #fff;
+    padding: 16px; /* tăng padding để tạo khoảng cách */
+    margin: 0 auto; /* căn giữa ảnh trong khung */
+    border-radius: 8px; /* bo góc nhẹ cho đẹp */
 }
 
 
 /* thân card là flex column để kiểm soát vị trí khối */
 .card-body {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
 }
 
 /* tiêu đề: đặt min-height để đảm bảo cùng hàng */
 .card-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--primary-text-color);
-  margin-bottom: 8px;
-  line-height: 1.4;
-  min-height: 40px;         /* ~2 dòng: giúp các tên thẳng hàng */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;    /* tối đa 2 dòng */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--primary-text-color);
+    margin-bottom: 8px;
+    line-height: 1.4;
+    min-height: 40px; /* ~2 dòng: giúp các tên thẳng hàng */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* tối đa 2 dòng */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* khu mô tả/cấu hình: đặt min-height để đồng mức */
 .card-text {
-  font-size: 13px;
-  color: var(--muted-color);
-  margin-bottom: 12px;
-  line-height: 1.5;
-  min-height: 56px;         /* đủ 2–3 dòng: các card không lệch */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;    /* tối đa 3 dòng */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+    font-size: 13px;
+    color: var(--muted-color);
+    margin-bottom: 12px;
+    line-height: 1.5;
+    min-height: 56px; /* đủ 2–3 dòng: các card không lệch */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* tối đa 3 dòng */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* giá: đẩy xuống cuối để tất cả card có đáy cùng mức */
 .card-body .fw-bold {
-  font-size: 15px;
-  color: #e53935;
-  margin-top: auto;         /* ép khối giá nằm đáy card */
+    font-size: 15px;
+    color: #e53935;
+    margin-top: auto; /* ép khối giá nằm đáy card */
 }
 
 .card-body .text-muted {
-  font-size: 13px;
-  color: #999;
-  text-decoration: line-through;
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
 }
 
 /* nút (nếu dùng) */
 .btn-primary {
-  background-color: var(--primary-color);
-  border: none;
-  font-weight: bold;
-  margin-top: 8px;
+    background-color: var(--primary-color);
+    border: none;
+    font-weight: bold;
+    margin-top: 8px;
 }
 
 .btn-primary:hover {
-  background-color: #3bbd96;
+    background-color: #3bbd96;
 }
+
 .sort-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin: 24px auto;
-  padding: 12px 16px;
-  background-color: var(--card-bg);       /* giống màu card */
-  border: 1px solid var(--border-color);  /* viền giống card */
-  border-radius: 12px;
-  max-width: 1140px;                      /* lùi vào giống card */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 24px auto;
+    padding: 12px 16px;
+    background-color: var(--card-bg); /* giống màu card */
+    border: 1px solid var(--border-color); /* viền giống card */
+    border-radius: 12px;
+    max-width: 1140px; /* lùi vào giống card */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .filter-label {
-  font-weight: bold;
-  color: var(--primary-text-color);
-  font-size: 14px;
+    font-weight: bold;
+    color: var(--primary-text-color);
+    font-size: 14px;
 }
 
 /* nút sắp xếp */
 .sort-group button {
-  background: #fff;
-  border: 1px solid var(--border-color);
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  color: var(--primary-text-color);
+    background: #fff;
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    color: var(--primary-text-color);
 }
 
 /* hover */
 .sort-group button:hover {
-  background: var(--primary-color);
-  color: #fff;
-  border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
 }
 
 /* trạng thái active */
 .sort-group button.active {
-  background: var(--primary-color);
-  color: #fff;
-  border-color: var(--primary-color);
-  pointer-events: none;
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+    pointer-events: none;
 }
 
