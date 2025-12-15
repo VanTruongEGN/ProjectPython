@@ -4,48 +4,173 @@
 <head>
     <title>Giỏ hàng</title>
     <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
 
-<div class="wrapper">
-    {%include 'includes/header.html'%}
-    <h1>Giỏ hàng</h1>
+<div class="cart-wrapper">
+    {% include 'includes/header.html' %}
     
-    <table>
-        <thead>
-            <tr>
-                <th>Sản phẩm</th>
-                <th>Giá</th>
-                <th>Số lượng</th>
-                <th>Thành tiền</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for item in items %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.price }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.line_total }}</td>
-                <td>
-                    <form method="post" action="{% url 'cart_remove' item.id %}">
-                        {% csrf_token %}
-                        <button type="submit">Xóa</button>
-                    </form>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="5">Giỏ hàng trống</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="cart-container">
+        <div class="cart-header-nav">
+            <a href="{% url 'home' %}" class="back-link"><i class="bi bi-chevron-left"></i> Mua thêm sản phẩm khác</a>
+        </div>
 
-    <p><strong>Tổng tiền:</strong> {{ total }}</p>
+        <div class="cart-content-box">
+            <div class="delivery-tabs">
+                <div class="tab active">
+                    <input type="radio" name="delivery_method" id="delivery_home" checked>
+                    <label for="delivery_home">Giao tận nơi</label>
+                </div>
+                <div class="tab">
+                    <input type="radio" name="delivery_method" id="delivery_store">
+                    <label for="delivery_store">Nhận tại siêu thị</label>
+                </div>
+            </div>
 
-    <a href="{% url 'checkout' %}">Thanh toán</a>
+            <div class="address-section" onclick="openAddressModal()">
+                <div class="address-info">
+                    {% if user_address %}
+                        <span class="user-name" id="display-name">Người nhận: {{ user_address.recipient_name }} - {{ user_address.phone }}</span>
+                        <span class="user-address" id="display-address">{{ user_address.address_line }}, {{ user_address.ward }}, {{ user_address.district }}, {{ user_address.city }}</span>
+                    {% else %}
+                         <span class="user-name" id="display-name">Địa chỉ nhận hàng</span>
+                         <span class="user-address" id="display-address">Vui lòng nhập địa chỉ nhận hàng</span>
+                    {% endif %}
+                </div>
+                <i class="bi bi-chevron-right arrow-icon"></i>
+            </div>
+
+            <div class="cart-items">
+                {% for item in items %}
+                <div class="cart-item">
+                    <div class="item-visual">
+                        {% if item.product.image_main %}
+                            <img src="{{ item.product.image_main.url }}" alt="{{ item.product.name }}">
+                        {% else %}
+                            <img src="{% static 'img/no-image.png' %}" alt="No Image">
+                        {% endif %}
+                        <form method="post" action="{% url 'cart_remove' item.id %}" class="delete-form-mobile">
+                            {% csrf_token %}
+                            <button type="submit" class="text-btn"> <i class="bi bi-trash"></i> Xóa</button>
+                        </form>
+                    </div>
+
+                    <div class="item-details">
+                        <div class="item-header">
+                            <h3 class="product-name">{{ item.product.name }}</h3>
+                            <span class="product-price">{{ item.price|floatformat:0 }}</span>
+                        </div>
+
+                        <div class="item-actions">
+                            <div class="quantity-control">
+                                <a href="{% url 'update_cart_quantity' item.id 'decrease' %}" class="qty-btn minus">-</a>
+                                <input type="text" value="{{ item.quantity }}" readonly class="qty-input">
+                                <a href="{% url 'update_cart_quantity' item.id 'increase' %}" class="qty-btn plus">+</a>
+                            </div>
+                            <form method="post" action="{% url 'cart_remove' item.id %}" class="delete-form-desktop">
+                                {% csrf_token %}
+                                <button type="submit" class="text-btn">Xóa</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-cart">
+                    <p>Giỏ hàng của bạn đang trống</p>
+                    <a href="{% url 'home' %}" class="btn-primary">Mua ngay</a>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if items %}
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Tạm tính ({{ items|length }} sản phẩm):</span>
+                    <span class="total-price">{{ total|floatformat:0 }}</span>
+                </div>
+            </div>
+            
+            <div class="cart-footer">
+                <form action="{% url 'process_checkout' %}" method="post">
+                     {% csrf_token %}
+                     <input type="hidden" name="note" value="Order from Web">
+                     <button type="submit" class="checkout-btn">ĐẶT HÀNG</button>
+                </form>
+                <div class="footer-note">Xem tin tức công nghệ tại <a href="#">TechStore</a></div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
 </div>
+
+
+<div id="addressModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeAddressModal()">&times;</span>
+    <h2>Thông tin người nhận</h2>
+    <form id="addressForm" onsubmit="saveAddress(event)">
+        <div class="form-group">
+            <label>Tên người nhận</label>
+            <input type="text" id="modal-name" value="{% if user_address %}{{ user_address.recipient_name }}{% endif %}" placeholder="Nhập tên người nhận" required>
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" id="modal-phone" value="{% if user_address %}{{ user_address.phone }}{% endif %}" placeholder="Nhập số điện thoại" required>
+        </div>
+        <div class="form-group">
+             <label>Tỉnh/Thành phố</label>
+             <input type="text" id="modal-city" value="{% if user_address %}{{ user_address.city }}{% endif %}" placeholder="Tỉnh/Thành phố" required>
+        </div>
+         <div class="form-group">
+             <label>Quận/Huyện</label>
+             <input type="text" id="modal-district" value="{% if user_address %}{{ user_address.district }}{% endif %}" placeholder="Quận/Huyện" required>
+        </div>
+         <div class="form-group">
+             <label>Phường/Xã</label>
+             <input type="text" id="modal-ward" value="{% if user_address %}{{ user_address.ward }}{% endif %}" placeholder="Phường/Xã" required>
+        </div>
+        <div class="form-group">
+            <label>Địa chỉ cụ thể</label>
+            <input type="text" id="modal-address" value="{% if user_address %}{{ user_address.address_line }}{% endif %}" placeholder="Số nhà, tên đường..." required>
+        </div>
+        <button type="submit" class="save-btn">XÁC NHẬN</button>
+    </form>
+  </div>
+</div>
+
+<script>
+    var modal = document.getElementById("addressModal");
+
+    function openAddressModal() {
+        modal.style.display = "block";
+    }
+
+    function closeAddressModal() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    function saveAddress(event) {
+        event.preventDefault();
+        var name = document.getElementById("modal-name").value;
+        var phone = document.getElementById("modal-phone").value;
+        var address = document.getElementById("modal-address").value;
+        var city = document.getElementById("modal-city").value;
+        var district = document.getElementById("modal-district").value;
+        var ward = document.getElementById("modal-ward").value;
+
+        document.getElementById("display-name").textContent = "Người nhận: " + name + " - " + phone;
+        document.getElementById("display-address").textContent = address + ", " + ward + ", " + district + ", " + city;
+        
+        closeAddressModal();
+    }
+</script>
 </body>
 </html>

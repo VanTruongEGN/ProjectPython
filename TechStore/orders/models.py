@@ -74,7 +74,14 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name="Đơn hàng")
-    product = models.ForeignKey('products.Product', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Sản phẩm")
+    product = models.ForeignKey(
+        'products.Product',
+        db_column="product_id_id",
+        to_field="id",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
     quantity = models.IntegerField(verbose_name="Số lượng")
     unit_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Đơn giá")
     discount_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Tiền giảm giá")
