@@ -40,7 +40,7 @@ def register_page(request):
     return render(request, 'accounts/signup.html')
 
 def personal_page(request):
-    return render(request, 'accounts/personal-page.html')
+    return render(request, 'accounts/profile.html')
 
 
 
