@@ -27,15 +27,15 @@
             {% if discount %}
                 <div class="price">
                 <span class="price-old">
-                    {{ discount.original_price }} ₫
+                    {{ discount.formatted_price }}
                 </span>
                     <span class="price-new">
-                    {{ discount.discounted_price }} ₫
+                    {{ discount.formatted_priceD }}
                 </span>
                 </div>
             {% else %}
                 <div class="price">
-                    {{ product.formatted_price }} ₫
+                    {{ product.formatted_price }}
                 </div>
             {% endif %}
 
@@ -53,28 +53,71 @@
         </div>
 
     </div>
-    <div class="product-section">
-        <h2>Mô tả sản phẩm</h2>
-        <div class="content">
-            {{ product.description|safe }}
+    <div class="product-section info">
+
+        <div class="description-part">
+            <h2>Mô tả sản phẩm</h2>
+            <div class="content">
+                {{ product.description|safe }}
+            </div>
+        </div>
+
+        <div class="specs-part">
+            <h2>Thông số kỹ thuật</h2>
+            <table class="spec-table">
+                {% for attr in attributes %}
+                    <tr>
+                        <th>{{ attr.attribute }}</th>
+                        <td>{{ attr.value }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">Chưa có thông số kỹ thuật</td>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
+    <div class="product-section comment">
+        <button id="writeReviewBtn">Viết đánh giá</button>
+        <div id="reviewForm">
+            <h3>Viết đánh giá</h3>
+            <select id="reviewStars">
+                <option value="5">5 ★★★★★</option>
+                <option value="4">4 ★★★★</option>
+                <option value="3">3 ★★★</option>
+                <option value="2">2 ★★</option>
+                <option value="1">1 ★</option>
+            </select>
+            <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..."></textarea>
+            <button id="submitReview">Hoàn thành</button>
+        </div>
 
-    <div class="product-section">
-        <h2>Thông số kỹ thuật</h2>
+        <div class="review-navigation">
+    {#            <div class="nav-item active">Đánh giá</div>#}
+        </div>
 
-        <table class="spec-table">
-            {% for attr in attributes %}
-                <tr>
-                    <th>{{ attr.attribute }}</th>
-                    <td>{{ attr.value }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="2">Chưa có thông số kỹ thuật</td>
-                </tr>
-            {% endfor %}
-        </table>
+        <div class="sort-area">
+            <select>
+                <option>Sắp xếp</option>
+                <option>5 sao</option>
+                <option>4 sao</option>
+                <option>3 sao</option>
+                <option>2 sao</option>
+                <option>1 sao</option>
+            </select>
+        </div>
+
+        <div class="comment-list">
+            <div class="comment-item">
+                <div class="comment-header">
+                    <span class="comment-author">Lê Vân Trường</span>
+                    <span class="comment-date">02/14/2025</span>
+                </div>
+                <p class="comment-rating" style="color: #FFD700">★★★★★</p>
+                <p class="comment-text">"Tuyệt vời! Sách giúp bé ngủ ngon hơn."</p>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block js %}
