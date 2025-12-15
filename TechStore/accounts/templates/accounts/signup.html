@@ -14,30 +14,45 @@
 
         <h2 class="auth-title">Tạo tài khoản</h2>
         <p class="auth-subtitle">Đăng ký để mua sắm nhanh hơn tại TechStore</p>
-
-        {% if error %}
-          <p class="error">{{ error }}</p>
+        
+                {% if error %}
+          <p style="color:red;">{{ error }}</p>
         {% endif %}
-
+        
         <form method="post">
-            {% csrf_token %}
+          {% csrf_token %}
+          <label>Họ và tên:</label>
+          <input type="text" name="full_name" required><br>
+        
+          <label>Email:</label>
+          <input type="email" name="email" required><br>
+        
+          <label>Số điện thoại:</label>
+          <input type="text" name="phone"><br>
+        
+          <label>Ngày sinh:</label>
+          <input type="date" name="date_of_birth"><br>
+        
+          <label>Giới tính:</label>
+  
+            <input type="text" name="gender" list="gender-options" placeholder="Chọn giới tính" required>
+            <datalist id="gender-options">
+              <option value="Nam">
+              <option value="Nữ">
+              <option value="Khác">
+            </datalist>
+  
+         
 
-            <label>Email</label>
-            <input type="email" name="email" placeholder="Nhập email" required>
-
-            <label>Mật khẩu</label>
-            <input type="password" name="password" placeholder="Tạo mật khẩu" required>
-
-            <label>Họ và tên</label>
-            <input type="text" name="full_name" placeholder="Nhập họ và tên">
-
-            <button type="submit">Đăng ký</button>
+        
+          <label>Mật khẩu:</label>
+          <input type="password" name="password" required><br>
+        
+          <label>Xác nhận mật khẩu:</label>
+          <input type="password" name="confirm_password" required><br>
+        
+          <button type="submit">Đăng ký</button>
         </form>
-
-        <div class="auth-footer">
-            <span>Đã có tài khoản?</span>
-            <a href="/accounts/login/">Đăng nhập</a>
-        </div>
 
     </div>
 
