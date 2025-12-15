@@ -46,10 +46,19 @@
             </ul>
 
             <div class="actions">
-                <input type="number" value="1" min="1">
-                <button class="btn-cart">Thêm vào giỏ hàng</button>
-                <button class="btn-buy">Mua ngay</button>
-            </div>
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <input type="number" name="quantity" value="1" min="1">
+                <button type="submit" class="btn-cart">Thêm vào giỏ hàng</button>
+            </form>
+
+            <form method="post" action="{% url 'buy_now' product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn-buy">Mua ngay</button>
+            </form>
+        </div>
+
         </div>
 
     </div>

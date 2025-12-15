@@ -74,18 +74,18 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name="Đơn hàng")
-    product_id = models.ForeignKey('products.Product', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Sản phẩm")
+    product = models.ForeignKey('products.Product', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Sản phẩm")
     quantity = models.IntegerField(verbose_name="Số lượng")
     unit_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Đơn giá")
     discount_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Tiền giảm giá")
 
     class Meta:
-        unique_together = ('order', 'product_id')
+        unique_together = ('order', 'product')
         verbose_name = "Chi tiết đơn hàng"
         verbose_name_plural = "Chi tiết đơn hàng"
 
     def __str__(self):
-        return f"{self.product_id} - SL: {self.quantity}"
+        return f"{self.product} - SL: {self.quantity}"
 
 
 class Shipping(models.Model):

@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Giỏ hàng</title>
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+</head>
+<body>
+
+<div class="wrapper">
+    {%include 'includes/header.html'%}
+    <h1>Giỏ hàng</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.line_total }}</td>
+                <td>
+                    <form method="post" action="{% url 'cart_remove' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5">Giỏ hàng trống</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p><strong>Tổng tiền:</strong> {{ total }}</p>
+
+    <a href="{% url 'checkout' %}">Thanh toán</a>
+</div>
+</body>
+</html>
