@@ -37,7 +37,7 @@ def login_page(request):
     return render(request, 'accounts/login.html')
 
 def register_page(request):
-    return render(request, 'accounts/register.html')
+    return render(request, 'accounts/signup.html')
 
 def personal_page(request):
     return render(request, 'accounts/personal-page.html')
