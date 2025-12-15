@@ -30,11 +30,12 @@
                                 <p class="card-text">{{ product.description|truncatewords:20 }}</p>
                                 {% with discount=discount_map|dict_key:product.id %}
                                     {% if discount %}
-                                        <p class="text-danger fw-bold">Giá giảm: {{ discount.discounted_price }} VNĐ</p>
-                                        <p class="fw-bold">{{ product.formatted_price }} VNĐ</p>
+                                        <s class="fw-bold original" style="font-size: 13px;color: gray";>{{ product.formatted_price }}</s>
+                                        <p class="text-danger fw-bold">{{ discount.formatted_priceD }}</p>
+
 
                                     {% else %}
-                                        <p class="fw-bold">{{ product.formatted_price }} VNĐ</p>
+                                        <p class="fw-bold">{{ product.formatted_price }}</p>
                                     {% endif %}
                                 {% endwith %}
                             </div>
