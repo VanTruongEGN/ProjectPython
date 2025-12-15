@@ -12,14 +12,15 @@ class Customer(models.Model):
     date_of_birth = models.DateField(verbose_name="Ngày sinh",null=True, blank=True)
     gender = models.CharField(verbose_name="Giới tính",max_length=10, null=True, blank=True)
     status = models.CharField(verbose_name="Trạng thái",default="Hoạt động")
-    created_at = models.DateTimeField(verbose_name="Ngày tạo",auto_now_add=True)
+    created_at = models.DateTimeField(verbose_name="Ngày tạo",auto_now_add=True, null =True)
+
 
     def __str__(self):
         return self.email
 
     def save(self, *args, **kwargs):
         if not self.id:
-            PREFIX = 'KH' 
+            PREFIX = 'KH'
             PADDING_LENGTH = 3
 
             last_record = Customer.objects.filter(id__startswith=PREFIX).order_by('-id').first()
@@ -54,7 +55,7 @@ class Address(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            PREFIX = 'DC' 
+            PREFIX = 'DC'
             PADDING_LENGTH = 3
 
             last_record = Address.objects.filter(id__startswith=PREFIX).order_by('-id').first()
@@ -78,7 +79,7 @@ class Wishlist(models.Model):
     added_at = models.DateTimeField(verbose_name="Ngày thêm vào",auto_now_add=True)
 
     class Meta:
-        unique_together = ('customer', 'product_id')
+        unique_together = ('customer', 'product')
 
 
 class Cart(models.Model):
@@ -86,12 +87,14 @@ class Cart(models.Model):
     customer = models.OneToOneField(Customer, verbose_name="Mã khách hàng", on_delete=models.CASCADE)
     class Meta:
         unique_together = ('customer', 'id')
+    verbose_name = "Giỏ hàng"
+    verbose_name_plural = "Giỏ hàng"
     def __str__(self):
         return f"Cart of {self.customer.email}"
 
     def save(self, *args, **kwargs):
         if not self.id:
-            PREFIX = 'GH' 
+            PREFIX = 'GH'
             PADDING_LENGTH = 3
 
             last_record = Cart.objects.filter(id__startswith=PREFIX).order_by('-id').first()
@@ -117,4 +120,4 @@ class CartItem(models.Model):
     added_at = models.DateTimeField(verbose_name="Ngày thêm vào",auto_now_add=True)
 
     class Meta:
-        unique_together = ('cart', 'product_id')
+        unique_together = ('cart', 'product')
