@@ -1,7 +1,9 @@
-import datetime
+import math
+from datetime import datetime
 
+from django.db.models import Avg
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
 from accounts.models import Customer
@@ -11,7 +13,6 @@ from .models import Product, ProductDiscount, Category, ProductAttribute
 
 def product_page(request,category_name):
     images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
-
     tablet_category = Category.objects.filter(name__iexact=category_name).first()
 
     products = Product.objects.filter(category=tablet_category, status=True)
@@ -26,8 +27,9 @@ def product_page(request,category_name):
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk, status=True)
-    comment = Comment.objects.filter(product_id=pk).first()
-    # Ảnh
+    comment = Comment.objects.filter(product=product).order_by('-created_at')
+    ratingAVG = Comment.objects.filter(product=product).aggregate(Avg('rating'))['rating__avg'] or 0
+    ratingAVG_int = math.floor(ratingAVG)
     images = product.images.all()
     main_image = product.image_main or (images.first().image if images else None)
 
@@ -48,37 +50,34 @@ def product_detail(request, pk):
         'attributes': attributes,
         'discount': discount,
         'comment': comment,
+        'ratingAVG': ratingAVG_int,
     })
-def addComment(request, product_id):
+def addComment(request, pk):
     if request.method != "POST":
-        return JsonResponse({"error": "Method not allowed"}, status=405)
+        return redirect('productDetail', pk=pk)
 
     customer_id = request.session.get("customer_id")
     if not customer_id:
-        return JsonResponse({"error": "Bạn cần đăng nhập"}, status=401)
+        return redirect('login')  # nếu chưa login
 
     content = request.POST.get("content")
     rating = request.POST.get("rating")
 
     if not content:
-        return JsonResponse({"error": "Thiếu dữ liệu"}, status=400)
+        # có thể thêm message báo lỗi
+        return redirect('productDetail', pk=pk)
 
-    customer = Customer.objects.get(id=customer_id)
-    product = Product.objects.get(id=product_id)
+    customer = get_object_or_404(Customer, id=customer_id)
+    product = get_object_or_404(Product, id=pk)
 
-    comment = Comment.objects.create(
+    Comment.objects.create(
         customer=customer,
         product=product,
         content=content,
-        rating=rating
+        rating=rating,
+        created_at=datetime.now().strftime("%d/%m/%Y"),
     )
 
-    return JsonResponse({
-        "success": True,
-        "customer_name": customer.full_name,
-        "content": comment.content,
-        "rating": comment.rating,
-        "created_at": datetime.now().strftime("%d/%m/%Y")
-    })
+    return redirect('productDetail', pk=pk)
 
 

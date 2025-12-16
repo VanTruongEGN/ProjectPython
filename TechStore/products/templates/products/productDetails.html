@@ -43,6 +43,15 @@
                 <li>Hãng: {{ product.brand }}</li>
                 <li>Model: {{ product.model }}</li>
                 <li>Bảo hành: {{ product.warranty_month }} tháng</li>
+                <li>Đánh giá: <span class="comment-rating" style="color: #FFD700">
+                      {% if ratingAVG > 0 %}
+                          {% for i in "12345"|slice:ratingAVG|make_list %}
+                              ★
+                          {% endfor %}
+                      {% else %}
+                          <span style="color: black">Chưa có đánh giá</span>
+                      {% endif %}
+                    </span></li>
             </ul>
 
             <div class="actions">
@@ -80,10 +89,9 @@
     </div>
     <div class="product-section comment">
         <button id="writeReviewBtn">Viết đánh giá</button>
-{#    action= "{% url 'addComment' product.id %}"#}
-        <form id="reviewForm"  method="post">
+        <h3>Viết đánh giá</h3>
+        <form id="reviewForm" method="post" action="{% url 'addComment' product.id %}">
             {% csrf_token %}
-            <h3>Viết đánh giá</h3>
             <select id="reviewStars" name="rating">
                 <option value="5">★★★★★</option>
                 <option value="4">★★★★</option>
@@ -92,13 +100,9 @@
                 <option value="1">★</option>
             </select>
             <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..." name="content"></textarea>
-            <input type="hidden" name="product" value="{{ product.id }}">
             <button type="submit" id="submitReview">Hoàn thành</button>
         </form>
 
-        <div class="review-navigation">
-            {#            <div class="nav-item active">Đánh giá</div>#}
-        </div>
 
         <div class="sort-area">
             <select>
@@ -112,7 +116,7 @@
         </div>
 
         <div class="comment-list">
-            {% for comment in comments %}
+            {% for comment in comment %}
                 <div class="comment-item">
                     <div class="comment-header">
                 <span class="comment-author">
@@ -123,7 +127,7 @@
                 </span>
                     </div>
                     <p class="comment-rating" style="color: #FFD700">
-                        {% for i in "12345"|slice:":comment.rating" %}★{% endfor %}
+                        {% for i in "12345"|slice:comment.rating %}★{% endfor %}
                     </p>
                     <p class="comment-text">
                         "{{ comment.content }}"
