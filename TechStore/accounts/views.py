@@ -4,37 +4,45 @@ from django.db import IntegrityError
 from .models import Customer
 from django.contrib.auth.hashers import check_password
 
-
 def signup_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
         full_name = request.POST.get("full_name")
+        phone = request.POST.get("phone")
+        date_of_birth = request.POST.get("date_of_birth")
+        gender = request.POST.get("gender")
 
-        # Kiểm tra email đã tồn tại chưa
+
+        if password != confirm_password:
+            return render(request, "accounts/signup.html", {
+                "error": "Mật khẩu xác nhận không khớp."
+            })
+
+
         if Customer.objects.filter(email=email).exists():
             return render(request, "accounts/signup.html", {
-                "error": "Email đã được sử dụng. Vui lòng chọn email khác."
+                "error": "Email đã được sử dụng."
             })
 
-        # Mã hóa mật khẩu
+
         password_hash = make_password(password)
 
-        try:
-            # Tạo Customer mới
-            customer = Customer(
-                email=email,
-                password_hash=password_hash,
-                full_name=full_name
-            )
-            customer.save()
-            return redirect("login")
-        except IntegrityError:
-            return render(request, "accounts/signup.html", {
-                "error": "Đăng ký thất bại do lỗi hệ thống. Vui lòng thử lại."
-            })
+        customer = Customer(
+            email=email,
+            password_hash=password_hash,
+            full_name=full_name,
+            phone=phone,
+            date_of_birth=date_of_birth if date_of_birth else None,
+            gender=gender,
+        )
+        customer.save()
+        return redirect("login")
 
     return render(request, "accounts/signup.html")
+
+
 
 
 def login_view(request):
@@ -45,10 +53,10 @@ def login_view(request):
         try:
             customer = Customer.objects.get(email=email)
             if check_password(password, customer.password_hash):
-                # Đăng nhập thành công → lưu session
                 request.session["customer_id"] = customer.id
                 request.session["customer_email"] = customer.email
-                return redirect("home")  # hoặc trang dashboard
+                return redirect("profile")
+
             else:
                 error = "Sai mật khẩu. Vui lòng thử lại."
         except Customer.DoesNotExist:
@@ -57,3 +65,19 @@ def login_view(request):
         return render(request, "accounts/login.html", {"error": error})
 
     return render(request, "accounts/login.html")
+def profile_view(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    try:
+        customer = Customer.objects.get(id=customer_id)
+    except Customer.DoesNotExist:
+        return redirect("login")
+
+    return render(request, "accounts/profile.html", {"customer": customer})
+
+
+def logout_view(request):
+    request.session.flush()
+    return redirect("login")
