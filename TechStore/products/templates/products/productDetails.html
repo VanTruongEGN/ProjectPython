@@ -80,7 +80,9 @@
     </div>
     <div class="product-section comment">
         <button id="writeReviewBtn">Viết đánh giá</button>
-        <form id="reviewForm">
+{#    action= "{% url 'addComment' product.id %}"#}
+        <form id="reviewForm"  method="post">
+            {% csrf_token %}
             <h3>Viết đánh giá</h3>
             <select id="reviewStars" name="rating">
                 <option value="5">★★★★★</option>
