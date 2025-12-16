@@ -9,12 +9,7 @@
     flex-direction: column;
     gap: 40px;
     align-items: center;
-    background: #f5f6f8;
 }
-
-/* ======================
-   SECTION (CATEGORY)
-====================== */
 
 .content-home .section {
     width: 80%;
@@ -61,7 +56,7 @@
     position: relative;
     width: 239px;
     height: 400px;
-    gap: 20px;
+    gap: 5px;
 }
 
 .product-card:hover {
@@ -84,14 +79,12 @@
     justify-content: center;
     margin-bottom: 12px;
     overflow: hidden;
-
-
 }
 
 .thumb img {
     width: 80%;
     max-width: 160px;
-    height: auto;
+    height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
 }
