@@ -48,12 +48,12 @@ def login_view(request):
                 # Đăng nhập thành công → lưu session
                 request.session["customer_id"] = customer.id
                 request.session["customer_email"] = customer.email
-                return redirect("home")  # hoặc trang dashboard
+                return redirect("home")
             else:
                 error = "Sai mật khẩu. Vui lòng thử lại."
         except Customer.DoesNotExist:
             error = "Email không tồn tại."
 
         return render(request, "accounts/login.html", {"error": error})
-
+    print("SESSION:", dict(request.session))
     return render(request, "accounts/login.html")
