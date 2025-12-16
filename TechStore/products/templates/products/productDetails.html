@@ -80,21 +80,22 @@
     </div>
     <div class="product-section comment">
         <button id="writeReviewBtn">Viết đánh giá</button>
-        <div id="reviewForm">
+        <form id="reviewForm">
             <h3>Viết đánh giá</h3>
-            <select id="reviewStars">
-                <option value="5">5 ★★★★★</option>
-                <option value="4">4 ★★★★</option>
-                <option value="3">3 ★★★</option>
-                <option value="2">2 ★★</option>
-                <option value="1">1 ★</option>
+            <select id="reviewStars" name="rating">
+                <option value="5">★★★★★</option>
+                <option value="4">★★★★</option>
+                <option value="3">★★★</option>
+                <option value="2">★★</option>
+                <option value="1">★</option>
             </select>
-            <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..."></textarea>
-            <button id="submitReview">Hoàn thành</button>
-        </div>
+            <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..." name="content"></textarea>
+            <input type="hidden" name="product" value="{{ product.id }}">
+            <button type="submit" id="submitReview">Hoàn thành</button>
+        </form>
 
         <div class="review-navigation">
-    {#            <div class="nav-item active">Đánh giá</div>#}
+            {#            <div class="nav-item active">Đánh giá</div>#}
         </div>
 
         <div class="sort-area">
@@ -109,14 +110,26 @@
         </div>
 
         <div class="comment-list">
-            <div class="comment-item">
-                <div class="comment-header">
-                    <span class="comment-author">Lê Vân Trường</span>
-                    <span class="comment-date">02/14/2025</span>
+            {% for comment in comments %}
+                <div class="comment-item">
+                    <div class="comment-header">
+                <span class="comment-author">
+                    {{ comment.customer.full_name }}
+                </span>
+                        <span class="comment-date">
+                    {{ comment.created_at|date:"d/m/Y H:i" }}
+                </span>
+                    </div>
+                    <p class="comment-rating" style="color: #FFD700">
+                        {% for i in "12345"|slice:":comment.rating" %}★{% endfor %}
+                    </p>
+                    <p class="comment-text">
+                        "{{ comment.content }}"
+                    </p>
                 </div>
-                <p class="comment-rating" style="color: #FFD700">★★★★★</p>
-                <p class="comment-text">"Tuyệt vời! Sách giúp bé ngủ ngon hơn."</p>
-            </div>
+            {% empty %}
+                <p>Chưa có bình luận nào cho sản phẩm này.</p>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

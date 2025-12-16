@@ -61,7 +61,7 @@
     position: relative;
     width: 239px;
     height: 400px;
-    gap: 20px;
+    gap: 5px;
 }
 
 .product-card:hover {
@@ -84,14 +84,12 @@
     justify-content: center;
     margin-bottom: 12px;
     overflow: hidden;
-
-
 }
 
 .thumb img {
     width: 80%;
     max-width: 160px;
-    height: auto;
+    height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
 }
