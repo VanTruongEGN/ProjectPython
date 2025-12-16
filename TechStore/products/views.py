@@ -49,7 +49,7 @@ def product_detail(request, pk):
         'discount': discount,
         'comment': comment,
     })
-def addComment(request):
+def addComment(request, product_id):
     if request.method != "POST":
         return JsonResponse({"error": "Method not allowed"}, status=405)
 
@@ -59,9 +59,8 @@ def addComment(request):
 
     content = request.POST.get("content")
     rating = request.POST.get("rating")
-    product_id = request.POST.get("product_id")
 
-    if not content or not product_id:
+    if not content:
         return JsonResponse({"error": "Thiếu dữ liệu"}, status=400)
 
     customer = Customer.objects.get(id=customer_id)
