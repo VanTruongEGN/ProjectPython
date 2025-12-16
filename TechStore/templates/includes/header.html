@@ -18,7 +18,12 @@
 
 
             <div class="actions">
-                <a href="{% url 'login' %}"><i class="bi bi-person-circle"></i> Đăng nhập</a>
+                {% if request.session.customer_id %}
+                  <a href="{% url 'profile' %}">Trang cá nhân</a>
+                {% else %}
+                  <a href="{% url 'login' %}">Đăng nhập</a>
+                {% endif %}
+                <a href="{% url 'logout' %}">Đăng xuất</a>
                 <a href=""><i class="bi bi-cart3"></i> Giỏ hàng</a>
                 <a href=""><i class="bi bi-geo-alt"></i> Địa chỉ</a>
             </div>
