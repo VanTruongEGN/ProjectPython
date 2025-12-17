@@ -81,13 +81,15 @@ def profile_view(request):
     if not customer_id:
         return redirect("login")
 
-    try:
-        customer = Customer.objects.get(id=customer_id)
-    except Customer.DoesNotExist:
-        return redirect("login")
+    customer = Customer.objects.get(id=customer_id)
+    order_count = Order.objects.filter(customer=customer).count()
+    addresses = Address.objects.filter(customer=customer)
 
-    return render(request, "accounts/profile.html", {"customer": customer})
-
+    return render(request, "accounts/profile.html", {
+        "customer": customer,
+        "order_count": order_count,
+        "addresses": addresses,
+    })
 
 def logout_view(request):
     request.session.flush()
