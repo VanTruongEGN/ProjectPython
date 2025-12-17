@@ -87,7 +87,7 @@ class Product(models.Model):
 
     def formatted_price(self):
         try:
-            return f"{int(self.price):,}".replace(",", ".")
+            return f"{int(self.price):,} VNĐ".replace(",", ".")
         except (ValueError, TypeError):
             return self.price
 
@@ -167,10 +167,10 @@ class ProductDiscount(models.Model):
         super().save(*args, **kwargs)
 
     def formatted_price(self):
-        return f"{int(self.original_price):,} ₫".replace(",", ".")
+        return f"{int(self.original_price):,} VNĐ".replace(",", ".")
     formatted_price.short_description = "Giá gốc"
 
     def formatted_priceD(self):
-        return f"{int(self.discounted_price):,} ₫".replace(",", ".")
+        return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
     formatted_priceD.short_description = "Giá đã giảm"
 

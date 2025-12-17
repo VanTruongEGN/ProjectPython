@@ -9,6 +9,7 @@ from products.models import ProductDiscount, ProductImage, Category, ProductAttr
 
 
 def home(request):
+    images = ["store/images/img1.png", "store/images/img2.png", "store/images/img3.png"]
     categories = Category.objects.all()
 
     discount_by_category = {}
@@ -32,7 +33,8 @@ def home(request):
             discount_by_category[cat] = discounts
 
     return render(request, 'store/home.html', {
-        'discount_by_category': discount_by_category
+        'discount_by_category': discount_by_category,
+        'images': images
     })
 
 #accounts
@@ -43,7 +45,7 @@ def register_page(request):
     return render(request, 'accounts/signup.html')
 
 def personal_page(request):
-    return render(request, 'accounts/personal-page.html')
+    return render(request, 'accounts/profile.html')
 
 
 

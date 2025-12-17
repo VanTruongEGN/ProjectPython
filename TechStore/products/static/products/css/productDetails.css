@@ -156,6 +156,12 @@ ul {
     width: 100%;
     border-collapse: collapse;
 }
+.info{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 
 .spec-table tr:nth-child(even) {
     background: #fafafa;
@@ -190,3 +196,103 @@ ul {
 .spec-table td {
     padding: 12px;
 }
+/* comment*/
+
+#reviewForm {
+    display: none;           /* ẩn mặc định */
+    margin-top: 20px;
+}
+
+#reviewForm input,
+#reviewForm select,
+#reviewForm textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Sao đánh giá */
+#reviewStars,
+#reviewStars option {
+    color: #FFD700;
+}
+
+/* Nút gửi */
+#submitReview {
+    padding: 8px 18px;
+    background-color: #0d3164;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#submitReview:hover {
+    opacity: 0.9;
+}
+
+/* ================= COMMENT LIST ================= */
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;              /* khoảng cách dọc giữa các comment */
+    margin-top: 25px;
+}
+
+.comment-item {
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+/* Header: tên + ngày */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.comment-author {
+    font-weight: 600;
+}
+
+.comment-date {
+    color: #999;
+    font-size: 13px;
+}
+
+/* Rating */
+.comment-rating {
+    margin: 6px 0 10px;
+    font-size: 14px;
+    color: #4CAF50;
+}
+
+/* Nội dung */
+.comment-text {
+    font-style: italic;
+    line-height: 1.5;
+    color: #333;
+}
+
+
+#writeReviewBtn {
+    display: flex;
+    justify-content: end;
+    width: fit-content;
+    cursor: pointer;
+}
+.sort-area{
+    display: flex;
+    justify-content: end;
+}
+.comment{
+    display: flex;
+    flex-direction: column;
+    gap:20px
+}
+

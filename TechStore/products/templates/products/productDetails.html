@@ -27,15 +27,15 @@
             {% if discount %}
                 <div class="price">
                 <span class="price-old">
-                    {{ discount.original_price }} ₫
+                    {{ discount.formatted_price }}
                 </span>
                     <span class="price-new">
-                    {{ discount.discounted_price }} ₫
+                    {{ discount.formatted_priceD }}
                 </span>
                 </div>
             {% else %}
                 <div class="price">
-                    {{ product.formatted_price }} ₫
+                    {{ product.formatted_price }}
                 </div>
             {% endif %}
 
@@ -43,6 +43,15 @@
                 <li>Hãng: {{ product.brand }}</li>
                 <li>Model: {{ product.model }}</li>
                 <li>Bảo hành: {{ product.warranty_month }} tháng</li>
+                <li>Đánh giá: <span class="comment-rating" style="color: #FFD700">
+                      {% if ratingAVG > 0 %}
+                          {% for i in "12345"|slice:ratingAVG|make_list %}
+                              ★
+                          {% endfor %}
+                      {% else %}
+                          <span style="color: black">Chưa có đánh giá</span>
+                      {% endif %}
+                    </span></li>
             </ul>
 
             <div class="actions">
@@ -62,28 +71,81 @@
         </div>
 
     </div>
-    <div class="product-section">
-        <h2>Mô tả sản phẩm</h2>
-        <div class="content">
-            {{ product.description|safe }}
+    <div class="product-section info">
+
+        <div class="description-part">
+            <h2>Mô tả sản phẩm</h2>
+            <div class="content">
+                {{ product.description|safe }}
+            </div>
+        </div>
+
+        <div class="specs-part">
+            <h2>Thông số kỹ thuật</h2>
+            <table class="spec-table">
+                {% for attr in attributes %}
+                    <tr>
+                        <th>{{ attr.attribute }}</th>
+                        <td>{{ attr.value }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">Chưa có thông số kỹ thuật</td>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
+    <div class="product-section comment">
+        <button id="writeReviewBtn">Viết đánh giá</button>
+        <h3>Viết đánh giá</h3>
+        <form id="reviewForm" method="post" action="{% url 'addComment' product.id %}">
+            {% csrf_token %}
+            <select id="reviewStars" name="rating">
+                <option value="5">★★★★★</option>
+                <option value="4">★★★★</option>
+                <option value="3">★★★</option>
+                <option value="2">★★</option>
+                <option value="1">★</option>
+            </select>
+            <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..." name="content"></textarea>
+            <button type="submit" id="submitReview">Hoàn thành</button>
+        </form>
 
-    <div class="product-section">
-        <h2>Thông số kỹ thuật</h2>
 
-        <table class="spec-table">
-            {% for attr in attributes %}
-                <tr>
-                    <th>{{ attr.attribute }}</th>
-                    <td>{{ attr.value }}</td>
-                </tr>
+        <div class="sort-area">
+            <select>
+                <option>Sắp xếp</option>
+                <option>5 sao</option>
+                <option>4 sao</option>
+                <option>3 sao</option>
+                <option>2 sao</option>
+                <option>1 sao</option>
+            </select>
+        </div>
+
+        <div class="comment-list">
+            {% for comment in comment %}
+                <div class="comment-item">
+                    <div class="comment-header">
+                <span class="comment-author">
+                    {{ comment.customer.full_name }}
+                </span>
+                        <span class="comment-date">
+                    {{ comment.created_at|date:"d/m/Y H:i" }}
+                </span>
+                    </div>
+                    <p class="comment-rating" style="color: #FFD700">
+                        {% for i in "12345"|slice:comment.rating %}★{% endfor %}
+                    </p>
+                    <p class="comment-text">
+                        "{{ comment.content }}"
+                    </p>
+                </div>
             {% empty %}
-                <tr>
-                    <td colspan="2">Chưa có thông số kỹ thuật</td>
-                </tr>
+                <p>Chưa có bình luận nào cho sản phẩm này.</p>
             {% endfor %}
-        </table>
+        </div>
     </div>
 {% endblock %}
 {% block js %}
