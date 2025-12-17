@@ -1,101 +1,138 @@
-    .header {
-      margin: 0;
-      font-family: var(--primary-font), sans-serif;
-      background: #fff;
-    }
+.header {
+    margin: 0;
+    font-family: var(--primary-font), sans-serif;
+    background: #fff;
+}
 
-    /* TOP BAR */
-    .header .topbar {
-      background: var(--primary-color);
-      padding: 12px 0;
-    }
+/* TOP BAR */
+.header .topbar {
+    background: var(--primary-color);
+    padding: 12px 0;
+}
 
-    .header .container {
-      max-width: 1380px;
-      margin: auto;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 0 12px;
-    }
+.header .container {
+    max-width: 1380px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 12px;
+}
+
 a {
     text-decoration: none;
     color: inherit;
     display: flex;
 
 }
-    .header .logo img {
-      height: 40px;
-        justify-content: flex-end;
-    }
 
-    /* SEARCH */
-    .header .search-box {
-      flex: 1;
-      display: flex;
-      justify-content: flex-start;
-    }
+.header .logo img {
+    height: 40px;
+    justify-content: flex-end;
+}
 
-    .header .search {
-      width: 90%;
-      display: flex;
-      background: #fff;
-      border-radius: 40px;
-      padding: 6px 14px;
-      align-items: center;
-      box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-    }
+/* SEARCH */
+.header .search-box {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
 
-    .header .search input {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 15px;
-    }
+.header button {
+    justify-content: end;
+    margin: 0;
+}
 
-    /* ACTIONS */
-    .header .actions {
-      display: flex;
-      gap: 18px;
-      align-items: center;
-    }
+.header form {
+    width: 85%;
+}
 
-    .header .actions div {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      color: var(--primary-text-color);
-    }
+.header .search {
+    width: 100%;
+    display: flex;
+    background: #fff;
+    border-radius: 40px;
+    padding: 6px 14px;
+    align-items: center;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
 
-    /* NAVIGATION ROW */
-    .header .nav {
-      background: var(--primary-color);
-      padding: 8px 0;
-    }
+.header .search button {
+    padding: 6px 18px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 20px;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+}
 
-    .header .nav .container {
-      display: flex;
-      gap: 18px;
-      overflow-x: auto;
-    }
+/* Hover */
+.header .search button:hover {
+    background: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
 
-    .header .nav a {
-      text-decoration: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      color: var(--primary-text-color);
-      font-size: 14px;
-      white-space: nowrap;
-    }
+/* Click */
+.header .search button:active {
+    transform: scale(0.95);
+}
 
-    .header .nav a:hover {
-      background: rgba(0,0,0,0.08);
-    }
+.header .search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+}
 
-    .header .actions a i,
-    .nav a i {
+/* ACTIONS */
+.header .actions {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.header .actions div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--primary-text-color);
+}
+
+/* NAVIGATION ROW */
+.header .nav {
+    background: var(--primary-color);
+    padding: 8px 0;
+}
+
+.header .nav .container {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+}
+
+.header .nav a {
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: var(--primary-text-color);
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.header .nav a:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.header .actions a i,
+.nav a i {
     margin-right: 5px;
 
 }

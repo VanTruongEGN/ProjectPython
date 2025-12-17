@@ -144,6 +144,10 @@ class ProductDiscount(models.Model):
     end_date = models.DateTimeField(verbose_name="Ngày kết thúc",null=True, blank=True)
     created_at = models.DateTimeField(verbose_name="Ngày thêm vào",auto_now_add=True)
 
+    class Meta:
+        verbose_name = "Sản phẩm giảm giá"
+        verbose_name_plural = "Sản phẩm giảm giá "
+
     def save(self, *args, **kwargs):
         if not self.id:
             PREFIX = 'CT' 
