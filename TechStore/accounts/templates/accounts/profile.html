@@ -1,0 +1,41 @@
+
+{% load static %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<body>
+
+   {% include 'includes/header.html' %}
+<div class="profile-container">
+  <h2 class="profile-heading">Thông tin cá nhân</h2>
+
+  <div class="profile-grid">
+    <div class="profile-card">
+      <div class="info-row">
+        <div class="info-label">Họ và tên</div>
+        <div class="info-value">{{ customer.full_name }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Email</div>
+        <div class="info-value">{{ customer.email }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Số điện thoại</div>
+        <div class="info-value">{{ customer.phone }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Ngày sinh</div>
+        <div class="info-value">{{ customer.date_of_birth|date:"d/m/Y" }}</div>
+      </div>
+        <div class="info-row">
+        <div class="info-label">Giới tính</div>
+        <div class="info-value">{{ customer.gender }}</div>
+      </div>
+    </div>
+  </div>
+</div>   
+{% endblock %}
