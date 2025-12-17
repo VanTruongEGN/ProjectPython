@@ -1,7 +1,7 @@
 import math
 from datetime import datetime
 
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -16,7 +16,7 @@ def product_page(request,category_name):
     tablet_category = Category.objects.filter(name__iexact=category_name).first()
 
     products = Product.objects.filter(category=tablet_category, status=True)
-    discounts = ProductDiscount.objects.all()
+    discounts = ProductDiscount.objects.filter(end_date__gte=timezone.now()).order_by("end_date")
     discount_map = {d.product.id: d for d in discounts}
 
     return render(request, 'products/product.html', {
@@ -80,4 +80,35 @@ def addComment(request, pk):
 
     return redirect('productDetail', pk=pk)
 
+def product_list(request):
+    images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
+
+    keyword = request.GET.get("q", "").strip()
+    now = timezone.now()
+
+    products = Product.objects.all()
+
+    if keyword:
+        products = products.filter(
+            Q(name__icontains=keyword) |
+            Q(description__icontains=keyword)
+        )
+
+    discounts = ProductDiscount.objects.filter(
+        start_date__lte=now,
+        end_date__gte=now,
+        product__in=products
+    )
+
+    discount_map = {}
+    for d in discounts:
+        if d.product_id not in discount_map:
+            discount_map[d.product_id] = d
+
+    return render(request, "products/product.html", {
+        "products": products,
+        "discount_map": discount_map,
+        "keyword": keyword,
+        "images": images,
+    })
 
