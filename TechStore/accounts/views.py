@@ -9,8 +9,12 @@ from django.contrib.auth.hashers import check_password
 from accounts.services import merge_session_cart_to_db, get_or_create_user_cart
 from products.models import Product, ProductDiscount
 from orders.models import Order, OrderItem, Payment
+from shippings.models import ShippingPartner, OrderShipping
+from accounts.models import Address
 from django.utils import timezone
 from decimal import Decimal
+from stores.models import StoreInventory, StoreReservation
+from django.db.models import F
 
 def signup_view(request):
     if request.method == "POST":
@@ -70,12 +74,29 @@ def process_checkout(request):
     if request.method != "POST":
         return redirect("cart")
 
-    if not request.session.get("customer_id"):
-        return redirect("login")
-    customer = Customer.objects.get(id=request.session["customer_id"])
-    cart = get_or_create_user_cart(customer)
+    customer = None
+    if request.session.get("customer_id"):
+        customer = Customer.objects.get(id=request.session["customer_id"])
+    else:
+        email = request.POST.get("guest_email")
+        if not email:
+            return redirect("login") 
+        
+        customer = Customer.objects.filter(email=email).first()
+        if not customer:
+            customer = Customer(
+                email=email,
+                full_name=request.POST.get("recipient_name"),
+                phone=request.POST.get("phone"),
+                password_hash=make_password("guest@123")
+            )
+            customer.save()
+        
+        merge_session_cart_to_db(request, customer)
 
+    cart = get_or_create_user_cart(customer)
     cart_items = CartItem.objects.filter(cart=cart).select_related("product")
+    
     if not cart_items.exists():
         return redirect("cart")
 
@@ -83,12 +104,65 @@ def process_checkout(request):
     for item in cart_items:
         total += item.quantity * item.price_at_add
 
-    address = Address.objects.filter(customer=customer, is_default=True).first() \
-              or Address.objects.filter(customer=customer).first()
+    address = None
+    delivery_method = request.POST.get("delivery_method", "home")
+    pickup_store = None
+
+    if delivery_method == "home":
+        address_id = request.POST.get("address_id")
+        
+        if address_id:
+            address = Address.objects.filter(id=address_id, customer=customer).first()
+        if not address:
+            recipient_name = request.POST.get("recipient_name")
+            phone = request.POST.get("phone")
+            address_line = request.POST.get("address_line")
+            city = request.POST.get("city")
+            district = request.POST.get("district")
+            ward = request.POST.get("ward")
+
+            if recipient_name and phone and address_line:
+                address = Address.objects.create(
+                    customer=customer,
+                    recipient_name=recipient_name,
+                    phone=phone,
+                    address_line=address_line,
+                    city=city or "",
+                    district=district or "",
+                    ward=ward or ""
+                )
+            else:
+                address = Address.objects.filter(customer=customer, is_default=True).first() \
+                or Address.objects.filter(customer=customer).first()
+
+        if not address:
+            return redirect("cart")
+            
+    elif delivery_method == "store":
+        store_id = request.POST.get("pickup_store_id")
+        if store_id:
+            from stores.models import Store
+            pickup_store = Store.objects.filter(id=store_id).first()
+        
+        if not pickup_store:
+            return redirect("cart")
+
+
+    shipping_partner_id = request.POST.get("shipping_partner")
+    shipping_partner = None
+    shipping_cost = 0
+    if shipping_partner_id:
+        try:
+             shipping_partner = ShippingPartner.objects.get(id=shipping_partner_id)
+             shipping_cost = shipping_partner.price
+        except ShippingPartner.DoesNotExist:
+             pass
+
+    total_with_shipping = total + shipping_cost
 
     payment = Payment.objects.create(
         method=request.POST.get("payment_method", "COD"),
-        amount=total,
+        amount=total_with_shipping,
         status="Chưa thanh toán"
     )
 
@@ -96,10 +170,23 @@ def process_checkout(request):
         customer=customer,
         address=address,
         payment=payment,
-        total_amount=total,
+        total_amount=total_with_shipping,
+        shipping_cost=shipping_cost,
         status="Đang xử lý",
-        note=request.POST.get("note", "")
+        note=request.POST.get("note", ""),
+        pickup_store_id=pickup_store
     )
+
+    if shipping_partner:
+        OrderShipping.objects.create(
+            order=order,
+            partner=shipping_partner,
+            shipping_fee=shipping_cost,
+            status="Đang xử lý"
+        )
+    
+
+
 
     for item in cart_items:
         OrderItem.objects.create(
@@ -107,9 +194,39 @@ def process_checkout(request):
             product=item.product,
             quantity=item.quantity,
             unit_price=item.price_at_add
+    )
+
+    if delivery_method == "store" and pickup_store:
+        inventory = StoreInventory.objects.select_for_update().filter(
+            store=pickup_store,
+            product=item.product
+        ).first()
+
+        if not inventory:
+            raise Exception("Không có hàng tại cửa hàng")
+
+        if inventory.stock - inventory.reserved_stock < item.quantity:
+            raise Exception("Không đủ hàng")
+
+        inventory.reserved_stock = F("reserved_stock") + item.quantity
+        inventory.save(update_fields=["reserved_stock"])
+
+        StoreReservation.objects.create(
+            order=order,
+            store=pickup_store,
+            customer=customer,
+            product=item.product,
+            quantity=item.quantity,
+            status="Pending"
         )
 
+
+
     cart_items.delete()
+
+    if not request.session.get("customer_id"):
+        request.session["cart"] = {}
+        
     return redirect("home")
 
 
@@ -202,10 +319,14 @@ def cart_view(request):
             customer_id=request.session["customer_id"]
         ).first()
 
+    from shippings.models import ShippingPartner
+    shipping_partners = ShippingPartner.objects.filter(is_active=True)
+
     return render(request, "accounts/cart.html", {
         "items": items,
         "total": total,
-        "user_address": user_address
+        "user_address": user_address,
+        "shipping_partners": shipping_partners
     })
 
 def buy_now(request, product_id):

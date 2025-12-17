@@ -40,7 +40,7 @@ body {
     margin-right: 5px;
 }
 
-/* Content Box */
+
 .cart-content-box {
     background: #fff;
     border-radius: 4px;
@@ -48,28 +48,45 @@ body {
     overflow: hidden;
 }
 
-/* Tabs */
+
 .delivery-tabs {
     display: flex;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 15px;
+}
+
+.delivery-tabs div {
+    display: flex;
+    justify-content: center;
 }
 
 .tab {
     flex: 1;
     text-align: center;
-    padding: 12px 0;
+    padding: 15px 0;
     cursor: pointer;
-    font-size: 14px;
-    color: #333;
+    font-size: 15px;
+    color: #666;
     position: relative;
-    background: #f8f8f8;
+    background: #fafafa;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.tab:first-child {
+    border-top-left-radius: 4px;
+}
+
+.tab:last-child {
+    border-top-right-radius: 4px;
 }
 
 .tab.active {
     background: #fff;
+    color: #d0021b;
     font-weight: 600;
-    border-top: 2px solid #2f80ed;
-    /* Or theme color */
+    border-bottom: 2px solid #d0021b;
+    margin-bottom: -2px;
 }
 
 .tab input {
@@ -107,7 +124,6 @@ body {
     color: #999;
 }
 
-/* Cart Items */
 .cart-items {
     padding: 0 15px;
 }
@@ -139,7 +155,6 @@ body {
 
 .delete-form-mobile .text-btn {
     display: none;
-    /* Hidden on desktop initially */
     font-size: 12px;
     color: #999;
     background: none;
@@ -176,7 +191,6 @@ body {
     white-space: nowrap;
 }
 
-/* Promos */
 .promo-section {
     margin-bottom: 15px;
 }
@@ -239,7 +253,6 @@ body {
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    /* Add this */
 }
 
 .qty-input {
@@ -271,23 +284,33 @@ body {
 .cart-summary {
     padding: 15px;
     border-top: 1px solid #f0f0f0;
+    margin-top: 15px;
 }
 
 .summary-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    font-weight: 500;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #333;
 }
 
-.total-price {
+.summary-row.total-row {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #ddd;
+    font-weight: 700;
+    font-size: 18px;
     color: #d0021b;
-    font-weight: bold;
+    align-items: center;
+}
+
+.total-price-display {
+    color: #d0021b;
     font-size: 16px;
 }
 
-/* Footer */
+
 .cart-footer {
     padding: 15px;
     text-align: center;
@@ -298,7 +321,6 @@ body {
     width: 100%;
     padding: 15px;
     background: #d0021b;
-    /* TechStore Red */
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -324,7 +346,7 @@ body {
     text-decoration: none;
 }
 
-/* Empty State */
+
 .empty-cart {
     text-align: center;
     padding: 40px 20px;
@@ -344,28 +366,7 @@ body {
     border-radius: 4px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 480px) {
-    .cart-container {
-        padding: 0;
-    }
 
-    .cart-content-box {
-        border-radius: 0;
-        box-shadow: none;
-    }
-
-    .delete-form-desktop {
-        display: none;
-    }
-
-    .delete-form-mobile .text-btn {
-        display: inline-block;
-        margin-top: 5px;
-    }
-}
-
-/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -451,4 +452,227 @@ body {
 
 .save-btn:hover {
     background-color: #e5911b;
+}
+
+
+.payment-section {
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 15px;
+}
+
+/* Shipping Section */
+.shipping-section {
+    margin: 15px 15px 0 15px;
+    /* Adjust spacing */
+    background: #fff;
+    border-radius: 4px;
+    /* Match other boxes */
+}
+
+.shipping-section .section-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.shipping-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shipping-option {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.shipping-option:hover {
+    border-color: #d0021b;
+    /* TechStore Red */
+    background-color: #fff9f9;
+}
+
+.shipping-option.selected {
+    border-color: #d0021b;
+    background-color: #fff0f0;
+    box-shadow: 0 2px 4px rgba(208, 2, 27, 0.1);
+}
+
+.shipping-option input[type="radio"] {
+    margin-right: 15px;
+    accent-color: #d0021b;
+    width: 18px;
+    height: 18px;
+}
+
+.shipping-details {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.shipping-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #333;
+}
+
+.shipping-price {
+    font-weight: 700;
+    font-size: 15px;
+    color: #d0021b;
+}
+
+.section-header {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+    text-transform: uppercase;
+}
+
+.payment-options {
+    display: flex;
+    gap: 10px;
+}
+
+label {
+    display: flex;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.payment-option:hover {
+    border-color: #2f80ed;
+}
+
+.payment-option.selected {
+    border-color: #2f80ed;
+    background-color: #f7fbff;
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+
+.payment-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.payment-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.payment-desc {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.store-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.store-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.store-item:hover {
+    background: #f9f9f9;
+}
+
+.store-item:last-child {
+    border-bottom: none;
+}
+
+.store-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.store-address {
+    font-size: 13px;
+    color: #666;
+}
+
+.store-info {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: #fff;
+}
+
+.picker-info {
+    padding: 15px;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    animation: fadeIn 0.3s;
+}
+
+.picker-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.picker-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.picker-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+.picker-input:focus {
+    border-color: #2f80ed;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
