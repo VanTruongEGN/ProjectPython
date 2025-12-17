@@ -1,11 +1,14 @@
 # Create your views here.
 # stores/views.py
+from datetime import timezone
+
+from django.db.models import Prefetch, Q
 from django.shortcuts import render
 from django.http import JsonResponse
 from accounts.models import CartItem, Customer, Cart
 from stores.models import Store, StoreInventory
 from accounts.services import get_or_create_user_cart
-from products.models import ProductDiscount, ProductImage, Category, ProductAttribute
+from products.models import ProductDiscount, ProductImage, Category, ProductAttribute, Product
 
 
 def home(request):
@@ -46,12 +49,6 @@ def register_page(request):
 
 def personal_page(request):
     return render(request, 'accounts/profile.html')
-
-
-
-
-
-
 
 
 
@@ -113,3 +110,19 @@ def get_available_stores_for_cart(request):
             })
 
     return JsonResponse({'stores': valid_stores})
+
+def search_product(request):
+    keyword = request.GET.get("q", "").strip()
+
+    products = Product.objects.filter(is_active=True)
+
+    if keyword:
+        products = products.filter(
+            Q(name__icontains=keyword) |
+            Q(description__icontains=keyword)
+        )
+
+    return render(request, "products/product.html", {
+        "product": products,
+        "keyword": keyword
+    })
