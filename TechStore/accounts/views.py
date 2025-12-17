@@ -89,6 +89,7 @@ def profile_view(request):
         "customer": customer,
         "order_count": order_count,
         "addresses": addresses,
+        "active_section": "profile",
     })
 
 def logout_view(request):
@@ -482,3 +483,32 @@ def edit_profile(request):
         return redirect("profile")
 
     return render(request, "accounts/edit_profile.html", {"customer": customer})
+def profile_password_view(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+    error = None
+    success = None
+
+    if request.method == "POST":
+        current_password = request.POST.get("currentPassword")
+        new_password = request.POST.get("newPassword")
+        confirm_password = request.POST.get("confirmPassword")
+
+        if not check_password(current_password, customer.password_hash):
+            error = "Mật khẩu hiện tại không đúng."
+        elif new_password != confirm_password:
+            error = "Mật khẩu xác nhận không khớp."
+        else:
+            customer.password_hash = make_password(new_password)
+            customer.save()
+            success = "Đổi mật khẩu thành công."
+
+    return render(request, "accounts/profile.html", {
+        "customer": customer,
+        "active_section": "password",
+        "error": error,
+        "success": success,
+    })
