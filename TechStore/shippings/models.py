@@ -8,6 +8,7 @@ class ShippingPartner(models.Model):
     name = models.CharField(max_length=255, verbose_name="Tên đơn vị vận chuyển")
     code = models.CharField(max_length=255, null=True, blank=True, verbose_name="Mã code")
     logo_url = models.CharField(max_length=500, null=True, blank=True, verbose_name="Logo")
+    price = models.DecimalField(max_digits=12, decimal_places=2, default=30000, verbose_name="Giá cước")
     is_active = models.BooleanField(default=True, verbose_name="Hoạt động")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo")
 

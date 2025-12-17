@@ -1,11 +1,10 @@
-from django.db import models
-
 # Create your models here.
 import uuid
 from django.db import models
 from accounts.models import Customer
 from products.models import Product
-
+from orders.models import Order
+ 
 
 class Store(models.Model):
     id = models.CharField(primary_key=True, editable=False, verbose_name="ID")
@@ -59,6 +58,13 @@ class StoreInventory(models.Model):
 
 class StoreReservation(models.Model):
     id = models.CharField(primary_key=True, verbose_name="ID đặt hàng")
+    order = models.ForeignKey(
+        "orders.Order",
+        on_delete=models.CASCADE,
+        related_name="reservations",
+        null=True,
+        blank=True
+    )
     store = models.ForeignKey(Store, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Cửa hàng")
     customer = models.ForeignKey(Customer, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Khách hàng")
     product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Sản phẩm")

@@ -1,10 +1,20 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.hashers import make_password
-from django.db import IntegrityError
-
-from orders.models import Order
-from .models import Customer, Address
+from django.db import IntegrityError, transaction
+from .models import Customer, CartItem, Address
 from django.contrib.auth.hashers import check_password
+from accounts.services import merge_session_cart_to_db, get_or_create_user_cart
+from .models import Customer, CartItem, Address
+from django.contrib.auth.hashers import check_password
+from accounts.services import merge_session_cart_to_db, get_or_create_user_cart
+from products.models import Product, ProductDiscount
+from orders.models import Order, OrderItem, Payment
+from shippings.models import ShippingPartner, OrderShipping
+from accounts.models import Address
+from django.utils import timezone
+from decimal import Decimal
+from stores.models import StoreInventory, StoreReservation
+from django.db.models import F
 
 def signup_view(request):
     if request.method == "POST":
@@ -55,17 +65,16 @@ def login_view(request):
         try:
             customer = Customer.objects.get(email=email)
             if check_password(password, customer.password_hash):
-                request.session["customer_id"] = customer.id
+                request.session["customer_id"] = str(customer.id)
                 request.session["customer_email"] = customer.email
+                merge_session_cart_to_db(request, customer)
                 return redirect("profile")
-
             else:
                 error = "Sai mật khẩu. Vui lòng thử lại."
         except Customer.DoesNotExist:
             error = "Email không tồn tại."
 
         return render(request, "accounts/login.html", {"error": error})
-
     return render(request, "accounts/login.html")
 def profile_view(request):
     customer_id = request.session.get("customer_id")
@@ -86,77 +95,342 @@ def logout_view(request):
     request.session.flush()
     return redirect("login")
 
-from datetime import datetime
+@transaction.atomic
+def process_checkout(request):
+    if request.method != "POST":
+        return redirect("cart")
 
-def update_profile(request):
-    customer_id = request.session.get("customer_id")
-    if not customer_id:
-        return redirect("login")
+    customer = None
+    if request.session.get("customer_id"):
+        customer = Customer.objects.get(id=request.session["customer_id"])
+    else:
+        email = request.POST.get("guest_email")
+        if not email:
+            return redirect("login") 
+        
+        customer = Customer.objects.filter(email=email).first()
+        if not customer:
+            customer = Customer(
+                email=email,
+                full_name=request.POST.get("recipient_name"),
+                phone=request.POST.get("phone"),
+                password_hash=make_password("guest@123")
+            )
+            customer.save()
+        
+        merge_session_cart_to_db(request, customer)
 
-    customer = Customer.objects.get(id=customer_id)
+    cart = get_or_create_user_cart(customer)
+    cart_items = CartItem.objects.filter(cart=cart).select_related("product")
+    
+    if not cart_items.exists():
+        return redirect("cart")
 
-    if request.method == "POST":
-        customer.full_name = request.POST.get("fullName")
-        customer.phone = request.POST.get("phoneNumber")
-        customer.gender = request.POST.get("gender")
+    total = 0
+    for item in cart_items:
+        total += item.quantity * item.price_at_add
 
-        # Lấy ngày sinh từ input
-        dob_str = request.POST.get("date_of_birth")
-        if dob_str:
-            try:
-                customer.date_of_birth = datetime.strptime(dob_str, "%Y-%m-%d").date()
-            except ValueError:
-                pass  # nếu format sai thì bỏ qua
+    address = None
+    delivery_method = request.POST.get("delivery_method", "home")
+    pickup_store = None
 
-        customer.save()
-        return redirect("profile")
+    if delivery_method == "home":
+        address_id = request.POST.get("address_id")
+        
+        if address_id:
+            address = Address.objects.filter(id=address_id, customer=customer).first()
+        if not address:
+            recipient_name = request.POST.get("recipient_name")
+            phone = request.POST.get("phone")
+            address_line = request.POST.get("address_line")
+            city = request.POST.get("city")
+            district = request.POST.get("district")
+            ward = request.POST.get("ward")
 
-    return render(request, "accounts/edit_profile.html", {"customer": customer})
+            if recipient_name and phone and address_line:
+                address = Address.objects.create(
+                    customer=customer,
+                    recipient_name=recipient_name,
+                    phone=phone,
+                    address_line=address_line,
+                    city=city or "",
+                    district=district or "",
+                    ward=ward or ""
+                )
+            else:
+                address = Address.objects.filter(customer=customer, is_default=True).first() \
+                or Address.objects.filter(customer=customer).first()
 
-def change_password(request):
-    customer_id = request.session.get("customer_id")
-    if not customer_id:
-        return redirect("login")
+        if not address:
+            return redirect("cart")
+            
+    elif delivery_method == "store":
+        store_id = request.POST.get("pickup_store_id")
+        if store_id:
+            from stores.models import Store
+            pickup_store = Store.objects.filter(id=store_id).first()
+        
+        if not pickup_store:
+            return redirect("cart")
 
-    customer = Customer.objects.get(id=customer_id)
 
-    if request.method == "POST":
-        current_password = request.POST.get("currentPassword")
-        new_password = request.POST.get("newPassword")
-        confirm_password = request.POST.get("confirmPassword")
+    shipping_partner_id = request.POST.get("shipping_partner")
+    shipping_partner = None
+    shipping_cost = 0
+    if shipping_partner_id:
+        try:
+             shipping_partner = ShippingPartner.objects.get(id=shipping_partner_id)
+             shipping_cost = shipping_partner.price
+        except ShippingPartner.DoesNotExist:
+             pass
 
-        if not check_password(current_password, customer.password_hash):
-            return render(request, "accounts/change_password.html", {"error": "Mật khẩu hiện tại không đúng."})
+    total_with_shipping = total + shipping_cost
 
-        if new_password != confirm_password:
-            return render(request, "accounts/change_password.html", {"error": "Mật khẩu xác nhận không khớp."})
+    payment = Payment.objects.create(
+        method=request.POST.get("payment_method", "COD"),
+        amount=total_with_shipping,
+        status="Chưa thanh toán"
+    )
 
-        customer.password_hash = make_password(new_password)
-        customer.save()
-        return redirect("profile")
+    order = Order.objects.create(
+        customer=customer,
+        address=address,
+        payment=payment,
+        total_amount=total_with_shipping,
+        shipping_cost=shipping_cost,
+        status="Đang xử lý",
+        note=request.POST.get("note", ""),
+        pickup_store_id=pickup_store
+    )
 
-    return render(request, "accounts/change_password.html")
+    if shipping_partner:
+        OrderShipping.objects.create(
+            order=order,
+            partner=shipping_partner,
+            shipping_fee=shipping_cost,
+            status="Đang xử lý"
+        )
+    
 
-def edit_profile(request):
-    customer_id = request.session.get("customer_id")
-    if not customer_id:
-        return redirect("login")
 
-    customer = Customer.objects.get(id=customer_id)
 
-    if request.method == "POST":
-        customer.full_name = request.POST.get("fullName")
-        customer.phone = request.POST.get("phoneNumber")
-        customer.gender = request.POST.get("gender")
+    for item in cart_items:
+        OrderItem.objects.create(
+            order=order,
+            product=item.product,
+            quantity=item.quantity,
+            unit_price=item.price_at_add
+    )
 
-        dob_str = request.POST.get("date_of_birth")
-        if dob_str:
-            try:
-                customer.date_of_birth = datetime.strptime(dob_str, "%Y-%m-%d").date()
-            except ValueError:
-                pass
+    if delivery_method == "store" and pickup_store:
+        inventory = StoreInventory.objects.select_for_update().filter(
+            store=pickup_store,
+            product=item.product
+        ).first()
 
-        customer.save()
-        return redirect("profile")
+        if not inventory:
+            raise Exception("Không có hàng tại cửa hàng")
 
-    return render(request, "accounts/edit_profile.html", {"customer": customer})
+        if inventory.stock - inventory.reserved_stock < item.quantity:
+            raise Exception("Không đủ hàng")
+
+        inventory.reserved_stock = F("reserved_stock") + item.quantity
+        inventory.save(update_fields=["reserved_stock"])
+
+        StoreReservation.objects.create(
+            order=order,
+            store=pickup_store,
+            customer=customer,
+            product=item.product,
+            quantity=item.quantity,
+            status="Pending"
+        )
+
+
+
+    cart_items.delete()
+
+    if not request.session.get("customer_id"):
+        request.session["cart"] = {}
+        
+    return redirect("home")
+
+
+
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    qty = int(request.POST.get("quantity", 1))
+
+    discount = ProductDiscount.objects.filter(
+        product=product,
+        start_date__lte=timezone.now(),
+        end_date__gte=timezone.now()
+    ).first()
+    price_at_add = discount.discounted_price if discount else product.price
+
+    if request.session.get("customer_id"):
+        customer = Customer.objects.get(id=request.session["customer_id"])
+        cart = get_or_create_user_cart(customer)
+
+        item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            defaults={
+                "quantity": qty,
+                "price_at_add": price_at_add
+            }
+        )
+        if not created:
+            item.quantity += qty
+            item.save()
+
+    else:
+        cart = request.session.get("cart", {})
+        if str(product.id) in cart:
+            cart[str(product.id)]["qty"] += qty
+        else:
+            cart[str(product.id)] = {
+                "qty": qty,
+                "price": str(price_at_add)
+            }
+        request.session["cart"] = cart
+
+    return redirect(request.META.get("HTTP_REFERER", "/"))
+
+
+def cart_view(request):
+    items = []
+    total = 0
+
+    if request.session.get("customer_id"):
+        customer = Customer.objects.get(id=request.session["customer_id"])
+        cart = get_or_create_user_cart(customer)
+        cart_items = CartItem.objects.filter(cart=cart).select_related("product")
+
+        for item in cart_items:
+            line_total = item.quantity * item.price_at_add
+            total += line_total
+
+            items.append({
+                "id": item.id,
+                "product": item.product,
+                "quantity": item.quantity,
+                "price": item.price_at_add,
+                "line_total": line_total,
+            })
+    else:
+        session_cart = request.session.get("cart", {})
+        for product_id, data in session_cart.items():
+            product = Product.objects.get(id=product_id)
+
+            price = data.get("price", product.price)
+            line_total = data["qty"] * Decimal(price)
+            total += line_total
+
+            items.append({
+                "id": product.id,
+                "product": product,
+                "quantity": data["qty"],
+                "price": price,
+            "line_total": line_total,
+        })
+
+
+    user_address = None
+    if request.session.get("customer_id"):
+        user_address = Address.objects.filter(
+            customer_id=request.session["customer_id"],
+            is_default=True
+        ).first() or Address.objects.filter(
+            customer_id=request.session["customer_id"]
+        ).first()
+
+    from shippings.models import ShippingPartner
+    shipping_partners = ShippingPartner.objects.filter(is_active=True)
+
+    return render(request, "accounts/cart.html", {
+        "items": items,
+        "total": total,
+        "user_address": user_address,
+        "shipping_partners": shipping_partners
+    })
+
+def buy_now(request, product_id):
+    if request.method != "POST":
+        return redirect("productDetail", pk=product_id)
+
+    product = get_object_or_404(Product, id=product_id)
+    qty = int(request.POST.get("quantity", 1))
+    
+    discount = ProductDiscount.objects.filter(
+        product=product,
+        start_date__lte=timezone.now(),
+        end_date__gte=timezone.now()
+    ).first()
+
+    price_at_add = discount.discounted_price if discount else product.price
+    if request.session.get("customer_id"):
+        customer = Customer.objects.get(id=request.session["customer_id"])
+        cart = get_or_create_user_cart(customer)
+
+        CartItem.objects.filter(cart=cart).delete()
+
+        CartItem.objects.create(
+            cart=cart,
+            product=product,
+            quantity=qty,
+            price_at_add=price_at_add
+        )
+
+
+    else:
+        request.session["cart"] = {
+            str(product.id): {"qty": qty}
+        }
+
+    return redirect("cart")
+
+    
+def cart_remove(request, item_id):
+
+    if request.session.get("customer_id"):
+        customer = Customer.objects.get(id=request.session["customer_id"])
+        cart = get_or_create_user_cart(customer)
+        CartItem.objects.filter(cart=cart, id=item_id).delete()
+
+    else:
+        cart = request.session.get("cart", {})
+        cart.pop(str(item_id), None)
+        request.session["cart"] = cart
+
+    return redirect("cart")
+
+def update_cart_quantity(request, item_id, action):
+    if request.session.get("customer_id"):
+        customer = Customer.objects.get(id=request.session["customer_id"])
+        cart = get_or_create_user_cart(customer)
+        item = get_object_or_404(CartItem, cart=cart, id=item_id)
+        
+        if action == "increase":
+            item.quantity += 1
+            item.save()
+        elif action == "decrease":
+            item.quantity -= 1
+            if item.quantity <= 0:
+                item.delete()
+            else:
+                item.save()
+    else:
+        cart = request.session.get("cart", {})
+
+        if str(item_id) in cart:
+            if action == "increase":
+                cart[str(item_id)]["qty"] += 1
+            elif action == "decrease":
+                cart[str(item_id)]["qty"] -= 1
+                if cart[str(item_id)]["qty"] <= 0:
+                    cart.pop(str(item_id), None)
+            
+            request.session["cart"] = cart
+            
+    return redirect("cart")
