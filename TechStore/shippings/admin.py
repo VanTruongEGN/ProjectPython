@@ -6,7 +6,7 @@ from .models import ShippingPartner, OrderShipping
 @admin.register(ShippingPartner)
 class ShippingPartnerAdmin(admin.ModelAdmin):
     readonly_fields = ['id']
-    list_display = ('id','name', 'code', 'is_active')
+    list_display = ('id','name', 'code','price', 'is_active')
     search_fields = ('name', 'code')
     list_filter = ('is_active','name','code')
 

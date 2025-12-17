@@ -83,33 +83,15 @@ class Wishlist(models.Model):
 
 
 class Cart(models.Model):
-    id = models.CharField(primary_key=True, verbose_name="ID")
-    customer = models.OneToOneField(Customer, verbose_name="Mã khách hàng", on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
+
     class Meta:
-        unique_together = ('customer', 'id')
-    verbose_name = "Giỏ hàng"
-    verbose_name_plural = "Giỏ hàng"
+        verbose_name = "Giỏ hàng"
+        verbose_name_plural = "Giỏ hàng"
+
     def __str__(self):
         return f"Cart of {self.customer.email}"
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            PREFIX = 'GH'
-            PADDING_LENGTH = 3
-
-            last_record = Cart.objects.filter(id__startswith=PREFIX).order_by('-id').first()
-
-            if last_record:
-                last_number_str = last_record.id.replace(PREFIX, '')
-                try:
-                    last_number = int(last_number_str)
-                except ValueError:
-                    last_number = 0
-                new_number = last_number + 1
-            else:
-                new_number = 1
-            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
-        super().save(*args, **kwargs)
 
 
 class CartItem(models.Model):
