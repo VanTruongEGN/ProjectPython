@@ -1,12 +1,13 @@
 # accounts/urls.py
 from django.urls import path
 from .views import signup_view, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, \
-    update_cart_quantity, process_checkout, change_password
+    update_cart_quantity, process_checkout, change_password, profile_password_view
 
 urlpatterns = [
     path("signup/", signup_view, name="signup"),
     path("login/", login_view, name="login"),
     path("profile/", profile_view, name="profile"),
+    path("profile/password/", profile_password_view, name="profile_password"),
     path("change-password/", change_password, name="change_password"),
     path("logout/", logout_view, name="logout"),    path("cart/", cart_view, name="cart"),
     path("cart/", cart_view, name="cart"),
