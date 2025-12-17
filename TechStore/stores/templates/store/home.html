@@ -12,9 +12,7 @@
             <div class="section">
                 {% for d in discounts %}
                     <a href="{% url 'productDetail' d.product.id %}" class="product-link">
-
                         <article class="product-card">
-
                             <div class="thumb">
                                 {% if d.product.image_main %}
                                     <img src="{{ d.product.image_main.url }}" alt="{{ d.product.name }}">

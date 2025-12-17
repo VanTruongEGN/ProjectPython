@@ -10,23 +10,26 @@
                 <a href="{% url 'home' %}"><img src="{% static 'img/img.png' %}" alt="logo"></a>
             </div>
             <div class="search-box">
-                <div class="search">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="  Nhập vào sản phẩm bạn muốn tìm kiếm..."/>
-                </div>
-            </div>
+                <form method="get" action="{% url 'search' %}">
+                    <div class="search">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="q" placeholder="Tìm sản phẩm..." value="{{ keyword }}">
+                        <button type="submit">Tìm</button>
+                    </div>
+                </form>
 
+            </div>
 
             <div class="actions">
                 {% if request.session.customer_id %}
-                  <a href="{% url 'profile' %}">Trang cá nhân</a>
+                    <a href="{% url 'profile' %}"><i class="bi bi-person-circle"></i>Trang cá nhân</a>
                 {% else %}
-                  <a href="{% url 'login' %}"><i class="bi bi-person-circle"></i>Đăng nhập</a>
+                    <a href="{% url 'login' %}"><i class="bi bi-person-circle"></i>Đăng nhập</a>
                 {% endif %}
-                <a href=""><i class="bi bi-cart3"></i> Giỏ hàng</a>
+
+                <a href="{% url 'cart' %}"><i class="bi bi-cart3"></i> Giỏ hàng</a>
                 <a href=""><i class="bi bi-geo-alt"></i> Địa chỉ</a>
             </div>
-
 
         </div>
     </div>
@@ -39,7 +42,7 @@
                 <i class="bi bi-laptop"></i> Laptop
             </a>
 
-             <a href="{% url 'productList' 'Tablet' %}">
+            <a href="{% url 'productList' 'Tablet' %}">
                 <i class="bi bi-tablet"></i> Tablet
             </a>
 
