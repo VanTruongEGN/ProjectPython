@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
-from .models import Customer
+
+from orders.models import Order
+from .models import Customer, Address
 from django.contrib.auth.hashers import check_password
 
 def signup_view(request):
@@ -70,14 +72,91 @@ def profile_view(request):
     if not customer_id:
         return redirect("login")
 
-    try:
-        customer = Customer.objects.get(id=customer_id)
-    except Customer.DoesNotExist:
-        return redirect("login")
+    customer = Customer.objects.get(id=customer_id)
+    order_count = Order.objects.filter(customer=customer).count()
+    addresses = Address.objects.filter(customer=customer)
 
-    return render(request, "accounts/profile.html", {"customer": customer})
-
+    return render(request, "accounts/profile.html", {
+        "customer": customer,
+        "order_count": order_count,
+        "addresses": addresses,
+    })
 
 def logout_view(request):
     request.session.flush()
     return redirect("login")
+
+from datetime import datetime
+
+def update_profile(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        customer.full_name = request.POST.get("fullName")
+        customer.phone = request.POST.get("phoneNumber")
+        customer.gender = request.POST.get("gender")
+
+        # Lấy ngày sinh từ input
+        dob_str = request.POST.get("date_of_birth")
+        if dob_str:
+            try:
+                customer.date_of_birth = datetime.strptime(dob_str, "%Y-%m-%d").date()
+            except ValueError:
+                pass  # nếu format sai thì bỏ qua
+
+        customer.save()
+        return redirect("profile")
+
+    return render(request, "accounts/edit_profile.html", {"customer": customer})
+
+def change_password(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        current_password = request.POST.get("currentPassword")
+        new_password = request.POST.get("newPassword")
+        confirm_password = request.POST.get("confirmPassword")
+
+        if not check_password(current_password, customer.password_hash):
+            return render(request, "accounts/change_password.html", {"error": "Mật khẩu hiện tại không đúng."})
+
+        if new_password != confirm_password:
+            return render(request, "accounts/change_password.html", {"error": "Mật khẩu xác nhận không khớp."})
+
+        customer.password_hash = make_password(new_password)
+        customer.save()
+        return redirect("profile")
+
+    return render(request, "accounts/change_password.html")
+
+def edit_profile(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        customer.full_name = request.POST.get("fullName")
+        customer.phone = request.POST.get("phoneNumber")
+        customer.gender = request.POST.get("gender")
+
+        dob_str = request.POST.get("date_of_birth")
+        if dob_str:
+            try:
+                customer.date_of_birth = datetime.strptime(dob_str, "%Y-%m-%d").date()
+            except ValueError:
+                pass
+
+        customer.save()
+        return redirect("profile")
+
+    return render(request, "accounts/edit_profile.html", {"customer": customer})
