@@ -434,3 +434,51 @@ def update_cart_quantity(request, item_id, action):
             request.session["cart"] = cart
             
     return redirect("cart")
+
+def change_password(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        current_password = request.POST.get("currentPassword")
+        new_password = request.POST.get("newPassword")
+        confirm_password = request.POST.get("confirmPassword")
+
+        if not check_password(current_password, customer.password_hash):
+            return render(request, "accounts/change_password.html", {"error": "Mật khẩu hiện tại không đúng."})
+
+        if new_password != confirm_password:
+            return render(request, "accounts/change_password.html", {"error": "Mật khẩu xác nhận không khớp."})
+
+        customer.password_hash = make_password(new_password)
+        customer.save()
+        return redirect("profile")
+
+    return render(request, "accounts/change_password.html")
+
+def edit_profile(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        customer.full_name = request.POST.get("fullName")
+        customer.phone = request.POST.get("phoneNumber")
+        customer.gender = request.POST.get("gender")
+
+        dob_str = request.POST.get("date_of_birth")
+        if dob_str:
+            try:
+                customer.date_of_birth = datetime.strptime(dob_str, "%Y-%m-%d").date()
+            except ValueError:
+                pass
+
+        customer.save()
+        return redirect("profile")
+
+    return render(request, "accounts/edit_profile.html", {"customer": customer})
