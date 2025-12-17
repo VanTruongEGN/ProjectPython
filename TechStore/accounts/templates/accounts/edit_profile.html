@@ -1,0 +1,40 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+<div class="profile-container">
+  <h2 class="profile-heading">Chỉnh sửa thông tin cá nhân</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Họ và tên</label>
+      <input type="text" name="fullName" value="{{ customer.full_name }}">
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" value="{{ customer.email }}" readonly>
+    </div>
+
+    <div class="form-group">
+      <label>Số điện thoại</label>
+      <input type="tel" name="phoneNumber" value="{{ customer.phone }}">
+    </div>
+
+    <div class="form-group">
+      <label>Ngày sinh</label>
+      <input type="date" name="date_of_birth" value="{{ customer.date_of_birth|date:'Y-m-d' }}">
+    </div>
+
+    <div class="form-group">
+      <label>Giới tính</label>
+      <select name="gender">
+        <option value="Nam" {% if customer.gender == "Nam" %}selected{% endif %}>Nam</option>
+        <option value="Nữ" {% if customer.gender == "Nữ" %}selected{% endif %}>Nữ</option>
+        <option value="Khác" {% if customer.gender == "Khác" %}selected{% endif %}>Khác</option>
+      </select>
+    </div>
+
+    <button type="submit" class="save-btn">Lưu thay đổi</button>
+  </form>
+</div>
