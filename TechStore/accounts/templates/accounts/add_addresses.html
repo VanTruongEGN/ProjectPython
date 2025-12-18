@@ -1,0 +1,43 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<form method="post">
+  {% csrf_token %}
+  <div class="form-section">
+    <h3>Thêm địa chỉ nhận hàng</h3>
+
+    <div class="form-group">
+      <label>Họ tên người nhận</label>
+      <input type="text" name="recipient_name" required>
+    </div>
+
+    <div class="form-group">
+      <label>Số điện thoại</label>
+      <input type="tel" name="phone" required>
+    </div>
+
+    <div class="form-group">
+      <label>Địa chỉ cụ thể</label>
+      <input type="text" name="address_line" required>
+    </div>
+
+    <div class="form-group">
+      <label>Xã/Phường</label>
+      <input type="text" name="ward">
+    </div>
+
+    <div class="form-group">
+      <label>Quận/Huyện</label>
+      <input type="text" name="district" required>
+    </div>
+
+    <div class="form-group">
+      <label>Thành phố</label>
+      <input type="text" name="city" required>
+    </div>
+
+    <label>
+      <input type="checkbox" name="is_default"> Đặt làm địa chỉ mặc định
+    </label>
+  </div>
+  <button type="submit" class="save-btn">Lưu thay đổi</button>
+</form>

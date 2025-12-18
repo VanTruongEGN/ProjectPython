@@ -35,4 +35,4 @@ def add_address(request):
         )
         return redirect("profile")
 
-    return render(request, "accounts/add_address.html")
+    return render(request, "accounts/add_addresses.html")
