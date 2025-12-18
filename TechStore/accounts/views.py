@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError, transaction
@@ -509,6 +511,66 @@ def profile_password_view(request):
     return render(request, "accounts/profile.html", {
         "customer": customer,
         "active_section": "password",
+        "error": error,
+        "success": success,
+    })
+def add_address(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        Address.objects.create(
+            customer=customer,
+            recipient_name=request.POST.get("recipient_name"),
+            phone=request.POST.get("phone"),
+            address_line=request.POST.get("address_line"),
+            ward=request.POST.get("ward"),
+            district=request.POST.get("district"),
+            city=request.POST.get("city"),
+            postal_code=request.POST.get("postal_code"),
+            is_default=request.POST.get("is_default") == "on"
+        )
+        return redirect("profile")
+
+    return render(request, "accounts/add_addresses.html")
+
+def delete_address(request, address_id):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    if request.method == "POST":
+        Address.objects.filter(id=address_id, customer_id=customer_id).delete()
+    return redirect("profile")
+
+def profile_address_view(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+    error = None
+    success = None
+
+    if request.method == "POST":
+        Address.objects.create(
+            customer=customer,
+            recipient_name=request.POST.get("recipient_name"),
+            phone=request.POST.get("phone"),
+            address_line=request.POST.get("address_line"),
+            ward=request.POST.get("ward"),
+            district=request.POST.get("district"),
+            city=request.POST.get("city"),
+            is_default=request.POST.get("is_default") == "on"
+        )
+        success = "Thêm địa chỉ thành công."
+
+    return render(request, "accounts/profile.html", {
+        "customer": customer,
+        "active_section": "address",  # để template hiển thị section địa chỉ
         "error": error,
         "success": success,
     })

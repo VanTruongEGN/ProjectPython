@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
-from accounts.models import Customer
+from accounts.models import Customer, Address
 from comments.models import Comment
 from .models import Product, ProductDiscount, Category, ProductAttribute
 
@@ -112,3 +112,78 @@ def product_list(request):
         "images": images,
     })
 
+def edit_profile(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+    addresses = Address.objects.filter(customer=customer)
+
+    error = None
+
+    if request.method == "POST":
+        customer.full_name = request.POST.get("fullName")
+        customer.phone = request.POST.get("phoneNumber")
+        customer.gender = request.POST.get("gender")
+
+        dob_str = request.POST.get("date_of_birth")
+        if dob_str:
+            try:
+                customer.date_of_birth = datetime.strptime(dob_str, "%Y-%m-%d").date()
+            except ValueError:
+                pass
+
+        # Đổi mật khẩu nếu có nhập
+        current = request.POST.get("currentPassword")
+        new = request.POST.get("newPassword")
+        confirm = request.POST.get("confirmPassword")
+
+        if current or new or confirm:
+            if not check_password(current, customer.password_hash):
+                error = "Mật khẩu hiện tại không đúng."
+            elif new != confirm:
+                error = "Mật khẩu xác nhận không khớp."
+            else:
+                customer.password_hash = make_password(new)
+
+        if not error:
+            customer.save()
+            return redirect("profile")
+
+    return render(request, "accounts/edit_profile.html", {
+        "customer": customer,
+        "error": error
+    })
+
+def add_address(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == "POST":
+        Address.objects.create(
+            customer=customer,
+            recipient_name=request.POST.get("recipient_name"),
+            phone=request.POST.get("phone"),  # nhớ đồng bộ name trong form
+            address_line=request.POST.get("address_line"),
+            ward=request.POST.get("ward"),
+            district=request.POST.get("district"),
+            city=request.POST.get("city"),
+            postal_code=request.POST.get("postal_code"),
+            is_default=request.POST.get("is_default") == "on"
+        )
+        return redirect("profile")
+
+    return render(request, "accounts/add_addresses.html")
+
+def delete_address(request, address_id):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    if request.method == "POST":
+        Address.objects.filter(id=address_id, customer_id=customer_id).delete()
+    return redirect("profile")
