@@ -36,6 +36,10 @@
                 </div>
                 </li>
                 <li data-section="orders-section"><a href="#">Đơn Mua</a></li>
+                 <li data-section="addresses-section"><div class="profile-actions">
+                    <a href="{% url 'profile_address' %}" class="btn btn-outline">Địa chỉ nhận hàng</a>
+                </div>
+                </li>
             </ul>
         </nav>
 
@@ -113,10 +117,44 @@
         </section>
 
         <!-- Địa chỉ -->
-        <section id="addresses-section" class="section">
-            <h2>Địa Chỉ Nhận Hàng</h2>
-            <!-- Hiển thị danh sách địa chỉ -->
-        </section>
+<section class="section {% if active_section == 'address' %}active{% endif %}">
+    <h2>Thêm Địa Chỉ</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Người nhận</label>
+            <input type="text" name="recipient_name" required>
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" name="phone" required>
+        </div>
+        <div class="form-group">
+            <label>Địa chỉ</label>
+            <input type="text" name="address_line" required>
+        </div>
+        <div class="form-group">
+            <label>Phường/Xã</label>
+            <input type="text" name="ward">
+        </div>
+        <div class="form-group">
+            <label>Quận/Huyện</label>
+            <input type="text" name="district">
+        </div>
+        <div class="form-group">
+            <label>Thành phố</label>
+            <input type="text" name="city">
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="is_default" id="defaultCheck">
+          <label class="form-check-label" for="defaultCheck">
+            Mặc định
+          </label>
+        </div>
+
+        <button class="save-btn" type="submit">Xác nhận</button>
+    </form>
+</section>
     </main>
 </div>
 
