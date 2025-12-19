@@ -10,6 +10,7 @@ class Comment(models.Model):
     rating = models.IntegerField(verbose_name="Số sao")
     content = models.TextField(null=True, blank=True, verbose_name="Nội dung")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo")
+    label = models.CharField(max_length=20,verbose_name="Cảm xúc")
     is_approved = models.BooleanField(default=True, verbose_name="Đã duyệt")
 
     class Meta:

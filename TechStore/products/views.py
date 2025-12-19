@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
+import sentiment
 from accounts.models import Customer, Address
 from comments.models import Comment
 from sentiment.services import predict_sentiment
@@ -43,14 +44,6 @@ def product_detail(request, pk):
         start_date__lte=timezone.now(),
         end_date__gte=timezone.now()
     ).first()
-    comment_with_sentiment = []
-    for c in comments:
-        sentiment = predict_sentiment(c.content)
-        comment_with_sentiment.append({
-            "comment": c,
-            "sentiment": sentiment["label"],
-            "score": sentiment["score"]
-        })
 
     return render(request, 'products/productDetails.html', {
         'product': product,
@@ -58,7 +51,7 @@ def product_detail(request, pk):
         'main_image': main_image,
         'attributes': attributes,
         'discount': discount,
-        'comment': comment_with_sentiment,
+        'comments': comments,
         'ratingAVG': ratingAVG_int,
     })
 def addComment(request, pk):
@@ -78,12 +71,15 @@ def addComment(request, pk):
 
     customer = get_object_or_404(Customer, id=customer_id)
     product = get_object_or_404(Product, id=pk)
+    result = predict_sentiment(content)
+    label=result["label"]
 
     Comment.objects.create(
         customer=customer,
         product=product,
         content=content,
         rating=rating,
+        label=label,
         created_at=datetime.now().strftime("%d/%m/%Y"),
     )
 

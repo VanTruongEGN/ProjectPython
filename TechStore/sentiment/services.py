@@ -12,9 +12,9 @@ model.to(device)
 model.eval()
 
 LABEL_MAP = {
-    0: "negative",
-    1: "neutral",
-    2: "positive"
+    0: "tiêu cực",
+    1: "trung lập",
+    2: "tích cực"
 }
 
 def predict_sentiment(text):

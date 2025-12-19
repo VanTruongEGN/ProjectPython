@@ -125,23 +125,23 @@
         </div>
 
         <div class="comment-list">
-            {% for comment in comment %}
+            {% for comment in comments %}
                 <div class="comment-item">
                     <div class="comment-header">
                 <span class="comment-author">
-                    {{ comment.comment.customer.full_name }}
+                    {{ comment.customer.full_name }}
                 </span>
                         <span class="comment-date">
-                    {{ comment.comment.created_at|date:"d/m/Y H:i" }}
+                    {{ comment.created_at|date:"d/m/Y H:i" }}
                 </span>
                     </div>
                     <p class="comment-rating" style="color: #FFD700">
-                        {% for i in "12345"|slice:comment.comment.rating %}★{% endfor %}
+                        {% for i in "12345"|slice:comment.rating %}★{% endfor %}
                     </p>
                     <p class="comment-text">
-                        "{{ comment.comment.content }}"
+                        "{{ comment.content }}"
                     </p>
-                    <p>{{ comment.sentiment }}</p>
+                    <p>{{ comment.label }}</p>
                 </div>
             {% empty %}
                 <p>Chưa có bình luận nào cho sản phẩm này.</p>
