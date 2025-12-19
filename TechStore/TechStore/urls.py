@@ -25,6 +25,7 @@ urlpatterns = [
     path('<str:category_name>/', product_page, name='productList'),
     path('product/<str:pk>/', views.product_detail, name='productDetail'),
     path('', include('stores.urls')),
+    path("sentiment/", include("sentiment.urls")),
 ]
 
 from django.conf import settings

@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from accounts.models import Customer, Address
 from comments.models import Comment
+from sentiment.services import predict_sentiment
 from .models import Product, ProductDiscount, Category, ProductAttribute
 
 
@@ -27,7 +28,7 @@ def product_page(request,category_name):
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk, status=True)
-    comment = Comment.objects.filter(product=product).order_by('-created_at')
+    comments = Comment.objects.filter(product=product).order_by('-created_at')
     ratingAVG = Comment.objects.filter(product=product).aggregate(Avg('rating'))['rating__avg'] or 0
     ratingAVG_int = math.floor(ratingAVG)
     images = product.images.all()
@@ -42,6 +43,14 @@ def product_detail(request, pk):
         start_date__lte=timezone.now(),
         end_date__gte=timezone.now()
     ).first()
+    comment_with_sentiment = []
+    for c in comments:
+        sentiment = predict_sentiment(c.content)
+        comment_with_sentiment.append({
+            "comment": c,
+            "sentiment": sentiment["label"],
+            "score": sentiment["score"]
+        })
 
     return render(request, 'products/productDetails.html', {
         'product': product,
@@ -49,7 +58,7 @@ def product_detail(request, pk):
         'main_image': main_image,
         'attributes': attributes,
         'discount': discount,
-        'comment': comment,
+        'comment': comment_with_sentiment,
         'ratingAVG': ratingAVG_int,
     })
 def addComment(request, pk):
@@ -110,50 +119,6 @@ def product_list(request):
         "discount_map": discount_map,
         "keyword": keyword,
         "images": images,
-    })
-
-def edit_profile(request):
-    customer_id = request.session.get("customer_id")
-    if not customer_id:
-        return redirect("login")
-
-    customer = Customer.objects.get(id=customer_id)
-    addresses = Address.objects.filter(customer=customer)
-
-    error = None
-
-    if request.method == "POST":
-        customer.full_name = request.POST.get("fullName")
-        customer.phone = request.POST.get("phoneNumber")
-        customer.gender = request.POST.get("gender")
-
-        dob_str = request.POST.get("date_of_birth")
-        if dob_str:
-            try:
-                customer.date_of_birth = datetime.strptime(dob_str, "%Y-%m-%d").date()
-            except ValueError:
-                pass
-
-        # Đổi mật khẩu nếu có nhập
-        current = request.POST.get("currentPassword")
-        new = request.POST.get("newPassword")
-        confirm = request.POST.get("confirmPassword")
-
-        if current or new or confirm:
-            if not check_password(current, customer.password_hash):
-                error = "Mật khẩu hiện tại không đúng."
-            elif new != confirm:
-                error = "Mật khẩu xác nhận không khớp."
-            else:
-                customer.password_hash = make_password(new)
-
-        if not error:
-            customer.save()
-            return redirect("profile")
-
-    return render(request, "accounts/edit_profile.html", {
-        "customer": customer,
-        "error": error
     })
 
 def add_address(request):
