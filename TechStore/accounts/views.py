@@ -17,7 +17,7 @@ from django.utils import timezone
 from decimal import Decimal
 from stores.models import StoreInventory, StoreReservation
 from django.db.models import F
-
+from django.contrib import messages
 def signup_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -84,14 +84,18 @@ def profile_view(request):
         return redirect("login")
 
     customer = Customer.objects.get(id=customer_id)
-    order_count = Order.objects.filter(customer=customer).count()
-    addresses = Address.objects.filter(customer=customer)
+
+    if request.method == "POST":
+        customer.full_name = request.POST.get("full_name")
+        customer.phone = request.POST.get("phone")
+        customer.date_of_birth = request.POST.get("date_of_birth")
+        customer.gender = request.POST.get("gender")
+        customer.save()
+        return redirect("profile")  # quay lại trang profile sau khi lưu
 
     return render(request, "accounts/profile.html", {
         "customer": customer,
-        "order_count": order_count,
-        "addresses": addresses,
-        "active_section": "profile",
+        "active_section": "profile"
     })
 
 def logout_view(request):
@@ -438,6 +442,7 @@ def update_cart_quantity(request, item_id, action):
             
     return redirect("cart")
 
+
 def change_password(request):
     customer_id = request.session.get("customer_id")
     if not customer_id:
@@ -451,16 +456,22 @@ def change_password(request):
         confirm_password = request.POST.get("confirmPassword")
 
         if not check_password(current_password, customer.password_hash):
-            return render(request, "accounts/change_password.html", {"error": "Mật khẩu hiện tại không đúng."})
+            messages.error(request, "Mật khẩu hiện tại không đúng.")
+            return redirect("profile_password")
 
         if new_password != confirm_password:
-            return render(request, "accounts/change_password.html", {"error": "Mật khẩu xác nhận không khớp."})
+            messages.error(request, "Mật khẩu xác nhận không khớp.")
+            return redirect("profile_password")
 
         customer.password_hash = make_password(new_password)
         customer.save()
-        return redirect("profile")
+        messages.success(request, "Đổi mật khẩu thành công!")
+        return redirect("profile_password")
 
     return render(request, "accounts/change_password.html")
+
+
+
 
 def edit_profile(request):
     customer_id = request.session.get("customer_id")

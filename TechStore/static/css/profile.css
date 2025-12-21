@@ -172,3 +172,55 @@ label input[type="checkbox"] {
 .btn-danger:hover {
   background: #a71d2a;
 }
+.menu ul li {
+  list-style: none;
+  margin-bottom: 10px;
+}
+
+.menu ul li a,
+.menu ul li .btn {
+  display: block;
+  padding: 10px 15px;
+  border-radius: 6px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+/* Khi hover */
+.menu ul li a:hover,
+.menu ul li .btn:hover {
+  background: #f0f8ff;
+  border: 1px solid #007bff;
+  color: #007bff;
+}
+
+/* Khi đang active */
+.menu ul li.active a,
+.menu ul li.active .btn {
+  border: 2px solid #007bff;
+  background: #e6f0ff;
+  color: #007bff;
+  font-weight: 600;
+}
+
+.alert {
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.alert-danger {
+  background: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+.alert-success {
+  background: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+
