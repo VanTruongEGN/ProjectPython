@@ -24,7 +24,7 @@
                 </div>
                 <div class="tab">
                     <input type="radio" name="delivery_method" id="delivery_store">
-                    <label for="delivery_store">Nhận tại siêu thị</label>
+                    <label for="delivery_store">Nhận tại cửa hàng</label>
                 </div>
             </div>
 
@@ -287,17 +287,6 @@
     addressSection.insertAdjacentHTML('afterend', storeInfoHtml);
     const storeSection = document.querySelector('.store-info');
 
-    // Create Recipient Info for Store Pickup ... (Assuming this part exists as per previous edits, ensuring context)
-    // Actually the previous tool call didn't show the full context of this part well, so I will be careful.
-    // I need to make sure I update the Event Listener inside.
-    
-    // CAUTION: The previous replacement for pickerInfoHtml created the element. 
-    // I just need to grab it here if I'm replacing the whole block or just find it.
-    // To be safe and avoid overwriting the complex previous injection logic if I can't see it all, 
-    // I will use a targeted replacement on the event listener if possible, 
-    // but the event listener is inside the block I'm targeting. 
-    // Let's re-read the file content to be sure.
-
 
     deliveryRadios.forEach(radio => {
         radio.addEventListener('change', function() {
@@ -400,10 +389,7 @@
             minimumFractionDigits: 0
         });
 
-        // Update Displays
-        // Subtotal (Static usually, but good to re-format if needed, though we just keep it or format it)
-        // subtotalElement.textContent = formatter.format(subtotal) + "đ"; // It's already rendered by Django
-        
+
         // Shipping Fee
         const shippingDisplay = document.getElementById('shipping-fee-display');
         if (shippingDisplay) {

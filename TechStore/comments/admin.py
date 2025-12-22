@@ -4,7 +4,7 @@ from .models import Comment
 # Register your models here.
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'product', 'rating', 'is_approved', 'created_at')
+    list_display = ('customer', 'product', 'rating','label', 'is_approved', 'created_at')
     search_fields = ('customer__id','product__name','product__id')
     list_filter = ('rating', 'product')
 

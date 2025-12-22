@@ -125,7 +125,7 @@
         </div>
 
         <div class="comment-list">
-            {% for comment in comment %}
+            {% for comment in comments %}
                 <div class="comment-item">
                     <div class="comment-header">
                 <span class="comment-author">
@@ -141,6 +141,7 @@
                     <p class="comment-text">
                         "{{ comment.content }}"
                     </p>
+                    <p>{{ comment.label }}</p>
                 </div>
             {% empty %}
                 <p>Chưa có bình luận nào cho sản phẩm này.</p>
