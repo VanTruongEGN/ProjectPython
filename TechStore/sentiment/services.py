@@ -1,7 +1,7 @@
 # sentiment/services.py
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-
+from underthesea import word_tokenize
 MODEL_PATH = "sentiment/model/phobert_sentiment"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -13,11 +13,11 @@ model.eval()
 
 LABEL_MAP = {
     0: "tiêu cực",
-    1: "trung lập",
-    2: "tích cực"
+    1: "tích cực"
 }
 
 def predict_sentiment(text):
+    text = " ".join(word_tokenize(text))
     inputs = tokenizer(
         text,
         return_tensors="pt",
