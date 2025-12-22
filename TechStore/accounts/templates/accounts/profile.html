@@ -17,30 +17,36 @@
     <aside class="sidebar">
         <div class="user-info">
             <div class="avatar-wrapper">
-                <img src="{% static 'images/avatar.png' %}" class="avatar-img">
+                <img src="{% static 'TechStore/media/avt/avatar.png' %}" class="avatar-img">
                 <span class="avatar-camera"><i class="bi bi-camera-fill"></i></span>
             </div>
             <p class="username">{{ customer.full_name }}</p>
-         <div class="profile-actions">
-          <a href="{% url 'profile' %}" class="btn btn-outline">Chỉnh sửa thông tin</a>
-        </div>
 
         </div>
 
         <nav class="menu">
             <ul>
-               <li class="{% if active_section == 'profile' %}active{% endif %}">
-    <a href="{% url 'profile' %}">Tài Khoản Của Tôi</a></li>
-                <li data-section="repass-section"><div class="profile-actions">
-                  <a href="{% url 'profile_password' %}" class="btn btn-outline">Đổi mật khẩu</a>
-                </div>
-                </li>
-                <li data-section="orders-section"><a href="#">Đơn Mua</a></li>
-                 <li data-section="addresses-section"><div class="profile-actions">
-                    <a href="{% url 'profile_address' %}" class="btn btn-outline">Địa chỉ nhận hàng</a>
-                </div>
-                </li>
+              <!-- Hồ sơ -->
+              <li class="{% if active_section == 'profile' %}active{% endif %}">
+                <a href="{% url 'profile' %}">Tài Khoản Của Tôi</a>
+              </li>
+            
+              <!-- Đổi mật khẩu -->
+              <li class="{% if active_section == 'password' %}active{% endif %}">
+                <a href="{% url 'profile_password' %}">Đổi mật khẩu</a>
+              </li>
+            
+              <!-- Đơn mua -->
+              <li class="{% if active_section == 'orders' %}active{% endif %}">
+                <a href="#">Đơn Mua</a>
+              </li>
+            
+              <!-- Địa chỉ nhận hàng -->
+              <li class="{% if active_section == 'address' %}active{% endif %}">
+                <a href="{% url 'profile_address' %}">Địa chỉ nhận hàng</a>
+              </li>
             </ul>
+
         </nav>
 
         <div class="logout-section">
@@ -57,35 +63,35 @@
             <h2>Hồ Sơ Của Tôi</h2>
             <p class="desc">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
 
-<form class="profile-form" method="post" action="{% url 'profile' %}">
-    {% csrf_token %}
-                <div class="form-group">
-                    <label>Họ và tên</label>
-                    <input type="text" value="{{ customer.full_name }}">
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" value="{{ customer.email }}" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="tel" value="{{ customer.phone }}">
-                </div>
-               <div class="form-group">
-                  <label>Ngày sinh</label>
-                  <input type="date" name="date_of_birth" value="{{ customer.date_of_birth|date:'Y-m-d' }}">
-                </div>
+        <form class="profile-form" method="post" action="{% url 'profile' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Họ và tên</label>
+                <input type="text" name="full_name" value="{{ customer.full_name }}">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ customer.email }}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input type="tel" name="phone" value="{{ customer.phone }}">
+            </div>
+            <div class="form-group">
+                <label>Ngày sinh</label>
+                <input type="date" name="date_of_birth" value="{{ customer.date_of_birth|date:'Y-m-d' }}">
+            </div>
+            <div class="form-group">
+                <label>Giới tính</label>
+                <select name="gender">
+                    <option value="Nam" {% if customer.gender == 'Nam' %}selected{% endif %}>Nam</option>
+                    <option value="Nữ" {% if customer.gender == 'Nữ' %}selected{% endif %}>Nữ</option>
+                    <option value="Khác" {% if customer.gender == 'Khác' %}selected{% endif %}>Khác</option>
+                </select>
+            </div>
+            <button class="save-btn" type="submit">Lưu</button>
+        </form>
 
-                <div class="form-group">
-                    <label>Giới tính</label>
-                    <select>
-                        <option {% if customer.gender == 'Nam' %}selected{% endif %}>Nam</option>
-                        <option {% if customer.gender == 'Nữ' %}selected{% endif %}>Nữ</option>
-                        <option {% if customer.gender == 'Khác' %}selected{% endif %}>Khác</option>
-                    </select>
-                </div>
-                <button class="save-btn" type="submit">Lưu</button>
-            </form>
         </section>
 
         <!-- Đổi mật khẩu -->
@@ -107,6 +113,18 @@
                 </div>
                 <button class="save-btn" type="submit">Xác nhận</button>
             </form>
+            {% if error %}
+              <div class="alert alert-danger">
+                {{ error }}
+              </div>
+            {% endif %}
+            
+            {% if success %}
+              <div class="alert alert-success">
+                {{ success }}
+              </div>
+            {% endif %}
+
         </section>
 
         <!-- Đơn mua -->

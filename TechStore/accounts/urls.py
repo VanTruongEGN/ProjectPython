@@ -20,4 +20,5 @@ urlpatterns = [
     path("add_addresses/", add_address, name="add_addresses"),
     path("delete-address/<str:address_id>/", delete_address, name="delete_address"),
     path("profile/address/", profile_address_view, name="profile_address"),
+
 ]
