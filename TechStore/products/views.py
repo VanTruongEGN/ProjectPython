@@ -8,7 +8,9 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 import matplotlib
-matplotlib.use('TkAgg')
+from matplotlib.ticker import MaxNLocator
+
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from accounts.models import Customer, Address
@@ -158,19 +160,22 @@ def review_chart(request, pk):
 
     # Thống kê theo label
     review_counts = Comment.objects.filter(product=product).values('label').annotate(count=Count('id'))
-    counts = {'tích cực': 0, 'trung lập': 0, 'tiêu cực': 0}
+    counts = {'tích cực': 0, 'tiêu cực': 0}
     for item in review_counts:
         counts[item['label']] = item['count']
 
     # Vẽ biểu đồ
-    labels = ['Tích cực', 'Trung lập', 'Tiêu cực']
-    values = [counts['tích cực'], counts['trung lập'], counts['tiêu cực']]
-    colors = ['#4ADE80', '#FACC15', '#F87171']
+    labels = ['Tích cực', 'Tiêu cực']
+    values = [counts['tích cực'], counts['tiêu cực']]
+    colors = ['#4ADE80', '#F87171']
 
+    ax = plt.gca()
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
     plt.figure(figsize=(6,4))
     plt.bar(labels, values, color=colors)
     plt.title('Thống kê lượt đánh giá')
+    plt.ylim(0, max(values)*1.2)
     plt.ylabel('Số lượt đánh giá')
 
     # Lưu ảnh vào buffer

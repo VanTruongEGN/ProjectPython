@@ -21,16 +21,11 @@ submitBtn.addEventListener("click", () => {
 
     if (!name || !text) {
         alert("Vui lòng nhập đầy đủ thông tin.");
-        console.log("1")
         return;
     }
 
 
 });
-const analysisComment = document.getElementById("analysis")
-analysisComment.addEventListener("click", () => {
-
-})
 
 
 

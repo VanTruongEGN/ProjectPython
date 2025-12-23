@@ -167,8 +167,14 @@
     const reviewChartUrl = "{% url 'review_chart' product.pk %}";
 
     btn.addEventListener('click', () => {
-        chartImg.src = reviewChartUrl + "?t=" + new Date().getTime(); // tránh cache
-        chartContainer.style.display = chartContainer.style.display === "block" ? "none" : "block";
+        if (chartContainer.style.display === "block") {
+            // nếu đang hiển thị thì ẩn chart
+            chartContainer.style.display = "none";
+        } else {
+            // nếu đang ẩn thì hiển thị chart và load ảnh 1 lần
+            chartContainer.style.display = "block";
+            chartImg.src = reviewChartUrl + "?t=" + new Date().getTime(); // tránh cache
+        }
     });
 </script>
 <script src="{% static 'products/js/productDetails.js' %}"></script>
