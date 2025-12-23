@@ -1,49 +1,49 @@
 {% extends "productDetailBase.html" %}
 {% block head %}
-    {% load static %}
-    {% load custom_filters %}
-    <link rel="stylesheet" href="{% static 'products/css/productDetails.css' %}">
+{% load static %}
+{% load custom_filters %}
+<link rel="stylesheet" href="{% static 'products/css/productDetails.css' %}">
 {% endblock %}
 {% block content %}
-    <div class="product-wrapper">
+<div class="product-wrapper">
 
-        <div class="product-left">
-            {% if main_image %}
-                <img id="mainImage" src="{{ main_image.url }}" class="main-image">
-            {% endif %}
+    <div class="product-left">
+        {% if main_image %}
+        <img id="mainImage" src="{{ main_image.url }}" class="main-image">
+        {% endif %}
 
-            <div class="thumbnail-list">
-                {% for img in images %}
-                    <img src="{{ img.image.url }}"
-                         onclick="changeImage(this)">
-                {% endfor %}
-            </div>
+        <div class="thumbnail-list">
+            {% for img in images %}
+            <img src="{{ img.image.url }}"
+                 onclick="changeImage(this)">
+            {% endfor %}
         </div>
+    </div>
 
-        <div class="product-right">
-            <h1>{{ product.name }}</h1>
+    <div class="product-right">
+        <h1>{{ product.name }}</h1>
 
-            <!-- Giá -->
-            {% if discount %}
-                <div class="price">
+        <!-- Giá -->
+        {% if discount %}
+        <div class="price">
                 <span class="price-old">
                     {{ discount.formatted_price }}
                 </span>
-                    <span class="price-new">
+            <span class="price-new">
                     {{ discount.formatted_priceD }}
                 </span>
-                </div>
-            {% else %}
-                <div class="price">
-                    {{ product.formatted_price }}
-                </div>
-            {% endif %}
+        </div>
+        {% else %}
+        <div class="price">
+            {{ product.formatted_price }}
+        </div>
+        {% endif %}
 
-            <ul class="info">
-                <li>Hãng: {{ product.brand }}</li>
-                <li>Model: {{ product.model }}</li>
-                <li>Bảo hành: {{ product.warranty_month }} tháng</li>
-                <li>Đánh giá: <span class="comment-rating" style="color: #FFD700">
+        <ul class="info">
+            <li>Hãng: {{ product.brand }}</li>
+            <li>Model: {{ product.model }}</li>
+            <li>Bảo hành: {{ product.warranty_month }} tháng</li>
+            <li>Đánh giá: <span class="comment-rating" style="color: #FFD700">
                       {% if ratingAVG > 0 %}
                           {% for i in "12345"|slice:ratingAVG|make_list %}
                               ★
@@ -52,9 +52,9 @@
                           <span style="color: black">Chưa có đánh giá</span>
                       {% endif %}
                     </span></li>
-            </ul>
+        </ul>
 
-            <div class="actions">
+        <div class="actions">
             <form method="post" action="{% url 'add_to_cart' product.id %}">
                 {% csrf_token %}
                 <input type="number" name="quantity" value="1" min="1">
@@ -68,87 +68,108 @@
             </form>
         </div>
 
-        </div>
-
     </div>
-    <div class="product-section info">
 
-        <div class="description-part">
-            <h2>Mô tả sản phẩm</h2>
-            <div class="content">
-                {{ product.description|safe }}
-            </div>
-        </div>
+</div>
+<div class="product-section info">
 
-        <div class="specs-part">
-            <h2>Thông số kỹ thuật</h2>
-            <table class="spec-table">
-                {% for attr in attributes %}
-                    <tr>
-                        <th>{{ attr.attribute }}</th>
-                        <td>{{ attr.value }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="2">Chưa có thông số kỹ thuật</td>
-                    </tr>
-                {% endfor %}
-            </table>
+    <div class="description-part">
+        <h2>Mô tả sản phẩm</h2>
+        <div class="content">
+            {{ product.description|safe }}
         </div>
     </div>
-    <div class="product-section comment">
+
+    <div class="specs-part">
+        <h2>Thông số kỹ thuật</h2>
+        <table class="spec-table">
+            {% for attr in attributes %}
+            <tr>
+                <th>{{ attr.attribute }}</th>
+                <td>{{ attr.value }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">Chưa có thông số kỹ thuật</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="product-section comment">
+    <div class="manage-review">
         <button id="writeReviewBtn">Viết đánh giá</button>
+        <button id="analysis">Thống kê đánh giá</button>
+    </div>
+    <div id="chartContainer" style="margin-top:20px; display:none;">
+        <img id="reviewChartImg" src="" alt="Biểu đồ đánh giá">
+    </div>
+
+    <form id="reviewForm" method="post" action="{% url 'addComment' product.id %}">
         <h3>Viết đánh giá</h3>
-        <form id="reviewForm" method="post" action="{% url 'addComment' product.id %}">
-            {% csrf_token %}
-            <select id="reviewStars" name="rating">
-                <option value="5">★★★★★</option>
-                <option value="4">★★★★</option>
-                <option value="3">★★★</option>
-                <option value="2">★★</option>
-                <option value="1">★</option>
-            </select>
-            <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..." name="content"></textarea>
-            <button type="submit" id="submitReview">Hoàn thành</button>
-        </form>
+        {% csrf_token %}
+        <select id="reviewStars" name="rating">
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★</option>
+            <option value="3">★★★</option>
+            <option value="2">★★</option>
+            <option value="1">★</option>
+        </select>
+        <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..." name="content" required></textarea>
+        <button type="submit" id="submitReview">Hoàn thành</button>
+    </form>
 
 
-        <div class="sort-area">
-            <select>
-                <option>Sắp xếp</option>
-                <option>5 sao</option>
-                <option>4 sao</option>
-                <option>3 sao</option>
-                <option>2 sao</option>
-                <option>1 sao</option>
-            </select>
-        </div>
+    <div class="sort-area">
+        <select>
+            <option>Sắp xếp</option>
+            <option>5 sao</option>
+            <option>4 sao</option>
+            <option>3 sao</option>
+            <option>2 sao</option>
+            <option>1 sao</option>
+        </select>
+    </div>
 
-        <div class="comment-list">
-            {% for comment in comments %}
-                <div class="comment-item">
-                    <div class="comment-header">
+    <div class="comment-list">
+        <h3>Đánh giá</h3>
+        {% for comment in comments %}
+        <div class="comment-item">
+            <div class="comment-header">
                 <span class="comment-author">
                     {{ comment.customer.full_name }}
                 </span>
-                        <span class="comment-date">
+                <span class="comment-date">
                     {{ comment.created_at|date:"d/m/Y H:i" }}
                 </span>
-                    </div>
-                    <p class="comment-rating" style="color: #FFD700">
-                        {% for i in "12345"|slice:comment.rating %}★{% endfor %}
-                    </p>
-                    <p class="comment-text">
-                        "{{ comment.content }}"
-                    </p>
-                    <p>{{ comment.label }}</p>
-                </div>
-            {% empty %}
-                <p>Chưa có bình luận nào cho sản phẩm này.</p>
-            {% endfor %}
+            </div>
+            <p class="comment-rating" style="color: #FFD700">
+                {% for i in "12345"|slice:comment.rating %}★{% endfor %}
+            </p>
+            <p class="comment-text">
+                "{{ comment.content }}"
+            </p>
+            <p>{{ comment.label }}</p>
         </div>
+        {% empty %}
+        <p>Chưa có bình luận nào cho sản phẩm này.</p>
+        {% endfor %}
     </div>
+</div>
 {% endblock %}
 {% block js %}
-    <script src="{% static 'products/js/productDetails.js' %}"></script>
+<script>
+    const btn = document.getElementById('analysis');
+    const chartContainer = document.getElementById('chartContainer');
+    const chartImg = document.getElementById('reviewChartImg');
+
+    // URL view review_chart
+    const reviewChartUrl = "{% url 'review_chart' product.pk %}";
+
+    btn.addEventListener('click', () => {
+        chartImg.src = reviewChartUrl + "?t=" + new Date().getTime(); // tránh cache
+        chartContainer.style.display = chartContainer.style.display === "block" ? "none" : "block";
+    });
+</script>
+<script src="{% static 'products/js/productDetails.js' %}"></script>
 {% endblock %}
