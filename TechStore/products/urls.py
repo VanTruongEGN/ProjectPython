@@ -12,5 +12,7 @@ urlpatterns = [
     path('search', views.product_list, name="search"),
     path("add_addresses/", add_address, name="add_addresses"),
     path("delete-address/<str:address_id>/", delete_address, name="delete_address"),
+    path('product/<str:pk>/review_chart/', views.review_chart, name='review_chart'),
+
 ]
 

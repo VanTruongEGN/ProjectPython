@@ -1,12 +1,16 @@
+import io
 import math
 from datetime import datetime
 
-from django.db.models import Avg, Q
-from django.http import JsonResponse
+
+from django.db.models import Avg, Q, Count
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 
-import sentiment
 from accounts.models import Customer, Address
 from comments.models import Comment
 from sentiment.services import predict_sentiment
@@ -148,3 +152,31 @@ def delete_address(request, address_id):
     if request.method == "POST":
         Address.objects.filter(id=address_id, customer_id=customer_id).delete()
     return redirect("profile")
+
+def review_chart(request, pk):
+    product = get_object_or_404(Product, pk=pk, status=True)
+
+    # Thống kê theo label
+    review_counts = Comment.objects.filter(product=product).values('label').annotate(count=Count('id'))
+    counts = {'tích cực': 0, 'trung lập': 0, 'tiêu cực': 0}
+    for item in review_counts:
+        counts[item['label']] = item['count']
+
+    # Vẽ biểu đồ
+    labels = ['Tích cực', 'Trung lập', 'Tiêu cực']
+    values = [counts['tích cực'], counts['trung lập'], counts['tiêu cực']]
+    colors = ['#4ADE80', '#FACC15', '#F87171']
+
+
+    plt.figure(figsize=(6,4))
+    plt.bar(labels, values, color=colors)
+    plt.title('Thống kê lượt đánh giá')
+    plt.ylabel('Số lượt đánh giá')
+
+    # Lưu ảnh vào buffer
+    buf = io.BytesIO()
+    plt.tight_layout()
+    plt.savefig(buf, format='png')
+    plt.close()
+    buf.seek(0)
+    return HttpResponse(buf.getvalue(), content_type='image/png')
