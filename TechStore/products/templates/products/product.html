@@ -1,51 +1,53 @@
 {% extends "base.html" %}
 {% block head %}
-    {% load static %}
-    {% load custom_filters %}
-    <link rel="stylesheet" href="{% static 'products/css/tablet1.css' %}">
+{% load static %}
+{% load custom_filters %}
+
+<link rel="stylesheet" href="{% static 'products/css/tablet1.css' %}">
 {% endblock %}
 {% block content %}
-    <div class="sort-group">
-        <span class="filter-label">Sắp xếp theo:</span>
-        <button>Nổi bật</button>
-        <button>Bán chạy</button>
-        <button>Giảm giá</button>
-        <button>Mới</button>
-        <button>Giá</button>
-    </div>
-    <div class="container mt-4">
-        <div class="row">
-            {% if products %}
-                {% for product in products %}
-                    <div class="col">
-                        <a href="{% url 'productDetail' product.id %}">
-                            <div class="card">
-                            {% if product.image_main %}
-                                <img src="{{ product.image_main.url }}" class="card-img-top" alt="{{ product.name }}">
-                            {% else %}
-                                <img src="{% static 'no-image.png' %}" class="card-img-top" alt="No image">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                                <p class="card-text">{{ product.description|truncatewords:20 }}</p>
-                                {% with discount=discount_map|dict_key:product.id %}
-                                    {% if discount %}
-                                        <s class="fw-bold original" style="font-size: 13px;color: gray";>{{ product.formatted_price }}</s>
-                                        <p class="text-danger fw-bold">{{ discount.formatted_priceD }}</p>
+<div class="sort-group">
+    <span class="filter-label">Sắp xếp theo:</span>
+    <button>Nổi bật</button>
+    <button>Bán chạy</button>
+    <button>Giảm giá</button>
+    <button>Mới</button>
+    <button>Giá</button>
+</div>
+<div class="container mt-4">
+    <div class="row">
+        {% if products %}
+        {% for product in products %}
+        <div class="col">
+            <a href="{% url 'productDetail' product.id %}">
+                <div class="card">
+                    {% if product.image_main %}
+                    <img src="{{ product.image_main.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="{% static 'no-image.png' %}" class="card-img-top" alt="No image">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                        {% with discount=discount_map|dict_key:product.id %}
+                        {% if discount %}
+                        <s class="fw-bold original" style="font-size: 13px;color: gray" ;>{{ product.formatted_price
+                            }}</s>
+                        <p class="text-danger fw-bold">{{ discount.formatted_priceD }}</p>
 
 
-                                    {% else %}
-                                        <p class="fw-bold">{{ product.formatted_price }}</p>
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
-                        </div>
-                        </a>
+                        {% else %}
+                        <p class="fw-bold">{{ product.formatted_price }}</p>
+                        {% endif %}
+                        {% endwith %}
                     </div>
-                {% endfor %}
-            {% else %}
-                <p class="text-center">Không có sản phẩm nào.</p>
-            {% endif %}
+                </div>
+            </a>
         </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-center">Không có sản phẩm nào.</p>
+        {% endif %}
     </div>
+</div>
 {% endblock %}
