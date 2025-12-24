@@ -1,11 +1,9 @@
 # accounts/urls.py
 from django.urls import path
-<<<<<<< HEAD
+
 from .views import signup_view, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, \
     update_cart_quantity, process_checkout, change_password, profile_password_view, add_address, delete_address, \
     profile_address_view,profile_orders
-=======
->>>>>>> 0aa9b3bf98d5f8b50a338268c51ab9b358dd9098
 
 from . import views
 from .views import signup_view, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, update_cart_quantity, process_checkout, change_password, profile_password_view, add_address
