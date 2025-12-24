@@ -2,6 +2,7 @@
 # stores/views.py
 from datetime import timezone
 
+from django.core.paginator import Paginator
 from django.db.models import Prefetch, Q
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -110,19 +111,3 @@ def get_available_stores_for_cart(request):
             })
 
     return JsonResponse({'stores': valid_stores})
-
-def search_product(request):
-    keyword = request.GET.get("q", "").strip()
-
-    products = Product.objects.filter(is_active=True)
-
-    if keyword:
-        products = products.filter(
-            Q(name__icontains=keyword) |
-            Q(description__icontains=keyword)
-        )
-
-    return render(request, "products/product.html", {
-        "product": products,
-        "keyword": keyword
-    })
