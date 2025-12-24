@@ -40,7 +40,7 @@ class Order(models.Model):
     promotion = models.ForeignKey('promotions.Promotion', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Mã khuyến mãi")
     order_date = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo đơn")
     status = models.CharField(max_length=20, default='đang chờ xử lý', verbose_name="Trạng thái đơn hàng")
-    total_amount = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Tổng tiền")
+    total_amount = models.DecimalField(max_digits=12, decimal_places=0, verbose_name="Tổng tiền")
     shipping_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Phí vận chuyển")
     note = models.TextField(null=True, blank=True, verbose_name="Ghi chú")
     pickup_store_id = models.ForeignKey('stores.Store', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Cửa hàng nhận hàng")
@@ -51,6 +51,11 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Đơn hàng {self.id}"
+    def formatted_price(self):
+        try:
+            return f"{int(self.total_amount):,} VNĐ".replace(",", ".")
+        except (ValueError, TypeError):
+            return self.total_amount
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -93,6 +98,12 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product} - SL: {self.quantity}"
+
+    def formatted_price(self):
+        try:
+            return f"{int(self.unit_price):,} VNĐ".replace(",", ".")
+        except (ValueError, TypeError):
+            return self.unit_price
 
 
 class Shipping(models.Model):

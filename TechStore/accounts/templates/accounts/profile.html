@@ -1,17 +1,15 @@
-
 {% extends "userBase.html" %}
 
 {% block head %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-    <link rel="stylesheet" href="{% static 'css/orders.css' %}">
-
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% load humanize %}
 {% endblock %}
 
 {% block content %}
 
 <body>
-
 
 
 <div class="container-user">
@@ -28,26 +26,26 @@
 
         <nav class="menu">
             <ul>
-              <!-- Hồ sơ -->
-              <li class="{% if active_section == 'profile' %}active{% endif %}">
-                <a href="{% url 'profile' %}">Tài Khoản Của Tôi</a>
-              </li>
-            
-              <!-- Đổi mật khẩu -->
-              <li class="{% if active_section == 'password' %}active{% endif %}">
-                <a href="{% url 'profile_password' %}">Đổi mật khẩu</a>
-              </li>
-            
-              <!-- Đơn mua -->
-              <li class="{% if active_section == 'orders' %}active{% endif %}">
-            <a href="{% url 'profile_orders' %}">Đơn Mua</a>
-              </li>
+                <!-- Hồ sơ -->
+                <li class="{% if active_section == 'profile' %}active{% endif %}">
+                    <a href="{% url 'profile' %}">Tài Khoản Của Tôi</a>
+                </li>
 
-            
-              <!-- Địa chỉ nhận hàng -->
-             <li class="{% if active_section == 'address' %}active{% endif %}">
-              <a href="{% url 'profile_address' %}">Địa chỉ nhận hàng</a>
-            </li>
+                <!-- Đổi mật khẩu -->
+                <li class="{% if active_section == 'password' %}active{% endif %}">
+                    <a href="{% url 'profile_password' %}">Đổi mật khẩu</a>
+                </li>
+
+                <!-- Đơn mua -->
+                <li class="{% if active_section == 'orders' %}active{% endif %}">
+                    <a href="{% url 'profile_orders' %}">Đơn Mua</a>
+                </li>
+
+
+                <!-- Địa chỉ nhận hàng -->
+                <li class="{% if active_section == 'address' %}active{% endif %}">
+                    <a href="{% url 'profile_address' %}">Địa chỉ nhận hàng</a>
+                </li>
 
             </ul>
 
@@ -63,42 +61,42 @@
     <!-- Nội dung chính -->
     <main class="content">
         <!-- Hồ sơ -->
-<section class="section {% if active_section == 'profile' %}active{% endif %}">
+        <section class="section {% if active_section == 'profile' %}active{% endif %}">
             <h2>Hồ Sơ Của Tôi</h2>
             <p class="desc">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
 
-        <form class="profile-form" method="post" action="{% url 'profile' %}">
-            {% csrf_token %}
-            <div class="form-group">
-                <label>Họ và tên</label>
-                <input type="text" name="full_name" value="{{ customer.full_name }}">
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" value="{{ customer.email }}" readonly>
-            </div>
-            <div class="form-group">
-                <label>Số điện thoại</label>
-                <input type="tel" name="phone" value="{{ customer.phone }}">
-            </div>
-            <div class="form-group">
-                <label>Ngày sinh</label>
-                <input type="date" name="date_of_birth" value="{{ customer.date_of_birth|date:'Y-m-d' }}">
-            </div>
-            <div class="form-group">
-                <label>Giới tính</label>
-                <select name="gender">
-                    <option value="Nam" {% if customer.gender == 'Nam' %}selected{% endif %}>Nam</option>
-                    <option value="Nữ" {% if customer.gender == 'Nữ' %}selected{% endif %}>Nữ</option>
-                    <option value="Khác" {% if customer.gender == 'Khác' %}selected{% endif %}>Khác</option>
-                </select>
-            </div>
-            <button class="save-btn" type="submit">Lưu</button>
-        </form>
+            <form class="profile-form" method="post" action="{% url 'profile' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input type="text" name="full_name" value="{{ customer.full_name }}">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ customer.email }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="tel" name="phone" value="{{ customer.phone }}">
+                </div>
+                <div class="form-group">
+                    <label>Ngày sinh</label>
+                    <input type="date" name="date_of_birth" value="{{ customer.date_of_birth|date:'Y-m-d' }}">
+                </div>
+                <div class="form-group">
+                    <label>Giới tính</label>
+                    <select name="gender">
+                        <option value="Nam" {% if customer.gender == 'Nam' %}selected{% endif %}>Nam</option>
+                        <option value="Nữ" {% if customer.gender == 'Nữ' %}selected{% endif %}>Nữ</option>
+                        <option value="Khác" {% if customer.gender == 'Khác' %}selected{% endif %}>Khác</option>
+                    </select>
+                </div>
+                <button class="save-btn" type="submit">Lưu</button>
+            </form>
         </section>
 
         <!-- Đổi mật khẩu -->
-<section class="section {% if active_section == 'password' %}active{% endif %}">
+        <section class="section {% if active_section == 'password' %}active{% endif %}">
             <h2>Đổi Mật Khẩu</h2>
             <form method="post">
                 {% csrf_token %}
@@ -117,149 +115,147 @@
                 <button class="save-btn" type="submit">Xác nhận</button>
             </form>
             {% if error %}
-              <div class="alert alert-danger">
+            <div class="alert alert-danger">
                 {{ error }}
-              </div>
+            </div>
             {% endif %}
-            
+
             {% if success %}
-              <div class="alert alert-success">
+            <div class="alert alert-success">
                 {{ success }}
-              </div>
+            </div>
             {% endif %}
 
         </section>
 
         <!-- Đơn mua -->
+        <section class="section orders-section {% if active_section == 'orders' %}active{% endif %}">
+            <div class="section-header">
+                <h2>Đơn Mua</h2>
+                <p>Bạn đã đặt <strong>{{ order_count }}</strong> đơn hàng.</p>
+            </div>
 
-
-<section class="section orders-section {% if active_section == 'orders' %}active{% endif %}">
-    <div class="section-header">
-        <h2>Đơn Mua</h2>
-        <p>Bạn đã đặt <strong>{{ order_count }}</strong> đơn hàng.</p>
-    </div>
-
-    {% for order in orders %}
-        <div class="order-box">
-            <div class="order-header">
-                <h4>Mã đơn: DH{{ order.id }}</h4>
-                <span class="order-status {{ order.status|lower }}">
+            {% for order in orders %}
+            <div class="order-box">
+                <div class="order-header">
+                    <h4>Mã đơn: DH{{ order.id }}</h4>
+                    <span class="order-status {{ order.status|lower }}">
                     {{ order.status }}
                 </span>
+                </div>
+
+                <div class="order-info">
+                    <p> Ngày đặt: {{ order.order_date|date:"d/m/Y H:i" }}</p>
+                    <p class="order-total">
+                        Tổng tiền: {{ order.formatted_price }}
+                    </p>
+                </div>
+
+                <details class="order-details">
+                    <summary> Xem chi tiết đơn hàng</summary>
+
+                    <div class="order-detail-box">
+                        <p><b>Mã đơn:</b> DH{{ order.id }}</p>
+
+                        {% if order.shipping_info %}
+                        <p><b>Địa chỉ giao hàng:</b>
+                            {{ order.shipping_info.recipient_name }}
+                            {{ order.shipping_info.phone }}
+                            {{ order.shipping_info.address_line }}
+                            {{ order.shipping_info.ward }}
+                            {{ order.shipping_info.district }}
+                            {{ order.shipping_info.city }}
+                        </p>
+                        {% endif %}
+
+                        <table class="order-detail-table">
+                            <tr>
+                                <th>Ảnh sản phẩm</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Giá</th>
+                            </tr>
+
+                            {% for item in order.items %}
+                            <tr>
+                                <td><a href="{% url 'productDetail' item.product.id %}"><img src="{{ item.product.image_main.url }}" alt=""></a></td>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.formatted_price}}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+
+                        <p class="order-detail-total" style="color: red;">
+                            Tổng tiền: {{ order.formatted_price }}
+                        </p>
+                    </div>
+                </details>
+
+
             </div>
-
-            <div class="order-info">
-                <p> Ngày đặt: {{ order.order_date|date:"d/m/Y H:i" }}</p>
-                <p class="order-total">
-                    Tổng tiền: {{ order.total_amount|floatformat:0 }}₫
-                </p>
-            </div>
-
-           <details class="order-details">
-    <summary> Xem chi tiết đơn hàng</summary>
-
-    <div class="order-detail-box">
-        <p><b>Mã đơn:</b> DH{{ order.id }}</p>
-
-{% if order.shipping_info %}
-        <p><b>Địa chỉ giao hàng:</b>
-            {{ order.shipping_info.recipient_name }}
-{{ order.shipping_info.phone }}
-{{ order.shipping_info.address_line }}
-{{ order.shipping_info.ward }}
-{{ order.shipping_info.district }}
-{{ order.shipping_info.city }}
-        </p>
-        {% endif %}
-
-        <table class="order-detail-table">
-            <tr>
-                <th>Ảnh sản phẩm</th>
-                <th>Tên sản phẩm</th>
-                <th>Số lượng</th>
-                <th>Giá</th>
-            </tr>
-
-            {% for item in order.items %}
-            <tr>
-
-                <td><a href="{% url 'productDetail' item.product.id %}"><img src="{{ item.product.image_main.url }}" alt=""></a></td>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.unit_price|floatformat:0 }}₫</td>
-            </tr>
             {% endfor %}
-        </table>
+            <!-- Địa chỉ -->
 
-        <p class="order-detail-total">
-            Tổng tiền: {{ order.total_amount|floatformat:0 }}₫
-        </p>
-    </div>
-</details>
+            <section class="section {% if active_section == 'address' %}active{% endif %}">
+                <h2>Địa chỉ nhận hàng</h2>
 
+                <!-- Form thêm địa chỉ -->
+                <form method="post" action="{% url 'profile_address' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Người nhận</label>
+                        <input type="text" name="recipient_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="text" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ</label>
+                        <input type="text" name="address_line" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phường/Xã</label>
+                        <input type="text" name="ward">
+                    </div>
+                    <div class="form-group">
+                        <label>Quận/Huyện</label>
+                        <input type="text" name="district">
+                    </div>
+                    <div class="form-group">
+                        <label>Thành phố</label>
+                        <input type="text" name="city">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_default" id="defaultCheck">
+                        <label class="form-check-label" for="defaultCheck">
+                            Mặc định
+                        </label>
+                    </div>
+                    <button class="save-btn" type="submit">Xác nhận</button>
+                </form>
 
-         </div>
-    {% endfor %}
-    <!-- Địa chỉ -->
-
-<section class="section {% if active_section == 'address' %}active{% endif %}">
-  <h2>Địa chỉ nhận hàng</h2>
-
-  <!-- Form thêm địa chỉ -->
-  <form method="post" action="{% url 'profile_address' %}">
-    {% csrf_token %}
-    <div class="form-group">
-      <label>Người nhận</label>
-      <input type="text" name="recipient_name" required>
-    </div>
-    <div class="form-group">
-      <label>Số điện thoại</label>
-      <input type="text" name="phone" required>
-    </div>
-    <div class="form-group">
-      <label>Địa chỉ</label>
-      <input type="text" name="address_line" required>
-    </div>
-    <div class="form-group">
-      <label>Phường/Xã</label>
-      <input type="text" name="ward">
-    </div>
-    <div class="form-group">
-      <label>Quận/Huyện</label>
-      <input type="text" name="district">
-    </div>
-    <div class="form-group">
-      <label>Thành phố</label>
-      <input type="text" name="city">
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" name="is_default" id="defaultCheck">
-      <label class="form-check-label" for="defaultCheck">
-        Mặc định
-      </label>
-    </div>
-    <button class="save-btn" type="submit">Xác nhận</button>
-  </form>
-
-  <!-- Danh sách địa chỉ -->
-  <h4>Danh sách địa chỉ đã lưu</h4>
-  <ul class="address-list">
-    {% for addr in addresses %}
-      <li>
-        <strong>{{ addr.recipient_name }}</strong> - {{ addr.phone }} <br>
-        {{ addr.address_line }}, {{ addr.ward }}, {{ addr.district }}, {{ addr.city }} ({{ addr.postal_code }})
-        {% if addr.is_default %}
-          <span style="color:blue;">[Mặc định]</span>
-        {% endif %}
-        <a href="{% url 'set_default_address' addr.id %}" class="default-btn"> Đặt làm mặc định </a>
-        <a href="{% url 'delete_address' addr.id %}" class="delete-btn" onclick="return confirm('Bạn có chắc muốn xóa địa chỉ này không?')"> Xóa </a>      </li>
-    {% empty %}
-      <li>Chưa có địa chỉ nào.</li>
-    {% endfor %}
-  </ul>
-</section>
-
-
+                <!-- Danh sách địa chỉ -->
+                <h4>Danh sách địa chỉ đã lưu</h4>
+                <ul class="address-list">
+                    {% for addr in addresses %}
+                    <li>
+                        <strong>{{ addr.recipient_name }}</strong> - {{ addr.phone }} <br>
+                        {{ addr.address_line }}, {{ addr.ward }}, {{ addr.district }}, {{ addr.city }} ({{
+                        addr.postal_code }})
+                        {% if addr.is_default %}
+                        <span style="color:blue;">[Mặc định]</span>
+                        {% endif %}
+                        <a href="{% url 'set_default_address' addr.id %}" class="default-btn"> Đặt làm mặc định </a>
+                        <a href="{% url 'delete_address' addr.id %}" class="delete-btn"
+                           onclick="return confirm('Bạn có chắc muốn xóa địa chỉ này không?')"> Xóa </a></li>
+                    {% empty %}
+                    <li>Chưa có địa chỉ nào.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </section>
     </main>
 </div>
 
