@@ -2,13 +2,15 @@
 from django.urls import path
 from .views import signup_view, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, \
     update_cart_quantity, process_checkout, change_password, profile_password_view, add_address, delete_address, \
-    profile_address_view
+    profile_address_view,profile_orders
 
 urlpatterns = [
     path("signup/", signup_view, name="signup"),
     path("login/", login_view, name="login"),
     path("profile/", profile_view, name="profile"),
     path("profile/password/", profile_password_view, name="profile_password"),
+    path("profile/orders/", profile_orders, name="profile_orders"),
+
     path("change-password/", change_password, name="change_password"),
     path("logout/", logout_view, name="logout"),    path("cart/", cart_view, name="cart"),
     path("cart/", cart_view, name="cart"),

@@ -18,6 +18,8 @@ from decimal import Decimal
 from stores.models import StoreInventory, StoreReservation
 from django.db.models import F
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 def signup_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -584,4 +586,20 @@ def profile_address_view(request):
         "active_section": "address",  # để template hiển thị section địa chỉ
         "error": error,
         "success": success,
+    })
+def profile_orders(request):
+    customer_id = request.session.get('customer_id')
+
+    if not customer_id:
+        return redirect('login')
+
+    customer = Customer.objects.get(id=customer_id)
+    orders = Order.objects.filter(customer=customer).order_by('-order_date')
+    for o in orders:
+        o.items = OrderItem.objects.filter(order=o)
+        o.shipping_info = Address.objects.filter(order=o).first()
+    return render(request, 'accounts/profile.html', {
+        'customer': customer,
+        'orders': orders,
+        'active_section': 'orders'
     })

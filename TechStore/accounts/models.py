@@ -15,6 +15,7 @@ class Customer(models.Model):
     created_at = models.DateTimeField(verbose_name="Ngày tạo",auto_now_add=True, null =True)
 
 
+
     def __str__(self):
         return self.email
 
