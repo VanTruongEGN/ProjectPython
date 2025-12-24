@@ -2,8 +2,7 @@
 # stores/views.py
 from datetime import timezone
 
-from django.core.paginator import Paginator
-from django.db.models import Prefetch, Q
+
 from django.shortcuts import render
 from django.http import JsonResponse
 from accounts.models import CartItem, Customer, Cart

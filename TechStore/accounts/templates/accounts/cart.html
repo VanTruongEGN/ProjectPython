@@ -10,7 +10,6 @@
 
 <div class="cart-wrapper">
     {% include 'includes/header.html' %}
-    
     <div class="cart-container">
         <div class="cart-header-nav">
             <a href="{% url 'home' %}" class="back-link"><i class="bi bi-chevron-left"></i> Mua thêm sản phẩm khác</a>
@@ -28,54 +27,51 @@
                 </div>
             </div>
 
-      <div class="address-section" onclick="openAddressModal()">
-  <div class="address-info">
-    <span id="display-name">
-      {% if user_address %}
-        Người nhận: {{ user_address.recipient_name }} - {{ user_address.phone }}
-      {% else %}
-        Địa chỉ nhận hàng
-      {% endif %}
-    </span>
-    <span id="display-address">
-      {% if user_address %}
-        {{ user_address.address_line }}, {{ user_address.ward }}, {{ user_address.district }}, {{ user_address.city }}
-      {% else %}
-        Vui lòng nhập địa chỉ nhận hàng
-      {% endif %}
-    </span>
-  </div>
-  <i class="bi bi-chevron-right arrow-icon"></i>
-</div>
-
-
-
-           
+            <div class="address-section" onclick="openAddressModal()">
+                <div class="address-info">
+                    <span id="display-name">
+                        {% if user_address %}
+                            Người nhận: {{ user_address.recipient_name }} - {{ user_address.phone }}
+                        {% else %}
+                            Địa chỉ nhận hàng
+                        {% endif %}
+                    </span>
+                    <span id="display-address">
+                          {% if user_address %}
+                            {{ user_address.address_line }}, {{ user_address.ward }}, {{ user_address.district }}, {{ user_address.city }}
+                          {% else %}
+                            Vui lòng nhập địa chỉ nhận hàng
+                          {% endif %}
+                    </span>
+                </div>
+                <i class="bi bi-chevron-right arrow-icon"></i>
+            </div>
 
             <div class="cart-items">
                 {% for item in items %}
                 <div class="cart-item">
                     <div class="item-visual">
                         {% if item.product.image_main %}
-                            <img src="{{ item.product.image_main.url }}" alt="{{ item.product.name }}">
+                        <img src="{{ item.product.image_main.url }}" alt="{{ item.product.name }}">
                         {% else %}
-                            <img src="{% static 'img/no-image.png' %}" alt="No Image">
+                        <img src="{% static 'img/no-image.png' %}" alt="No Image">
                         {% endif %}
                         <form method="post" action="{% url 'cart_remove' item.id %}" class="delete-form-mobile">
                             {% csrf_token %}
-                            <button type="submit" class="text-btn"> <i class="bi bi-trash"></i> Xóa</button>
+                            <button type="submit" class="text-btn"><i class="bi bi-trash"></i> Xóa</button>
                         </form>
                     </div>
 
                     <div class="item-details">
                         <div class="item-header">
                             <h3 class="product-name">{{ item.product.name }}</h3>
-                            <span class="product-price">{{ item.price|floatformat:0 }}</span>
+                            <span class="product-price">{{ item.product.formatted_price }}</span>
                         </div>
 
                         <div class="item-actions">
                             <div class="quantity-control">
-                                <a href="{% url 'update_cart_quantity' item.id 'decrease' %}" class="qty-btn minus">-</a>
+                                <a href="{% url 'update_cart_quantity' item.id 'decrease' %}"
+                                   class="qty-btn minus">-</a>
                                 <input type="text" value="{{ item.quantity }}" readonly class="qty-input">
                                 <a href="{% url 'update_cart_quantity' item.id 'increase' %}" class="qty-btn plus">+</a>
                             </div>
@@ -93,16 +89,17 @@
                 </div>
                 {% endfor %}
             </div>
-             {% if shipping_partners %}
+            {% if shipping_partners %}
             <div class="shipping-section" id="shipping-section">
                 <div class="section-header">Đơn vị vận chuyển</div>
                 <div class="shipping-options">
                     {% for partner in shipping_partners %}
                     <label class="shipping-option">
-                        <input type="radio" name="shipping_partner" value="{{ partner.id }}" data-price="{{ partner.price }}" {% if forloop.first %}checked{% endif %}>
+                        <input type="radio" name="shipping_partner" value="{{ partner.id }}"
+                               data-price="{{ partner.price }}" {% if forloop.first %}checked{% endif %}>
                         <div class="shipping-details">
                             <span class="shipping-name">{{ partner.name }}</span>
-                            <span class="shipping-price">{{ partner.price|floatformat:0 }}đ</span>
+                            <span class="shipping-price">{{ partner.price|floatformat:0 }} VNĐ</span>
                         </div>
                     </label>
                     {% endfor %}
@@ -114,15 +111,15 @@
             <div class="cart-summary">
                 <div class="summary-row">
                     <span>Tạm tính ({{ items|length }} sản phẩm):</span>
-                    <span id="cart-subtotal" data-price="{{ total }}">{{ total|floatformat:0 }}đ</span>
+                    <span id="cart-subtotal" data-price="{{ total }}">{{ total|floatformat:0 }} VNĐ</span>
                 </div>
                 <div class="summary-row">
                     <span>Phí vận chuyển:</span>
-                    <span id="shipping-fee-display">0đ</span>
+                    <span id="shipping-fee-display">0 VNĐ</span>
                 </div>
                 <div class="summary-row total-row">
                     <span>Tổng tiền:</span>
-                    <span class="total-price-display" id="grand-total-display">{{ total|floatformat:0 }}đ</span>
+                    <span class="total-price-display" id="grand-total-display">{{ total|floatformat:0 }} VND</span>
                 </div>
             </div>
             <div class="payment-section">
@@ -136,53 +133,50 @@
                     </label>
                     <label class="payment-option">
                         <input type="radio" name="payment_ui" value="Chuyển khoản" onchange="updatePaymentMethod(this)">
-                         <div class="payment-details">
+                        <div class="payment-details">
                             <span class="payment-name">Chuyển khoản ngân hàng</span>
                             <span class="payment-desc">Quét mã QR hoặc chuyển khoản trực tiếp</span>
                         </div>
                     </label>
                 </div>
             </div>
-            
-            
-        <div class="cart-footer">
-    <form action="{% url 'process_checkout' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="note" value="Order from Web">
 
-        <!-- Các hidden input để nhận dữ liệu từ modal -->
-        <input type="hidden" name="recipient_name" id="hidden_name">
-        <input type="hidden" name="phone" id="hidden_phone">
-        <input type="hidden" name="city" id="hidden_city">
-        <input type="hidden" name="district" id="hidden_district">
-        <input type="hidden" name="ward" id="hidden_ward">
-        <input type="hidden" name="address_line" id="hidden_address">
+            <div class="cart-footer">
+                <form action="{% url 'process_checkout' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="note" value="Order from Web">
 
-        <input type="hidden" name="payment_method" id="hidden_payment_method" value="COD">
-        <input type="hidden" name="delivery_method" id="hidden_delivery_method" value="home">
-        <input type="hidden" name="pickup_store_id" id="hidden_pickup_store_id">
-        <input type="hidden" name="shipping_partner" id="hidden_shipping_partner">
+                    <!-- Các hidden input để nhận dữ liệu từ modal -->
+                    <input type="hidden" name="recipient_name" id="hidden_name">
+                    <input type="hidden" name="phone" id="hidden_phone">
+                    <input type="hidden" name="city" id="hidden_city">
+                    <input type="hidden" name="district" id="hidden_district">
+                    <input type="hidden" name="ward" id="hidden_ward">
+                    <input type="hidden" name="address_line" id="hidden_address">
 
-        <button type="submit" class="checkout-btn">ĐẶT HÀNG</button>
-    </form>
-    <div class="footer-note">Xem tin tức công nghệ tại <a href="#">TechStore</a></div>
-</div>
+                    <input type="hidden" name="payment_method" id="hidden_payment_method" value="COD">
+                    <input type="hidden" name="delivery_method" id="hidden_delivery_method" value="home">
+                    <input type="hidden" name="pickup_store_id" id="hidden_pickup_store_id">
+                    <input type="hidden" name="shipping_partner" id="hidden_shipping_partner">
 
+                    <button type="submit" class="checkout-btn">ĐẶT HÀNG</button>
+                </form>
+                <div class="footer-note">Xem tin tức công nghệ tại <a href="#">TechStore</a></div>
+            </div>
             {% endif %}
-
         </div>
     </div>
 </div>
 
 <div id="addressModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeAddressModal()">&times;</span>
-    <h2>Chọn địa chỉ nhận hàng</h2>
+    <div class="modal-content">
+        <span class="close" onclick="closeAddressModal()">&times;</span>
+        <h2>Chọn địa chỉ nhận hàng</h2>
 
-    <!-- Danh sách địa chỉ -->
-   <ul class="address-list">
-  {% for addr in addresses %}
-    <li class="address-item" onclick="selectAddress(
+        <!-- Danh sách địa chỉ -->
+        <ul class="address-list">
+            {% for addr in addresses %}
+            <li class="address-item" onclick="selectAddress(
       '{{ addr.recipient_name|escapejs }}',
       '{{ addr.phone|escapejs }}',
       '{{ addr.city|escapejs }}',
@@ -191,36 +185,61 @@
       '{{ addr.address_line|escapejs }}',
       this
     )">
-      <strong>{{ addr.recipient_name }}</strong> - {{ addr.phone }} <br>
-      {{ addr.address_line }}, {{ addr.ward }}, {{ addr.district }}, {{ addr.city }}
-      {% if addr.is_default %}
-        <span style="color:blue;">[Mặc định]</span>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
+                <strong>{{ addr.recipient_name }}</strong> - {{ addr.phone }} <br>
+                {{ addr.address_line }}, {{ addr.ward }}, {{ addr.district }}, {{ addr.city }}
+                {% if addr.is_default %}
+                <span style="color:blue;">[Mặc định]</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
 
 
-    <hr>
-    <h3>Thêm địa chỉ mới</h3>
-<form method="post" action="{% url 'profile_address' %}" class="address-form">
-  {% csrf_token %}
-  <div class="form-row">
-    <input type="text" name="recipient_name" placeholder="Tên người nhận" required>
-    <input type="text" name="phone" placeholder="Số điện thoại" required>
-  </div>
-  <div class="form-row">
-    <input type="text" name="address_line" placeholder="Địa chỉ cụ thể" required>
-    <input type="text" name="ward" placeholder="Xã/Phường">
-  </div>
-  <div class="form-row">
-    <input type="text" name="district" placeholder="Quận/Huyện">
-    <input type="text" name="city" placeholder="Thành phố">
-  </div>
-  <button type="submit" class="save-btn">Lưu địa chỉ</button>
-</form>
+        <hr>
+        <h3>Thêm địa chỉ mới</h3>
+        <form method="post" action="{% url 'profile_address' %}" class="address-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <input type="text" name="recipient_name" placeholder="Tên người nhận" required>
+                <input type="text" name="phone" placeholder="Số điện thoại" required>
+            </div>
+            <div class="form-row">
+                <input type="text" name="address_line" placeholder="Địa chỉ cụ thể" required>
+                <input type="text" name="ward" placeholder="Xã/Phường">
+            </div>
+            <div class="form-row">
+                <input type="text" name="district" placeholder="Quận/Huyện">
+                <input type="text" name="city" placeholder="Thành phố">
+            </div>
+            <button type="submit" class="save-btn">Lưu địa chỉ</button>
+        </form>
 
-  </div>
+    </div>
+</div>
+<div id="storeModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeStoreModal()">&times;</span>
+        <div class="form-group">
+            <label>Tên người nhận</label>
+            <input type="text" id="modal-name" value="{% if user_address %}{{ user_address.recipient_name }}{% endif %}"
+                   placeholder="Nhập tên người nhận" required>
+        </div>
+        <div class="form-group">
+            <label>Email (để nhận thông báo)</label>
+            <input type="email" id="modal-email"
+                   value="{% if request.session.customer_email %}{{ request.session.customer_email }}{% endif %}"
+                   placeholder="Nhập email" required>
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" id="modal-phone" value="{% if user_address %}{{ user_address.phone }}{% endif %}"
+                   placeholder="Nhập số điện thoại" required>
+        </div>
+        <h2>Chọn cửa hàng nhận hàng</h2>
+        <div id="store-list" class="store-list">
+            <p>Đang tải danh sách cửa hàng...</p>
+        </div>
+    </div>
 </div>
 <script>
     var modal = document.getElementById("addressModal");
@@ -232,7 +251,6 @@
     function closeAddressModal() {
         modal.style.display = "none";
     }
-
 
 
     function saveAddress(event) {
@@ -255,15 +273,15 @@
 
         document.getElementById("display-name").textContent = "Người nhận: " + name + " - " + phone;
         document.getElementById("display-address").textContent = address + ", " + ward + ", " + district + ", " + city;
-        
+
         closeAddressModal();
     }
 
     function updatePaymentMethod(radio) {
         document.getElementById("hidden_payment_method").value = radio.value;
-        
+
         document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
-        if(radio.checked) {
+        if (radio.checked) {
             radio.closest('.payment-option').classList.add('selected');
         }
     }
@@ -272,7 +290,7 @@
     const addressSection = document.querySelector('.address-section');
     const hiddenDelivery = document.getElementById('hidden_delivery_method');
     const shippingSection = document.getElementById('shipping-section');
-    
+
     let storeInfoHtml = `<div class="store-info" style="display:none;" onclick="openStoreModal()">
         <div class="address-info">
              <span class="user-name" id="display-store-name">Chọn cửa hàng</span>
@@ -280,13 +298,13 @@
         </div>
         <i class="bi bi-chevron-right arrow-icon"></i>
     </div>`;
-    
+
     addressSection.insertAdjacentHTML('afterend', storeInfoHtml);
     const storeSection = document.querySelector('.store-info');
 
 
     deliveryRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
+        radio.addEventListener('change', function () {
             // Update tabs UI
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             this.closest('.tab').classList.add('active');
@@ -294,12 +312,12 @@
             if (this.id === 'delivery_home') {
                 addressSection.style.display = 'flex';
                 storeSection.style.display = 'none';
-                if(shippingSection) shippingSection.style.display = 'block';
+                if (shippingSection) shippingSection.style.display = 'block';
                 hiddenDelivery.value = 'home';
             } else {
                 addressSection.style.display = 'none';
                 storeSection.style.display = 'flex';
-                if(shippingSection) shippingSection.style.display = 'none';
+                if (shippingSection) shippingSection.style.display = 'none';
                 hiddenDelivery.value = 'store';
                 // Automatically open modal if no store selected? 
                 // Let's verify if store is selected, if not open modal
@@ -312,15 +330,17 @@
 
     // Store Modal Logic
     var storeModal = document.getElementById("storeModal");
+
     function openStoreModal() {
         storeModal.style.display = "block";
         fetchStores();
     }
+
     function closeStoreModal() {
         storeModal.style.display = "none";
     }
-    
-    window.onclick = function(event) {
+
+    window.onclick = function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
@@ -332,27 +352,27 @@
     function fetchStores() {
         const listDiv = document.getElementById('store-list');
         listDiv.innerHTML = '<p>Đang tải...</p>';
-        
+
         fetch("{% url 'api_cart_available_stores' %}")
-        .then(response => response.json())
-        .then(data => {
-            if (data.stores && data.stores.length > 0) {
-                let html = '';
-                data.stores.forEach(store => {
-                    html += `<div class="store-item" onclick="selectStore('${store.id}', '${store.name}', '${store.address}')">
+                .then(response => response.json())
+                .then(data => {
+                    if (data.stores && data.stores.length > 0) {
+                        let html = '';
+                        data.stores.forEach(store => {
+                            html += `<div class="store-item" onclick="selectStore('${store.id}', '${store.name}', '${store.address}')">
                         <div class="store-name">${store.name}</div>
                         <div class="store-address">${store.address}</div>
                     </div>`;
+                        });
+                        listDiv.innerHTML = html;
+                    } else {
+                        listDiv.innerHTML = '<p>Không tìm thấy cửa hàng nào có đủ hàng trong giỏ của bạn.</p>';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    listDiv.innerHTML = '<p>Lỗi tải danh sách cửa hàng.</p>';
                 });
-                listDiv.innerHTML = html;
-            } else {
-                listDiv.innerHTML = '<p>Không tìm thấy cửa hàng nào có đủ hàng trong giỏ của bạn.</p>';
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            listDiv.innerHTML = '<p>Lỗi tải danh sách cửa hàng.</p>';
-        });
     }
 
     function selectStore(id, name, address) {
@@ -379,7 +399,7 @@
         }
 
         let total = subtotal + shippingCost;
-        
+
         // Format Currency
         const formatter = new Intl.NumberFormat('vi-VN', {
             style: 'decimal',
@@ -390,26 +410,26 @@
         // Shipping Fee
         const shippingDisplay = document.getElementById('shipping-fee-display');
         if (shippingDisplay) {
-            shippingDisplay.textContent = shippingCost > 0 ? formatter.format(shippingCost) + "đ" : "0đ";
+            shippingDisplay.textContent = shippingCost > 0 ? formatter.format(shippingCost) + " VNĐ" : "0VNĐ";
         }
-        
+
         // Grand Total
         const totalDisplay = document.getElementById('grand-total-display');
         if (totalDisplay) {
-            totalDisplay.textContent = formatter.format(total) + "đ";
+            totalDisplay.textContent = formatter.format(total) + " VNĐ";
         }
     }
 
     // Attach listeners
     document.querySelectorAll('input[name="shipping_partner"]').forEach(radio => {
-        radio.addEventListener('change', function() {
+        radio.addEventListener('change', function () {
             // Update UI selected state
             document.querySelectorAll('.shipping-option').forEach(opt => opt.classList.remove('selected'));
             this.closest('.shipping-option').classList.add('selected');
-            
+
             // Sync to hidden input
             document.getElementById('hidden_shipping_partner').value = this.value;
-            
+
             calculateTotal();
         });
     });
@@ -418,68 +438,68 @@
     // Wait for DOM
     // Initial run
     // Wait for DOM
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         // Mark initial selected
         const checked = document.querySelector('input[name="shipping_partner"]:checked');
-        if(checked) {
+        if (checked) {
             checked.closest('.shipping-option').classList.add('selected');
             document.getElementById('hidden_shipping_partner').value = checked.value;
         }
-        
+
         calculateTotal();
     });
 
     // Update calculateTotal trigger in delivery toggle
     deliveryRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
+        radio.addEventListener('change', function () {
             // ... existing UI toggle logic ...
             // Update tabs UI
-             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             this.closest('.tab').classList.add('active');
 
             if (this.id === 'delivery_home') {
                 addressSection.style.display = 'flex';
                 storeSection.style.display = 'none';
-                if(shippingSection) shippingSection.style.display = 'block';
+                if (shippingSection) shippingSection.style.display = 'block';
                 hiddenDelivery.value = 'home';
             } else {
                 addressSection.style.display = 'none';
                 storeSection.style.display = 'flex';
-                if(shippingSection) shippingSection.style.display = 'none';
+                if (shippingSection) shippingSection.style.display = 'none';
                 hiddenDelivery.value = 'store';
-                
-                 if (!document.getElementById('hidden_pickup_store_id').value) {
+
+                if (!document.getElementById('hidden_pickup_store_id').value) {
                     openStoreModal();
                 }
             }
 
-            calculateTotal(); 
+            calculateTotal();
         });
     });
 
 </script>
 <script>
-function selectAddress(name, phone, city, district, ward, address, element) {
-  // Xóa highlight cũ
-  document.querySelectorAll(".address-item").forEach(el => el.classList.remove("selected"));
+    function selectAddress(name, phone, city, district, ward, address, element) {
+        // Xóa highlight cũ
+        document.querySelectorAll(".address-item").forEach(el => el.classList.remove("selected"));
 
-  // Thêm highlight cho dòng vừa chọn
-  element.classList.add("selected");
+        // Thêm highlight cho dòng vừa chọn
+        element.classList.add("selected");
 
-  // Cập nhật hiển thị ngoài giỏ hàng
-  document.getElementById("display-name").innerText = "Người nhận: " + name + " - " + phone;
-  document.getElementById("display-address").innerText = address + ", " + ward + ", " + district + ", " + city;
+        // Cập nhật hiển thị ngoài giỏ hàng
+        document.getElementById("display-name").innerText = "Người nhận: " + name + " - " + phone;
+        document.getElementById("display-address").innerText = address + ", " + ward + ", " + district + ", " + city;
 
-  // Cập nhật hidden input để gửi khi checkout
-  document.getElementById("hidden_name").value = name;
-  document.getElementById("hidden_phone").value = phone;
-  document.getElementById("hidden_city").value = city;
-  document.getElementById("hidden_district").value = district;
-  document.getElementById("hidden_ward").value = ward;
-  document.getElementById("hidden_address").value = address;
+        // Cập nhật hidden input để gửi khi checkout
+        document.getElementById("hidden_name").value = name;
+        document.getElementById("hidden_phone").value = phone;
+        document.getElementById("hidden_city").value = city;
+        document.getElementById("hidden_district").value = district;
+        document.getElementById("hidden_ward").value = ward;
+        document.getElementById("hidden_address").value = address;
 
-  closeAddressModal();
-}
+        closeAddressModal();
+    }
 </script>
 </body>
 </html>
