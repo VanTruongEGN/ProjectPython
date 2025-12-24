@@ -84,6 +84,7 @@ def profile_view(request):
         return redirect("login")
 
     customer = Customer.objects.get(id=customer_id)
+    addresses = Address.objects.filter(customer=customer)
 
     if request.method == "POST":
         customer.full_name = request.POST.get("full_name")
@@ -91,12 +92,13 @@ def profile_view(request):
         customer.date_of_birth = request.POST.get("date_of_birth")
         customer.gender = request.POST.get("gender")
         customer.save()
-        return redirect("profile")  # quay lại trang profile sau khi lưu
 
     return render(request, "accounts/profile.html", {
         "customer": customer,
+        "addresses": addresses,
         "active_section": "profile"
     })
+
 
 def logout_view(request):
     request.session.flush()
@@ -305,10 +307,12 @@ def add_to_cart(request, product_id):
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
+
 def cart_view(request):
     items = []
-    total = 0
+    total = Decimal(0)
 
+    # Nếu đã đăng nhập thì lấy giỏ hàng từ DB
     if request.session.get("customer_id"):
         customer = Customer.objects.get(id=request.session["customer_id"])
         cart = get_or_create_user_cart(customer)
@@ -326,6 +330,7 @@ def cart_view(request):
                 "line_total": line_total,
             })
     else:
+        # Nếu chưa đăng nhập thì lấy giỏ hàng từ session
         session_cart = request.session.get("cart", {})
         for product_id, data in session_cart.items():
             product = Product.objects.get(id=product_id)
@@ -339,28 +344,33 @@ def cart_view(request):
                 "product": product,
                 "quantity": data["qty"],
                 "price": price,
-            "line_total": line_total,
-        })
+                "line_total": line_total,
+            })
 
-
+    # Lấy địa chỉ mặc định hoặc địa chỉ đầu tiên
     user_address = None
+    addresses = []
     if request.session.get("customer_id"):
+        customer_id = request.session["customer_id"]
         user_address = Address.objects.filter(
-            customer_id=request.session["customer_id"],
+            customer_id=customer_id,
             is_default=True
         ).first() or Address.objects.filter(
-            customer_id=request.session["customer_id"]
+            customer_id=customer_id
         ).first()
+        addresses = Address.objects.filter(customer_id=customer_id)
 
-    from shippings.models import ShippingPartner
+    # Lấy danh sách đơn vị vận chuyển
     shipping_partners = ShippingPartner.objects.filter(is_active=True)
 
     return render(request, "accounts/cart.html", {
         "items": items,
         "total": total,
         "user_address": user_address,
+        "addresses": addresses,
         "shipping_partners": shipping_partners
     })
+
 
 def buy_now(request, product_id):
     if request.method != "POST":
@@ -548,15 +558,6 @@ def add_address(request):
 
     return render(request, "accounts/add_addresses.html")
 
-def delete_address(request, address_id):
-    customer_id = request.session.get("customer_id")
-    if not customer_id:
-        return redirect("login")
-
-    if request.method == "POST":
-        Address.objects.filter(id=address_id, customer_id=customer_id).delete()
-    return redirect("profile")
-
 def profile_address_view(request):
     customer_id = request.session.get("customer_id")
     if not customer_id:
@@ -567,21 +568,72 @@ def profile_address_view(request):
     success = None
 
     if request.method == "POST":
-        Address.objects.create(
-            customer=customer,
-            recipient_name=request.POST.get("recipient_name"),
-            phone=request.POST.get("phone"),
-            address_line=request.POST.get("address_line"),
-            ward=request.POST.get("ward"),
-            district=request.POST.get("district"),
-            city=request.POST.get("city"),
-            is_default=request.POST.get("is_default") == "on"
-        )
-        success = "Thêm địa chỉ thành công."
+        try:
+            Address.objects.create(
+                customer=customer,
+                recipient_name=request.POST.get("recipient_name"),
+                phone=request.POST.get("phone"),
+                address_line=request.POST.get("address_line"),
+                ward=request.POST.get("ward"),
+                district=request.POST.get("district"),
+                city=request.POST.get("city"),
+                postal_code=request.POST.get("postal_code"),
+                is_default=request.POST.get("is_default") == "on"
+            )
+            success = "Thêm địa chỉ thành công."
+        except Exception as e:
+            error = f"Lỗi khi thêm địa chỉ: {e}"
+
+    addresses = Address.objects.filter(customer=customer)
 
     return render(request, "accounts/profile.html", {
         "customer": customer,
-        "active_section": "address",  # để template hiển thị section địa chỉ
+        "addresses": addresses,
+        "active_section": "address",
         "error": error,
         "success": success,
     })
+from django.shortcuts import get_object_or_404
+
+def delete_address(request, address_id):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+    address = get_object_or_404(Address, id=address_id, customer=customer)
+
+    address.delete()
+
+    addresses = Address.objects.filter(customer=customer)
+    return render(request, "accounts/profile.html", {
+        "customer": customer,
+        "addresses": addresses,
+        "active_section": "address",
+        "success": "Xóa địa chỉ thành công."
+    })
+
+def set_default_address(request, address_id):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+    address = get_object_or_404(Address, id=address_id, customer=customer)
+
+    # Bỏ mặc định ở các địa chỉ khác
+    Address.objects.filter(customer=customer, is_default=True).update(is_default=False)
+
+    # Đặt địa chỉ này làm mặc định
+    address.is_default = True
+    address.save()
+
+    addresses = Address.objects.filter(customer=customer)
+    return render(request, "accounts/profile.html", {
+        "customer": customer,
+        "addresses": addresses,
+        "active_section": "address",
+        "success": "Đã đặt địa chỉ mặc định thành công."
+    })
+
+

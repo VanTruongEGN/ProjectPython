@@ -1,18 +1,19 @@
 import uuid
 
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
 class Customer(models.Model):
     id = models.CharField(primary_key=True, verbose_name="ID")
-    email = models.EmailField(verbose_name="Email",unique=True)
-    password_hash = models.CharField(verbose_name="Passwork_hash",max_length=255)
-    full_name = models.CharField(verbose_name="Họ và tên",max_length=255, null=True, blank=True)
-    phone = models.CharField(verbose_name="Số điện thoại",max_length=20, null=True, blank=True)
-    date_of_birth = models.DateField(verbose_name="Ngày sinh",null=True, blank=True)
-    gender = models.CharField(verbose_name="Giới tính",max_length=10, null=True, blank=True)
-    status = models.CharField(verbose_name="Trạng thái",default="Hoạt động")
-    created_at = models.DateTimeField(verbose_name="Ngày tạo",auto_now_add=True, null =True)
+    email = models.EmailField(verbose_name="Email", unique=True)
+    password_hash = models.CharField(verbose_name="Passwork_hash", max_length=255)
+    full_name = models.CharField(verbose_name="Họ và tên", max_length=255, null=True, blank=True)
+    phone = models.CharField(verbose_name="Số điện thoại", max_length=20, null=True, blank=True)
+    date_of_birth = models.DateField(verbose_name="Ngày sinh", null=True, blank=True)
+    gender = models.CharField(verbose_name="Giới tính", max_length=10, null=True, blank=True)
+    status = models.CharField(verbose_name="Trạng thái", default="Hoạt động")
+    created_at = models.DateTimeField(verbose_name="Ngày tạo", auto_now_add=True, null=True)
+
 
 
     def __str__(self):
@@ -57,9 +58,7 @@ class Address(models.Model):
         if not self.id:
             PREFIX = 'DC'
             PADDING_LENGTH = 3
-
             last_record = Address.objects.filter(id__startswith=PREFIX).order_by('-id').first()
-
             if last_record:
                 last_number_str = last_record.id.replace(PREFIX, '')
                 try:
@@ -70,6 +69,11 @@ class Address(models.Model):
             else:
                 new_number = 1
             self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
+
+        # Nếu địa chỉ này được chọn là mặc định, thì bỏ mặc định ở các địa chỉ khác
+        if self.is_default:
+            Address.objects.filter(customer=self.customer, is_default=True).exclude(id=self.id).update(is_default=False)
+
         super().save(*args, **kwargs)
 
 

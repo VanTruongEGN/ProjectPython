@@ -28,18 +28,27 @@
                 </div>
             </div>
 
-            <div class="address-section" onclick="openAddressModal()">
-                <div class="address-info">
-                    {% if user_address %}
-                        <span class="user-name" id="display-name">Người nhận: {{ user_address.recipient_name }} - {{ user_address.phone }}</span>
-                        <span class="user-address" id="display-address">{{ user_address.address_line }}, {{ user_address.ward }}, {{ user_address.district }}, {{ user_address.city }}</span>
-                    {% else %}
-                         <span class="user-name" id="display-name">Địa chỉ nhận hàng</span>
-                         <span class="user-address" id="display-address">Vui lòng nhập địa chỉ nhận hàng</span>
-                    {% endif %}
-                </div>
-                <i class="bi bi-chevron-right arrow-icon"></i>
-            </div>
+      <div class="address-section" onclick="openAddressModal()">
+  <div class="address-info">
+    <span id="display-name">
+      {% if user_address %}
+        Người nhận: {{ user_address.recipient_name }} - {{ user_address.phone }}
+      {% else %}
+        Địa chỉ nhận hàng
+      {% endif %}
+    </span>
+    <span id="display-address">
+      {% if user_address %}
+        {{ user_address.address_line }}, {{ user_address.ward }}, {{ user_address.district }}, {{ user_address.city }}
+      {% else %}
+        Vui lòng nhập địa chỉ nhận hàng
+      {% endif %}
+    </span>
+  </div>
+  <i class="bi bi-chevron-right arrow-icon"></i>
+</div>
+
+
 
            
 
@@ -136,95 +145,83 @@
             </div>
             
             
-            <div class="cart-footer">
-                <form action="{% url 'process_checkout' %}" method="post">
-                     {% csrf_token %}
-                     <input type="hidden" name="note" value="Order from Web">
+        <div class="cart-footer">
+    <form action="{% url 'process_checkout' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="note" value="Order from Web">
 
-                     <input type="hidden" name="guest_email" id="hidden_email">
-                     <input type="hidden" name="recipient_name" id="hidden_name">
-                     <input type="hidden" name="phone" id="hidden_phone">
-                     <input type="hidden" name="city" id="hidden_city">
-                     <input type="hidden" name="district" id="hidden_district">
-                     <input type="hidden" name="ward" id="hidden_ward">
-                     <input type="hidden" name="address_line" id="hidden_address">
-                     <input type="hidden" name="payment_method" id="hidden_payment_method" value="COD">
-                     <input type="hidden" name="delivery_method" id="hidden_delivery_method" value="home">
-                     <input type="hidden" name="pickup_store_id" id="hidden_pickup_store_id">
-                     <input type="hidden" name="shipping_partner" id="hidden_shipping_partner">
+        <!-- Các hidden input để nhận dữ liệu từ modal -->
+        <input type="hidden" name="recipient_name" id="hidden_name">
+        <input type="hidden" name="phone" id="hidden_phone">
+        <input type="hidden" name="city" id="hidden_city">
+        <input type="hidden" name="district" id="hidden_district">
+        <input type="hidden" name="ward" id="hidden_ward">
+        <input type="hidden" name="address_line" id="hidden_address">
 
-                     <button type="submit" class="checkout-btn">ĐẶT HÀNG</button>
-                </form>
-                <div class="footer-note">Xem tin tức công nghệ tại <a href="#">TechStore</a></div>
-            </div>
+        <input type="hidden" name="payment_method" id="hidden_payment_method" value="COD">
+        <input type="hidden" name="delivery_method" id="hidden_delivery_method" value="home">
+        <input type="hidden" name="pickup_store_id" id="hidden_pickup_store_id">
+        <input type="hidden" name="shipping_partner" id="hidden_shipping_partner">
+
+        <button type="submit" class="checkout-btn">ĐẶT HÀNG</button>
+    </form>
+    <div class="footer-note">Xem tin tức công nghệ tại <a href="#">TechStore</a></div>
+</div>
+
             {% endif %}
 
         </div>
     </div>
 </div>
 
-
 <div id="addressModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeAddressModal()">&times;</span>
-    <h2>Thông tin người nhận</h2>
-    <form id="addressForm" onsubmit="saveAddress(event)">
-        <div class="form-group">
-            <label>Tên người nhận</label>
-            <input type="text" id="modal-name" value="{% if user_address %}{{ user_address.recipient_name }}{% endif %}" placeholder="Nhập tên người nhận" required>
-        </div>
-        <div class="form-group">
-            <label>Email (để nhận thông báo)</label>
-            <input type="email" id="modal-email" value="{% if request.session.customer_email %}{{ request.session.customer_email }}{% endif %}" placeholder="Nhập email" required>
-        </div>
-        <div class="form-group">
-            <label>Số điện thoại</label>
-            <input type="text" id="modal-phone" value="{% if user_address %}{{ user_address.phone }}{% endif %}" placeholder="Nhập số điện thoại" required>
-        </div>
-        <div class="form-group">
-             <label>Tỉnh/Thành phố</label>
-             <input type="text" id="modal-city" value="{% if user_address %}{{ user_address.city }}{% endif %}" placeholder="Tỉnh/Thành phố" required>
-        </div>
-         <div class="form-group">
-             <label>Quận/Huyện</label>
-             <input type="text" id="modal-district" value="{% if user_address %}{{ user_address.district }}{% endif %}" placeholder="Quận/Huyện" required>
-        </div>
-         <div class="form-group">
-             <label>Phường/Xã</label>
-             <input type="text" id="modal-ward" value="{% if user_address %}{{ user_address.ward }}{% endif %}" placeholder="Phường/Xã" required>
-        </div>
-        <div class="form-group">
-            <label>Địa chỉ cụ thể</label>
-            <input type="text" id="modal-address" value="{% if user_address %}{{ user_address.address_line }}{% endif %}" placeholder="Số nhà, tên đường..." required>
-        </div>
-        <button type="submit" class="save-btn">XÁC NHẬN</button>
-    </form>
+    <h2>Chọn địa chỉ nhận hàng</h2>
+
+    <!-- Danh sách địa chỉ -->
+   <ul class="address-list">
+  {% for addr in addresses %}
+    <li class="address-item" onclick="selectAddress(
+      '{{ addr.recipient_name|escapejs }}',
+      '{{ addr.phone|escapejs }}',
+      '{{ addr.city|escapejs }}',
+      '{{ addr.district|escapejs }}',
+      '{{ addr.ward|escapejs }}',
+      '{{ addr.address_line|escapejs }}',
+      this
+    )">
+      <strong>{{ addr.recipient_name }}</strong> - {{ addr.phone }} <br>
+      {{ addr.address_line }}, {{ addr.ward }}, {{ addr.district }}, {{ addr.city }}
+      {% if addr.is_default %}
+        <span style="color:blue;">[Mặc định]</span>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+
+    <hr>
+    <h3>Thêm địa chỉ mới</h3>
+<form method="post" action="{% url 'profile_address' %}" class="address-form">
+  {% csrf_token %}
+  <div class="form-row">
+    <input type="text" name="recipient_name" placeholder="Tên người nhận" required>
+    <input type="text" name="phone" placeholder="Số điện thoại" required>
   </div>
+  <div class="form-row">
+    <input type="text" name="address_line" placeholder="Địa chỉ cụ thể" required>
+    <input type="text" name="ward" placeholder="Xã/Phường">
+  </div>
+  <div class="form-row">
+    <input type="text" name="district" placeholder="Quận/Huyện">
+    <input type="text" name="city" placeholder="Thành phố">
+  </div>
+  <button type="submit" class="save-btn">Lưu địa chỉ</button>
+</form>
+
   </div>
 </div>
-
-<div id="storeModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeStoreModal()">&times;</span>
-     <div class="form-group">
-            <label>Tên người nhận</label>
-            <input type="text" id="modal-name" value="{% if user_address %}{{ user_address.recipient_name }}{% endif %}" placeholder="Nhập tên người nhận" required>
-        </div>
-        <div class="form-group">
-            <label>Email (để nhận thông báo)</label>
-            <input type="email" id="modal-email" value="{% if request.session.customer_email %}{{ request.session.customer_email }}{% endif %}" placeholder="Nhập email" required>
-        </div>
-        <div class="form-group">
-            <label>Số điện thoại</label>
-            <input type="text" id="modal-phone" value="{% if user_address %}{{ user_address.phone }}{% endif %}" placeholder="Nhập số điện thoại" required>
-        </div>
-    <h2>Chọn cửa hàng nhận hàng</h2>
-    <div id="store-list" class="store-list">
-        <p>Đang tải danh sách cửa hàng...</p>
-    </div>
-  </div>
-</div>
-
 <script>
     var modal = document.getElementById("addressModal");
 
@@ -460,6 +457,29 @@
         });
     });
 
+</script>
+<script>
+function selectAddress(name, phone, city, district, ward, address, element) {
+  // Xóa highlight cũ
+  document.querySelectorAll(".address-item").forEach(el => el.classList.remove("selected"));
+
+  // Thêm highlight cho dòng vừa chọn
+  element.classList.add("selected");
+
+  // Cập nhật hiển thị ngoài giỏ hàng
+  document.getElementById("display-name").innerText = "Người nhận: " + name + " - " + phone;
+  document.getElementById("display-address").innerText = address + ", " + ward + ", " + district + ", " + city;
+
+  // Cập nhật hidden input để gửi khi checkout
+  document.getElementById("hidden_name").value = name;
+  document.getElementById("hidden_phone").value = phone;
+  document.getElementById("hidden_city").value = city;
+  document.getElementById("hidden_district").value = district;
+  document.getElementById("hidden_ward").value = ward;
+  document.getElementById("hidden_address").value = address;
+
+  closeAddressModal();
+}
 </script>
 </body>
 </html>
