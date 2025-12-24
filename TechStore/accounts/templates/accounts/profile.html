@@ -132,7 +132,7 @@
 
         <!-- Đơn mua -->
 
-<<<<<<< HEAD
+
 <section class="section orders-section {% if active_section == 'orders' %}active{% endif %}">
     <div class="section-header">
         <h2>Đơn Mua</h2>
@@ -174,13 +174,16 @@
 
         <table class="order-detail-table">
             <tr>
-                <th>Sản phẩm</th>
+                <th>Ảnh sản phẩm</th>
+                <th>Tên sản phẩm</th>
                 <th>Số lượng</th>
                 <th>Giá</th>
             </tr>
 
             {% for item in order.items %}
             <tr>
+
+                <td><a href="{% url 'productDetail' item.product.id %}"><img src="{{ item.product.image_main.url }}" alt=""></a></td>
                 <td>{{ item.product.name }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.unit_price|floatformat:0 }}₫</td>
@@ -198,8 +201,7 @@
          </div>
     {% endfor %}
     <!-- Địa chỉ -->
-=======
->>>>>>> 0aa9b3bf98d5f8b50a338268c51ab9b358dd9098
+
 <section class="section {% if active_section == 'address' %}active{% endif %}">
   <h2>Địa chỉ nhận hàng</h2>
 

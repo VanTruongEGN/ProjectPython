@@ -595,7 +595,7 @@ def profile_address_view(request):
         "error": error,
         "success": success,
     })
-<<<<<<< HEAD
+
 def profile_orders(request):
     customer_id = request.session.get('customer_id')
 
@@ -612,7 +612,7 @@ def profile_orders(request):
         'orders': orders,
         'active_section': 'orders'
     })
-=======
+
 from django.shortcuts import get_object_or_404
 
 def delete_address(request, address_id):
@@ -657,4 +657,3 @@ def set_default_address(request, address_id):
     })
 
 
->>>>>>> 0aa9b3bf98d5f8b50a338268c51ab9b358dd9098
