@@ -4,6 +4,8 @@
 {% block head %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/orders.css' %}">
+
 {% endblock %}
 
 {% block content %}
@@ -38,8 +40,9 @@
             
               <!-- Đơn mua -->
               <li class="{% if active_section == 'orders' %}active{% endif %}">
-                <a href="#">Đơn Mua</a>
+            <a href="{% url 'profile_orders' %}">Đơn Mua</a>
               </li>
+
             
               <!-- Địa chỉ nhận hàng -->
              <li class="{% if active_section == 'address' %}active{% endif %}">
@@ -128,11 +131,76 @@
         </section>
 
         <!-- Đơn mua -->
-        <section id="orders-section" class="section">
-            <h2>Đơn Mua</h2>
-            <p>Bạn đã đặt <strong>{{ order_count }}</strong> đơn hàng.</p>
-            <!-- Có thể thêm bảng danh sách đơn hàng -->
-        </section>
+
+
+<section class="section orders-section {% if active_section == 'orders' %}active{% endif %}">
+    <div class="section-header">
+        <h2>Đơn Mua</h2>
+        <p>Bạn đã đặt <strong>{{ order_count }}</strong> đơn hàng.</p>
+    </div>
+
+    {% for order in orders %}
+        <div class="order-box">
+            <div class="order-header">
+                <h4>Mã đơn: DH{{ order.id }}</h4>
+                <span class="order-status {{ order.status|lower }}">
+                    {{ order.status }}
+                </span>
+            </div>
+
+            <div class="order-info">
+                <p> Ngày đặt: {{ order.order_date|date:"d/m/Y H:i" }}</p>
+                <p class="order-total">
+                    Tổng tiền: {{ order.total_amount|floatformat:0 }}₫
+                </p>
+            </div>
+
+           <details class="order-details">
+    <summary> Xem chi tiết đơn hàng</summary>
+
+    <div class="order-detail-box">
+        <p><b>Mã đơn:</b> DH{{ order.id }}</p>
+
+{% if order.shipping_info %}
+        <p><b>Địa chỉ giao hàng:</b>
+            {{ order.shipping_info.recipient_name }}
+{{ order.shipping_info.phone }}
+{{ order.shipping_info.address_line }}
+{{ order.shipping_info.ward }}
+{{ order.shipping_info.district }}
+{{ order.shipping_info.city }}
+        </p>
+        {% endif %}
+
+        <table class="order-detail-table">
+            <tr>
+                <th>Ảnh sản phẩm</th>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+            </tr>
+
+            {% for item in order.items %}
+            <tr>
+
+                <td><a href="{% url 'productDetail' item.product.id %}"><img src="{{ item.product.image_main.url }}" alt=""></a></td>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit_price|floatformat:0 }}₫</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <p class="order-detail-total">
+            Tổng tiền: {{ order.total_amount|floatformat:0 }}₫
+        </p>
+    </div>
+</details>
+
+
+         </div>
+    {% endfor %}
+    <!-- Địa chỉ -->
 
 <section class="section {% if active_section == 'address' %}active{% endif %}">
   <h2>Địa chỉ nhận hàng</h2>
