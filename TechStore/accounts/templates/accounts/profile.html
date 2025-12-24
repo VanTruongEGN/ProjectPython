@@ -42,9 +42,10 @@
               </li>
             
               <!-- Địa chỉ nhận hàng -->
-              <li class="{% if active_section == 'address' %}active{% endif %}">
-                <a href="{% url 'profile_address' %}">Địa chỉ nhận hàng</a>
-              </li>
+             <li class="{% if active_section == 'address' %}active{% endif %}">
+              <a href="{% url 'profile_address' %}">Địa chỉ nhận hàng</a>
+            </li>
+
             </ul>
 
         </nav>
@@ -91,7 +92,6 @@
             </div>
             <button class="save-btn" type="submit">Lưu</button>
         </form>
-
         </section>
 
         <!-- Đổi mật khẩu -->
@@ -134,45 +134,64 @@
             <!-- Có thể thêm bảng danh sách đơn hàng -->
         </section>
 
-        <!-- Địa chỉ -->
 <section class="section {% if active_section == 'address' %}active{% endif %}">
-    <h2>Thêm Địa Chỉ</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label>Người nhận</label>
-            <input type="text" name="recipient_name" required>
-        </div>
-        <div class="form-group">
-            <label>Số điện thoại</label>
-            <input type="text" name="phone" required>
-        </div>
-        <div class="form-group">
-            <label>Địa chỉ</label>
-            <input type="text" name="address_line" required>
-        </div>
-        <div class="form-group">
-            <label>Phường/Xã</label>
-            <input type="text" name="ward">
-        </div>
-        <div class="form-group">
-            <label>Quận/Huyện</label>
-            <input type="text" name="district">
-        </div>
-        <div class="form-group">
-            <label>Thành phố</label>
-            <input type="text" name="city">
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="is_default" id="defaultCheck">
-          <label class="form-check-label" for="defaultCheck">
-            Mặc định
-          </label>
-        </div>
+  <h2>Địa chỉ nhận hàng</h2>
 
-        <button class="save-btn" type="submit">Xác nhận</button>
-    </form>
+  <!-- Form thêm địa chỉ -->
+  <form method="post" action="{% url 'profile_address' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Người nhận</label>
+      <input type="text" name="recipient_name" required>
+    </div>
+    <div class="form-group">
+      <label>Số điện thoại</label>
+      <input type="text" name="phone" required>
+    </div>
+    <div class="form-group">
+      <label>Địa chỉ</label>
+      <input type="text" name="address_line" required>
+    </div>
+    <div class="form-group">
+      <label>Phường/Xã</label>
+      <input type="text" name="ward">
+    </div>
+    <div class="form-group">
+      <label>Quận/Huyện</label>
+      <input type="text" name="district">
+    </div>
+    <div class="form-group">
+      <label>Thành phố</label>
+      <input type="text" name="city">
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="is_default" id="defaultCheck">
+      <label class="form-check-label" for="defaultCheck">
+        Mặc định
+      </label>
+    </div>
+    <button class="save-btn" type="submit">Xác nhận</button>
+  </form>
+
+  <!-- Danh sách địa chỉ -->
+  <h4>Danh sách địa chỉ đã lưu</h4>
+  <ul class="address-list">
+    {% for addr in addresses %}
+      <li>
+        <strong>{{ addr.recipient_name }}</strong> - {{ addr.phone }} <br>
+        {{ addr.address_line }}, {{ addr.ward }}, {{ addr.district }}, {{ addr.city }} ({{ addr.postal_code }})
+        {% if addr.is_default %}
+          <span style="color:blue;">[Mặc định]</span>
+        {% endif %}
+        <a href="{% url 'set_default_address' addr.id %}" class="default-btn"> Đặt làm mặc định </a>
+        <a href="{% url 'delete_address' addr.id %}" class="delete-btn" onclick="return confirm('Bạn có chắc muốn xóa địa chỉ này không?')"> Xóa </a>      </li>
+    {% empty %}
+      <li>Chưa có địa chỉ nào.</li>
+    {% endfor %}
+  </ul>
 </section>
+
+
     </main>
 </div>
 
