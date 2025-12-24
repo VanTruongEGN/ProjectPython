@@ -2,7 +2,7 @@ import io
 import math
 from datetime import datetime
 
-
+from django.core.paginator import Paginator
 from django.db.models import Avg, Q, Count
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -21,16 +21,22 @@ from .models import Product, ProductDiscount, Category, ProductAttribute
 
 def product_page(request,category_name):
     images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
-    tablet_category = Category.objects.filter(name__iexact=category_name).first()
+    category = Category.objects.filter(name__iexact=category_name).first()
 
-    products = Product.objects.filter(category=tablet_category, status=True)
+    products = Product.objects.filter(category=category, status=True)
+
+    paginator = Paginator(products, 10)
+    pageNumber = request.GET.get('page')
+    pageObj = paginator.get_page(pageNumber)
+
     discounts = ProductDiscount.objects.filter(end_date__gte=timezone.now()).order_by("end_date")
-    discount_map = {d.product.id: d for d in discounts}
+    discountMap = {d.product.id: d for d in discounts}
 
     return render(request, 'products/product.html', {
         'products': products,
-        'discount_map': discount_map,
+        'discount_map': discountMap,
         'images': images,
+        'pageObj': pageObj,
     })
 
 def product_detail(request, pk):
@@ -101,15 +107,19 @@ def product_list(request):
 
     if keyword:
         products = products.filter(
-            Q(name__icontains=keyword) |
-            Q(description__icontains=keyword)
+            Q(name__icontains=keyword)
         )
+
+    paginator = Paginator(products, 10)
+    pageNumber = request.GET.get('page')
+    pageObj = paginator.get_page(pageNumber)
 
     discounts = ProductDiscount.objects.filter(
         start_date__lte=now,
         end_date__gte=now,
         product__in=products
     )
+
 
     discount_map = {}
     for d in discounts:
@@ -121,6 +131,7 @@ def product_list(request):
         "discount_map": discount_map,
         "keyword": keyword,
         "images": images,
+        "pageObj": pageObj,
     })
 
 def add_address(request):

@@ -222,5 +222,105 @@ label input[type="checkbox"] {
   color: #0f5132;
   border: 1px solid #badbcc;
 }
+.address-list {
+  margin-top: 20px;
+}
+
+.address-card {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  background: #f9f9f9;
+}
+
+.address-card .badge {
+  display: inline-block;
+  background: #007bff;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #4CAF50; /* xanh lá cho success */
+  color: white;
+  padding: 15px 25px;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 9999;
+  opacity: 0.95;
+}
+
+.popup.error {
+  background: #f44336; /* đỏ cho error */
+}
+.delete-btn {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 12px;
+  background-color: #f44336; /* đỏ */
+  color: #fff;
+  font-size: 14px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f; /* đỏ đậm khi hover */
+}
+
+.delete-btn:active {
+  background-color: #b71c1c; /* đỏ tối khi click */
+}.default-btn {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 12px;
+  background-color: #2196F3; /* xanh dương */
+  color: #fff;
+  font-size: 14px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.default-btn:hover {
+  background-color: #1976D2; /* xanh đậm khi hover */
+}
+
+.default-btn:active {
+  background-color: #0D47A1; /* xanh tối khi click */
+}
+.logout-section {
+  text-align: right;
+  margin-top: 20px;
+}
+
+#logoutBtn {
+  background: linear-gradient(to right, #f44336, #e53935);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+#logoutBtn:hover {
+  background: linear-gradient(to right, #e53935, #d32f2f);
+  transform: translateY(-1px);
+}
+
+#logoutBtn:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
 
 
