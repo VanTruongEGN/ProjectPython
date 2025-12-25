@@ -23,9 +23,8 @@ submitBtn.addEventListener("click", () => {
         alert("Vui lòng nhập đầy đủ thông tin.");
         return;
     }
-
-
 });
+
 
 
 

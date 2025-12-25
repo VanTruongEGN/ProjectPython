@@ -1,7 +1,6 @@
 # Create your views here.
 # stores/views.py
-from datetime import timezone
-
+from datetime import timezone, datetime
 
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -9,7 +8,6 @@ from accounts.models import CartItem, Customer, Cart
 from stores.models import Store, StoreInventory
 from accounts.services import get_or_create_user_cart
 from products.models import ProductDiscount, ProductImage, Category, ProductAttribute, Product
-
 
 def home(request):
     images = ["store/images/img1.png", "store/images/img2.png", "store/images/img3.png"]
@@ -24,6 +22,9 @@ def home(request):
             .filter(
                 product__category=cat,
                 product__status=True,
+                start_date__lte=datetime.now(timezone.utc),
+                end_date__gte=datetime.now(timezone.utc),
+
             )
             .order_by('-created_at')[:8]
         )
