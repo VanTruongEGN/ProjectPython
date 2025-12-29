@@ -16,7 +16,8 @@ import matplotlib.pyplot as plt
 from accounts.models import Customer, Address
 from comments.models import Comment
 from sentiment.services import predict_sentiment
-from .models import Product, ProductDiscount, Category, ProductAttribute
+from .models import Product, Category, ProductAttribute
+from promotions.services import PromotionEngine
 
 
 def product_page(request,category_name):
@@ -29,8 +30,22 @@ def product_page(request,category_name):
     pageNumber = request.GET.get('page')
     pageObj = paginator.get_page(pageNumber)
 
-    discounts = ProductDiscount.objects.filter(end_date__gte=timezone.now()).order_by("end_date")
-    discountMap = {d.product.id: d for d in discounts}
+    # Logic mới: Lấy thông tin discount cho các sản phẩm trong page
+    discountMap = {}
+    for p in pageObj:
+        price, rule, orig = PromotionEngine.calculate_best_price(p)
+        if rule:
+             # Create a simple dict or object to mimic old behavior if template uses it
+             # Template likely does: discount.discounted_price
+             class DiscountObj: 
+                 def __init__(self, p, pr, o):
+                     self.discounted_price = pr
+                     self.original_price = o
+                     self.product = p
+                 def formatted_priceD(self): return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
+                 def formatted_price(self): return f"{int(self.original_price):,} VNĐ".replace(",", ".")
+
+             discountMap[p.id] = DiscountObj(p, price, orig)
 
     return render(request, 'products/product.html', {
         'products': products,
@@ -51,11 +66,16 @@ def product_detail(request, pk):
     attributes = ProductAttribute.objects.filter(product=product)
 
     # Khuyến mãi
-    discount = ProductDiscount.objects.filter(
-        product=product,
-        start_date__lte=timezone.now(),
-        end_date__gte=timezone.now()
-    ).first()
+    # Khuyến mãi
+    price, rule, orig_price = PromotionEngine.calculate_best_price(product)
+    discount = None
+    if rule:
+        class DiscountObj:
+             def __init__(self, p, pr, o):
+                 self.discounted_price = pr
+                 self.original_price = o
+             def formatted_priceD(self): return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
+        discount = DiscountObj(product, price, orig_price)
 
     return render(request, 'products/productDetails.html', {
         'product': product,
@@ -114,17 +134,25 @@ def product_list(request):
     pageNumber = request.GET.get('page')
     pageObj = paginator.get_page(pageNumber)
 
-    discounts = ProductDiscount.objects.filter(
-        start_date__lte=now,
-        end_date__gte=now,
-        product__in=products
-    )
-
-
+    # Fix Logic: Calculate discounts for products in the current page
     discount_map = {}
-    for d in discounts:
-        if d.product_id not in discount_map:
-            discount_map[d.product_id] = d
+    for p in pageObj:
+         price, rule, orig = PromotionEngine.calculate_best_price(p)
+         if rule:
+             class DiscountObj:
+                 def __init__(self, p, pr, o):
+                     self.product_id = p.id
+                     self.discounted_price = pr
+                     self.original_price = o
+                 def formatted_priceD(self): return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
+                 def formatted_price(self): return f"{int(self.original_price):,} VNĐ".replace(",", ".")
+             discount_map[p.id] = DiscountObj(p, price, orig)
+             
+    # Clean up unused code
+    discounts = []
+
+
+
 
     return render(request, "products/product.html", {
         "products": products,

@@ -1,22 +1,23 @@
 from django.contrib import admin
-from .models import Promotion, PromotionProduct, PromotionUsageLog
+from .models import PromotionEvent, PromotionRule
 
-# Register your models here.
-class PromotionProductInline(admin.TabularInline):
-    model = PromotionProduct
+# --- New System Admin ---
+class PromotionRuleInline(admin.TabularInline):
+    model = PromotionRule
     extra = 1
-    fields = ('product_id',)
+    filter_horizontal = ('products',) 
 
-class PromotionUsageLogInline(admin.TabularInline):
-    model = PromotionUsageLog
-    extra = 1
-    readonly_fields = ('used_at',)
-    fields = ('customer', 'order', 'used_at')
+@admin.register(PromotionEvent)
+class PromotionEventAdmin(admin.ModelAdmin):
+    list_display = ('name', 'start_date', 'end_date', 'is_active')
+    list_filter = ('is_active', 'start_date', 'end_date')
+    search_fields = ('name',)
+    inlines = [PromotionRuleInline]
 
-@admin.register(Promotion)
-class PromotionAdmin(admin.ModelAdmin):
-    readonly_fields = ['id']
-    list_display = ('id','code', 'name', 'discount_type', 'discount_value', 'status')
-    search_fields = ('code', 'name')
-    list_filter = ('discount_type', 'status', 'start_date', 'end_date','name')
-    inlines = [PromotionProductInline, PromotionUsageLogInline]
+@admin.register(PromotionRule)
+class PromotionRuleAdmin(admin.ModelAdmin):
+    # Removed discount_type choices from list_display if it's too long, or keep it.
+    list_display = ('name', 'event', 'discount_type', 'discount_value', 'min_quantity')
+    list_filter = ('discount_type', 'event')
+    search_fields = ('name', 'event__name')
+    filter_horizontal = ('products',)
