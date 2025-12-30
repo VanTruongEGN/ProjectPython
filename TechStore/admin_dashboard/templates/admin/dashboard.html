@@ -1,0 +1,150 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load currency %}
+{% load humanize %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin_dashboard/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<h1>📊 Dashboard quản trị hệ thống</h1>
+
+<!-- ===== FILTER ===== -->
+<div class="filter-box">
+    <form method="get" style="display:flex; gap:15px; align-items:end;">
+        <div>
+            <label>Từ ngày</label>
+            <input type="date" name="start_date" value="{{ start_date }}">
+        </div>
+        <div>
+            <label>Đến ngày</label>
+            <input type="date" name="end_date" value="{{ end_date }}">
+        </div>
+        <div>
+            <label>Năm thống kê</label>
+            <select name="year">
+                {% for y in year_list %}
+                <option value="{{ y }}" {% if y == year %}selected{% endif %}>
+                    {{ y }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="button default">Lọc</button>
+    </form>
+</div>
+
+<div class="dashboard-cards">
+    <div class="card">
+        <h3>💰 Doanh thu hôm nay</h3>
+        <strong>{{ today_revenue|vnd }}</strong>
+    </div>
+    <div class="card">
+        <h3>📦 Tổng đơn</h3>
+        <strong>{{ total_orders }}</strong>
+    </div>
+    <div class="card">
+        <h3>🏦 Tổng doanh thu</h3>
+        <strong>{{ total_revenue|vnd }}</strong>
+    </div>
+</div>
+
+<h2>📈 Doanh thu theo tháng ({{ year }})</h2>
+<canvas id="revenueChart" height="90"></canvas>
+
+<hr>
+
+<!-- ===== TOP SẢN PHẨM ===== -->
+<h2>🔥 Top sản phẩm bán chạy</h2>
+<table class="admin-table">
+    <tr>
+        <th>Mã sản phẩm</th>
+        <th>Sản phẩm</th>
+        <th>Số lượng bán</th>
+    </tr>
+    {% for p in top_products %}
+    <tr>
+        <td>{{ p.product__id }}</td>
+        <td>{{ p.product__name }}</td>
+        <td>{{ p.total_sold }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<hr>
+
+<!-- ===== TOP KHÁCH HÀNG ===== -->
+<h2>👑 Khách hàng mua nhiều nhất</h2>
+<table class="admin-table">
+    <tr>
+        <th>Khách hàng</th>
+        <th>Mã khách hàng</th>
+        <th>Số đơn</th>
+        <th>Tổng chi</th>
+    </tr>
+    {% for c in top_customers %}
+    <tr>
+        <td>{{ c.customer__id }}</td>
+        <td>{{ c.customer__full_name }}</td>
+        <td>{{ c.total_orders }}</td>
+        <td>{{ c.total_spent|vnd }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+
+<script>
+const ctx = document.getElementById('revenueChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ month_labels|safe }},
+        datasets: [{
+            label: 'Doanh thu theo tháng (đ)',
+            data: {{ month_values|safe }},
+            backgroundColor: '#4CAF50'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true },
+
+            // ===== HIỂN THỊ SỐ TRÊN ĐẦU CỘT =====
+            datalabels: {
+                anchor: 'end',
+                align: 'top',
+                color: '#333',
+                font: {
+                    weight: 'bold',
+                    size: 12
+                },
+                formatter: function(value) {
+                    if (value === 0) return '';
+                    return value.toLocaleString() + ' đ';
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: value => value.toLocaleString() + ' đ'
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+</script>
+
+
+{% endblock %}
