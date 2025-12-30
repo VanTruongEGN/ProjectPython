@@ -9,17 +9,17 @@ from accounts.services import merge_session_cart_to_db, get_or_create_user_cart
 from .models import Customer, CartItem, Address
 from django.contrib.auth.hashers import check_password
 from accounts.services import merge_session_cart_to_db, get_or_create_user_cart
-from products.models import Product, ProductDiscount
+from products.models import Product
 from orders.models import Order, OrderItem, Payment
 from shippings.models import ShippingPartner, OrderShipping
 from accounts.models import Address
 from django.utils import timezone
 from decimal import Decimal
 from stores.models import StoreInventory, StoreReservation
+from promotions.services import PromotionEngine
 from django.db.models import F
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
 def signup_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -138,8 +138,14 @@ def process_checkout(request):
         return redirect("cart")
 
     total = 0
-    for item in cart_items:
-        total += item.quantity * item.price_at_add
+    # Refactored: Use PromotionEngine to calculate current totals
+    from promotions.services import PromotionEngine
+    cart_totals = PromotionEngine.calculate_cart_totals(cart_items)
+    
+    # Sử dụng total_final từ PromotionEngine
+    total = cart_totals['total_final']
+
+    items_map = { detail['item_id']: detail for detail in cart_totals['items_details'] }
 
     address = None
     delivery_method = request.POST.get("delivery_method", "home")
@@ -226,11 +232,16 @@ def process_checkout(request):
 
 
     for item in cart_items:
+        # Lấy thông tin giá đã tính toán
+        detail = items_map.get(item.id)
+        final_price = detail['final_single_price'] if detail else item.price_at_add
+        
         OrderItem.objects.create(
             order=order,
             product=item.product,
             quantity=item.quantity,
-            unit_price=item.price_at_add
+            unit_price=final_price,
+            discount_amount=detail['original_single_price'] - detail['final_single_price'] if detail else 0
     )
 
     if delivery_method == "store" and pickup_store:
@@ -272,12 +283,7 @@ def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     qty = int(request.POST.get("quantity", 1))
 
-    discount = ProductDiscount.objects.filter(
-        product=product,
-        start_date__lte=timezone.now(),
-        end_date__gte=timezone.now()
-    ).first()
-    price_at_add = discount.discounted_price if discount else product.price
+    price_at_add = product.price
 
     if request.session.get("customer_id"):
         customer = Customer.objects.get(id=request.session["customer_id"])
@@ -320,33 +326,60 @@ def cart_view(request):
         cart = get_or_create_user_cart(customer)
         cart_items = CartItem.objects.filter(cart=cart).select_related("product")
 
-        for item in cart_items:
-            line_total = item.quantity * item.price_at_add
-            total += line_total
-
-            items.append({
-                "id": item.id,
-                "product": item.product,
-                "quantity": item.quantity,
-                "price": item.price_at_add,
-                "line_total": line_total,
+        from promotions.services import PromotionEngine
+        cart_totals = PromotionEngine.calculate_cart_totals(cart_items)
+        total = cart_totals['total_final']
+        total_original = cart_totals['total_original']
+        total_discount = cart_totals['total_discount_amount']
+        
+        for detail in cart_totals['items_details']:
+             items.append({
+                "id": detail['item_id'],
+                "product": detail['product'],
+                "quantity": detail['quantity'],
+                "price": detail['final_single_price'],
+                "original_price": detail['original_single_price'],
+                "line_total": detail['line_total'],
+                "promotion_rule": detail['applied_rule']
             })
+
+
     else:
         # Nếu chưa đăng nhập thì lấy giỏ hàng từ session
         session_cart = request.session.get("cart", {})
-        for product_id, data in session_cart.items():
-            product = Product.objects.get(id=product_id)
+        
+        mock_items = []
+        if session_cart:
+            products = Product.objects.filter(id__in=session_cart.keys())
+            product_map = {str(p.id): p for p in products}
+            
+            class MockCartItem:
+                def __init__(self, product, quantity):
+                    self.id = product.id
+                    self.product = product
+                    self.quantity = quantity
+            
+            for pid, data in session_cart.items():
+                if pid in product_map:
+                    mock_items.append(MockCartItem(product_map[pid], data['qty']))
+        
+        cart_totals = PromotionEngine.calculate_cart_totals(mock_items)
+        
+        total = cart_totals['total_final']
+        total_original = cart_totals['total_original']
+        total_discount = cart_totals['total_discount_amount']
 
-            price = data.get("price", product.price)
-            line_total = data["qty"] * Decimal(price)
-            total += line_total
-
-            items.append({
-                "id": product.id,
-                "product": product,
-                "quantity": data["qty"],
-                "price": price,
-                "line_total": line_total,
+        # Build items list with promo info
+        items = []
+        for detail in cart_totals['items_details']:
+             items.append({
+                "id": detail['item_id'],
+                "product": detail['product'],
+                "quantity": detail['quantity'],
+                "price": detail['final_single_price'], 
+                "original_price": detail['original_single_price'],
+                "line_total": detail['line_total'],
+                "promotion_rule": detail['applied_rule']
             })
 
     # Lấy địa chỉ mặc định hoặc địa chỉ đầu tiên
@@ -368,6 +401,8 @@ def cart_view(request):
     return render(request, "accounts/cart.html", {
         "items": items,
         "total": total,
+        "total_original": total_original,
+        "total_discount": total_discount,
         "user_address": user_address,
         "addresses": addresses,
         "shipping_partners": shipping_partners
@@ -381,13 +416,8 @@ def buy_now(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     qty = int(request.POST.get("quantity", 1))
     
-    discount = ProductDiscount.objects.filter(
-        product=product,
-        start_date__lte=timezone.now(),
-        end_date__gte=timezone.now()
-    ).first()
-
-    price_at_add = discount.discounted_price if discount else product.price
+    # Discount is now calculated dynamically in Cart
+    price_at_add = product.price
     if request.session.get("customer_id"):
         customer = Customer.objects.get(id=request.session["customer_id"])
         cart = get_or_create_user_cart(customer)
