@@ -23,11 +23,31 @@
 }
 
 .filter-box {
+    height: fit-content;
     background: #f8f8f8;
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 30px;
+
 }
+.filter-box form{
+    display: flex;
+    flex-direction: column;
+    margin-left: 0;
+    padding-left: 0;
+}
+.filter-box .radio-filter{
+    margin: 0;
+    padding: 0;
+}
+.filter-box .option-filter{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
 
 .admin-table {
     width: 100%;
@@ -41,4 +61,7 @@
 
 .admin-table th {
     background: #f0f0f0;
+}
+.button.default{
+    padding:5px 10px
 }
