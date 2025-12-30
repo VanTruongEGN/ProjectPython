@@ -1,5 +1,5 @@
 from accounts.models import Cart, CartItem
-from products.models import Product, ProductDiscount
+from products.models import Product
 from django.utils import timezone
 from decimal import Decimal
 
@@ -19,11 +19,7 @@ def merge_session_cart_to_db(request, customer):
         try:
             product = Product.objects.get(id=product_id)
 
-            discount = ProductDiscount.objects.filter(
-                product=product,
-                start_date__lte=timezone.now(),
-                end_date__gte=timezone.now()
-            ).first()
+
 
             
             price_at_add = (

@@ -1,40 +1,53 @@
-# Create your views here.
-# stores/views.py
-from datetime import timezone, datetime
+from datetime import timezone
+
 
 from django.shortcuts import render
 from django.http import JsonResponse
 from accounts.models import CartItem, Customer, Cart
 from stores.models import Store, StoreInventory
 from accounts.services import get_or_create_user_cart
-from products.models import ProductDiscount, ProductImage, Category, ProductAttribute, Product
+from products.models import ProductImage, Category, ProductAttribute, Product
+from promotions.services import PromotionEngine
+from promotions.models import PromotionEvent, PromotionRule
 
 def home(request):
     images = ["store/images/img1.png", "store/images/img2.png", "store/images/img3.png"]
     categories = Category.objects.all()
 
     discount_by_category = {}
+    from django.utils import timezone
+
+    now = timezone.now()
+    active_events = PromotionEvent.objects.filter(is_active=True, start_date__lte=now, end_date__gte=now)
 
     for cat in categories:
-        discounts = (
-            ProductDiscount.objects
-            .select_related('product', 'product__category')
-            .filter(
-                product__category=cat,
-                product__status=True,
-                start_date__lte=datetime.now(timezone.utc),
-                end_date__gte=datetime.now(timezone.utc),
+        promoted_products = Product.objects.filter(
+            category=cat,
+            status=True,
+            promotion_rules__event__in=active_events
+        ).distinct()[:8]
+                
+        discounted_products = []
+        for p in promoted_products:
+             price, rule, orig = PromotionEngine.calculate_best_price(p)
+             if rule:
+                 class DiscountMock:
+                     def __init__(self, product, price, orig):
+                         self.product = product
+                         self.discounted_price = price
+                         self.original_price = orig
+                         self.attrs = ProductAttribute.objects.filter(product=product)[:2]
+                     def formatted_priceD(self):
+                         try: return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
+                         except: return self.discounted_price
+                     def formatted_price(self):
+                         try: return f"{int(self.original_price):,} VNĐ".replace(",", ".")
+                         except: return self.original_price
 
-            )
-            .order_by('-created_at')[:8]
-        )
-        for d in discounts:
-            d.attrs = ProductAttribute.objects.filter(
-                product=d.product
-            )[:2]
+                 discounted_products.append(DiscountMock(p, price, orig))
 
-        if discounts.exists():
-            discount_by_category[cat] = discounts
+        if discounted_products:
+            discount_by_category[cat] = discounted_products
 
     return render(request, 'store/home.html', {
         'discount_by_category': discount_by_category,

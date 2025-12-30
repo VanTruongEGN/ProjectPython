@@ -135,46 +135,5 @@ class ProductAttribute(models.Model):
          unique_together = ('product', 'attribute')
 
 
-class ProductDiscount(models.Model):
-    id = models.CharField(primary_key=True,verbose_name="Mã chương trình")
-    product = models.ForeignKey(Product,verbose_name="Mã sản phẩm",on_delete=models.SET_NULL,null=True)
-    original_price = models.DecimalField(verbose_name="Giá gốc",max_digits=12, decimal_places=2, null=True, blank=True)
-    discounted_price = models.DecimalField(verbose_name="Giá đã giảm",max_digits=12, decimal_places=2)
-    start_date = models.DateTimeField(verbose_name="Ngày bắt đầu",null=True, blank=True)
-    end_date = models.DateTimeField(verbose_name="Ngày kết thúc",null=True, blank=True)
-    created_at = models.DateTimeField(verbose_name="Ngày thêm vào",auto_now_add=True)
 
-    class Meta:
-        verbose_name = "Sản phẩm giảm giá"
-        verbose_name_plural = "Sản phẩm giảm giá "
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            PREFIX = 'CT' 
-            PADDING_LENGTH = 3
-
-            last_record = ProductDiscount.objects.filter(id__startswith=PREFIX).order_by('-id').first()
-
-            if last_record:
-                last_number_str = last_record.id.replace(PREFIX, '')
-                try:
-                    last_number = int(last_number_str)
-                except ValueError:
-                    last_number = 0
-                new_number = last_number + 1
-            else:
-                new_number = 1
-            self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
-
-        if self.product:
-            self.original_price = self.product.price
-        super().save(*args, **kwargs)
-
-    def formatted_price(self):
-        return f"{int(self.original_price):,} VNĐ".replace(",", ".")
-    formatted_price.short_description = "Giá gốc"
-
-    def formatted_priceD(self):
-        return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
-    formatted_priceD.short_description = "Giá đã giảm"
 
