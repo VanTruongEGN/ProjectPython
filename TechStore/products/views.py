@@ -53,7 +53,6 @@ def product_page(request,category_name):
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk, status=True)
-    comments = Comment.objects.filter(product=product).order_by('-created_at')
     ratingAVG = Comment.objects.filter(product=product).aggregate(Avg('rating'))['rating__avg'] or 0
     ratingAVG_int = math.floor(ratingAVG)
     images = product.images.all()
@@ -74,6 +73,12 @@ def product_detail(request, pk):
              def formatted_priceD(self): return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
         discount = DiscountObj(product, price, orig_price)
 
+
+    comments = Comment.objects.filter(product=product).order_by('-created_at')
+    rating = request.GET.get('rating')
+    if rating:
+        comments = comments.filter(rating=rating)
+
     return render(request, 'products/productDetails.html', {
         'product': product,
         'images': images,
@@ -82,6 +87,7 @@ def product_detail(request, pk):
         'discount': discount,
         'comments': comments,
         'ratingAVG': ratingAVG_int,
+        'ajax': True,
     })
 def addComment(request, pk):
     if request.method != "POST":
@@ -111,8 +117,13 @@ def addComment(request, pk):
         label=label,
         created_at=datetime.now().strftime("%d/%m/%Y"),
     )
+    comments = Comment.objects.filter(product=product).order_by('-created_at')
 
-    return redirect('productDetail', pk=pk)
+    return render(request, 'products/productDetails.html', {
+        'product': product,
+        'comments': comments,
+        'ajax': True
+    })
 
 def product_list(request):
     images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
