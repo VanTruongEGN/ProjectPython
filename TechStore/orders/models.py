@@ -37,7 +37,6 @@ class Order(models.Model):
     customer = models.ForeignKey('accounts.Customer', on_delete=models.CASCADE, verbose_name="Khách hàng")
     address = models.ForeignKey('accounts.Address' , null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Mã địa chỉ")
     payment = models.ForeignKey(Payment, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Mã PTTT")
-    # promotion field removed as part of refactor
     order_date = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo đơn")
     status = models.CharField(max_length=20, default='đang chờ xử lý', verbose_name="Trạng thái đơn hàng")
     total_amount = models.DecimalField(max_digits=12, decimal_places=0, verbose_name="Tổng tiền")

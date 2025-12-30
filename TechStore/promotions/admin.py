@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import PromotionEvent, PromotionRule
 
-# --- New System Admin ---
 class PromotionRuleInline(admin.TabularInline):
     model = PromotionRule
     extra = 1
@@ -16,7 +15,6 @@ class PromotionEventAdmin(admin.ModelAdmin):
 
 @admin.register(PromotionRule)
 class PromotionRuleAdmin(admin.ModelAdmin):
-    # Removed discount_type choices from list_display if it's too long, or keep it.
     list_display = ('name', 'event', 'discount_type', 'discount_value', 'min_quantity')
     list_filter = ('discount_type', 'event')
     search_fields = ('name', 'event__name')

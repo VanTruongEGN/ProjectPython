@@ -30,13 +30,10 @@ def product_page(request,category_name):
     pageNumber = request.GET.get('page')
     pageObj = paginator.get_page(pageNumber)
 
-    # Logic mới: Lấy thông tin discount cho các sản phẩm trong page
     discountMap = {}
     for p in pageObj:
         price, rule, orig = PromotionEngine.calculate_best_price(p)
         if rule:
-             # Create a simple dict or object to mimic old behavior if template uses it
-             # Template likely does: discount.discounted_price
              class DiscountObj: 
                  def __init__(self, p, pr, o):
                      self.discounted_price = pr

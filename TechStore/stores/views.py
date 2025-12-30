@@ -1,5 +1,3 @@
-# Create your views here.
-# stores/views.py
 from datetime import timezone
 
 

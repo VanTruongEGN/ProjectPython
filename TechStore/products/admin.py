@@ -32,8 +32,6 @@ class ProductAttributeInline(admin.TabularInline):
         return obj.category.name if obj.category else None
     category_name.short_description = 'Category'
 
-
-
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['id','name', 'brand', 'formatted_price', 'category', 'status', 'created_at']
