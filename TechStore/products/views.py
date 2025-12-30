@@ -2,6 +2,7 @@ import io
 import math
 from datetime import datetime
 
+import numpy as np
 from django.core.paginator import Paginator
 from django.db.models import Avg, Q, Count
 from django.http import JsonResponse, HttpResponse
