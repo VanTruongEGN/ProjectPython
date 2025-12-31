@@ -121,39 +121,38 @@
 
 
     <div class="sort-area">
-        <select>
-            <option>Sắp xếp</option>
-            <option>5 sao</option>
-            <option>4 sao</option>
-            <option>3 sao</option>
-            <option>2 sao</option>
-            <option>1 sao</option>
+        <select id="ratingFilter">
+            <option value="">Tất cả</option>
+            {% for i in "12345" %}
+            <option value="{{ i }}">{{ i }} sao</option>
+            {% endfor %}
         </select>
     </div>
-
-    <div class="comment-list">
-        <h3>Đánh giá</h3>
-        {% for comment in comments %}
-        <div class="comment-item">
-            <div class="comment-header">
+    <div id="commentSection">
+        <div class="comment-list">
+            <h3>Đánh giá</h3>
+            {% for comment in comments %}
+            <div class="comment-item">
+                <div class="comment-header">
                 <span class="comment-author">
                     {{ comment.customer.full_name }}
                 </span>
-                <span class="comment-date">
+                    <span class="comment-date">
                     {{ comment.created_at|date:"d/m/Y H:i" }}
                 </span>
+                </div>
+                <p class="comment-rating" style="color: #FFD700">
+                    {% for i in "12345"|slice:comment.rating %}★{% endfor %}
+                </p>
+                <p class="comment-text">
+                    "{{ comment.content }}"
+                </p>
+                <p>{{ comment.label }}</p>
             </div>
-            <p class="comment-rating" style="color: #FFD700">
-                {% for i in "12345"|slice:comment.rating %}★{% endfor %}
-            </p>
-            <p class="comment-text">
-                "{{ comment.content }}"
-            </p>
-            <p>{{ comment.label }}</p>
+            {% empty %}
+            <p>Chưa có bình luận nào cho sản phẩm này.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p>Chưa có bình luận nào cho sản phẩm này.</p>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}
@@ -168,13 +167,61 @@
 
     btn.addEventListener('click', () => {
         if (chartContainer.style.display === "block") {
-            // nếu đang hiển thị thì ẩn chart
             chartContainer.style.display = "none";
         } else {
-            // nếu đang ẩn thì hiển thị chart và load ảnh 1 lần
             chartContainer.style.display = "block";
             chartImg.src = reviewChartUrl + "?t=" + new Date().getTime(); // tránh cache
         }
+    });
+    document.getElementById('ratingFilter').addEventListener('change', function () {
+        const rating = this.value;
+        const url = "{% url 'productDetail' product.id %}?rating=" + rating;
+
+        fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newComments = doc.querySelector('#commentSection').innerHTML;
+
+                    document.getElementById('commentSection').innerHTML = newComments;
+                });
+    });
+    document.getElementById('reviewForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: formData
+        })
+                .then(res => {
+                    if (!res.ok) throw new Error("Submit failed");
+                    return res.text();
+                })
+                .then(html => {
+                    // Parse HTML trả về
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // Lấy lại đúng section comment
+                    const newComments = doc.querySelector('#commentSection').innerHTML;
+                    document.getElementById('commentSection').innerHTML = newComments;
+
+                    // Reset form
+                    form.reset();
+                    const formReview = document.getElementById('reviewForm');
+                    formReview.style.display='none';
+                })
+                .catch(err => {
+                    alert("Gửi đánh giá thất bại");
+                    console.error(err);
+                });
     });
 </script>
 <script src="{% static 'products/js/productDetails.js' %}"></script>

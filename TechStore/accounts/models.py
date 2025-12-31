@@ -38,7 +38,9 @@ class Customer(models.Model):
                 new_number = 1
             self.id = f"{PREFIX}{str(new_number).zfill(PADDING_LENGTH)}"
         super().save(*args, **kwargs)
-
+    class Meta:
+        verbose_name = "Khách hàng"
+        verbose_name_plural = "Khách hàng"
 
 class Address(models.Model):
     id = models.CharField(verbose_name="ID",primary_key=True)

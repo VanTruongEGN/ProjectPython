@@ -65,7 +65,26 @@
                     <div class="item-details">
                         <div class="item-header">
                             <h3 class="product-name">{{ item.product.name }}</h3>
-                            <span class="product-price">{{ item.product.formatted_price }}</span>
+                            {% if item.price < item.original_price %}
+                                <div class="price-box">
+                                    <span class="product-price">{{ item.price|floatformat:0 }} VNĐ</span>
+                                    <span class="original-price" style="text-decoration: line-through; color: #999; font-size: 0.9em; margin-left: 8px;">
+                                        {{ item.original_price|floatformat:0 }} VNĐ
+                                    </span>
+                                </div>
+                                {% if item.promotion_rule %}
+                                    <div class="promotion-tag" style="color: #d70018; font-size: 0.85em; margin-top: 4px;">
+                                        <i class="bi bi-tag-fill"></i> {{ item.promotion_rule.name }}
+                                        {% if item.promotion_rule.discount_type == 'PERCENT' %}
+                                            (-{{ item.promotion_rule.discount_value }}%)
+                                        {% else %}
+                                            (-{{ item.promotion_rule.discount_value|floatformat:0 }}đ)
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <span class="product-price">{{ item.price|floatformat:0 }} VNĐ</span>
+                            {% endif %}
                         </div>
 
                         <div class="item-actions">
@@ -110,7 +129,17 @@
             {% if items %}
             <div class="cart-summary">
                 <div class="summary-row">
-                    <span>Tạm tính ({{ items|length }} sản phẩm):</span>
+                    <span>Tạm tính (Gốc):</span>
+                    <span id="cart-original">{{ total_original|floatformat:0 }} VNĐ</span>
+                </div>
+                {% if total_discount > 0 %}
+                <div class="summary-row" style="color: #d70018;">
+                    <span>Giảm giá:</span>
+                    <span>-{{ total_discount|floatformat:0 }} VNĐ</span>
+                </div>
+                {% endif %}
+                <div class="summary-row">
+                    <span>Thành tiền:</span>
                     <span id="cart-subtotal" data-price="{{ total }}">{{ total|floatformat:0 }} VNĐ</span>
                 </div>
                 <div class="summary-row">
@@ -122,6 +151,25 @@
                     <span class="total-price-display" id="grand-total-display">{{ total|floatformat:0 }} VND</span>
                 </div>
             </div>
+
+            <div class="promotion-selection-section" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                <div class="section-header" style="font-weight: 500; margin-bottom: 10px;">
+                    <i class="bi bi-ticket-perforated" style="color: #d70018;"></i> Khuyến mãi & Mã giảm giá
+                </div>
+                 <div class="active-promotions-list">
+                    {% for item in items %}
+                        {% if item.promotion_rule %}
+                        <div class="promo-item-badge" style="background: #fff5f5; border: 1px dashed #d70018; padding: 8px; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #d70018; font-size: 0.9em;">
+                                <strong>{{ item.promotion_rule.event.name }}</strong>: {{ item.promotion_rule.name }}
+                            </span>
+                            <span style="font-size: 0.8em; color: gray;">Đã áp dụng</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                 </div>
+            </div>
+
             <div class="payment-section">
                 <div class="section-header">Phương thức thanh toán</div>
                 <div class="payment-options">
