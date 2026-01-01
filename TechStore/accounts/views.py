@@ -369,7 +369,6 @@ def cart_view(request):
         cart = get_or_create_user_cart(customer)
         cart_items = CartItem.objects.filter(cart=cart).select_related("product")
 
-        from promotions.services import PromotionEngine
         cart_totals = PromotionEngine.calculate_cart_totals(cart_items)
         total = cart_totals['total_final']
         total_original = cart_totals['total_original']

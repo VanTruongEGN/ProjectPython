@@ -25,8 +25,16 @@ SECRET_KEY = 'django-insecure-m%c%y^#8$6$_9ud9i6t$+t5o)9#^v(0&9^57=!33^#!r_la_s4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.ngrok-free.dev',
+]
 
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ngrok-free.dev",
+]
 
 # Application definition
 
@@ -139,7 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-VNPAY_TMN_CODE = "J4X8OO7F"  # ← Mới, thay thế cái cũ 4A6W4HB2
-VNPAY_HASH_SECRET = "GET0FWM9GA9V8W0PSDIE09S5M7S3MJAN"  # ← Secret mới, chính chủ
+VNPAY_TMN_CODE = "EJ5C0155"  # ← Mới, thay thế cái cũ 4A6W4HB2
+VNPAY_HASH_SECRET = "38D2Y04F2OCZOPXYAUN0T9P5IHMLLX0Q"  # ← Secret mới, chính chủ
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"  # Giữ nguyên
-VNPAY_RETURN_URL = "http://127.0.0.1:8000/accounts/vnpay_return/"  # Giữ nguyên, có dấu / cuối
+VNPAY_RETURN_URL = "https://synostotic-overplentifully-houston.ngrok-free.dev/accounts/vnpay_return/"  # Giữ nguyên, có dấu / cuối
