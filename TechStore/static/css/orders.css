@@ -164,7 +164,24 @@
 /* ======================
    BUTTON
 ====================== */
-.btn-review {
+.btn-cancel {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+    text-align: center;
+}
+
+
+.btn-cancel:hover {
+   background: #dc2626;
+}
+.btn-review{
     display: inline-block;
     padding: 6px 14px;
     background: #10b981;
@@ -174,12 +191,11 @@
     font-weight: 600;
     text-decoration: none;
     transition: 0.2s;
+    text-align: center;
 }
-
-.btn-review:hover {
+.btn-review:hover{
     background: #059669;
 }
-
 /* Đã đánh giá */
 .reviewed-text {
     color: #16a34a;
@@ -212,4 +228,13 @@
     .order-detail-table td {
         font-size: 13px;
     }
+}
+.order-box.cancelled {
+    opacity: 0.6;
+    background: #f8f8f8;
+}
+
+.order-status.cancelled {
+    color: #dc2626;
+    font-weight: bold;
 }

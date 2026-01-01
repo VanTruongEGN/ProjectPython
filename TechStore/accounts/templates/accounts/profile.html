@@ -41,6 +41,10 @@
                     <a href="{% url 'profile_orders' %}">Đơn Mua</a>
                 </li>
 
+                <!--  Đơn đã huỷ -->
+        <li class="{% if active_section == 'cancelled_orders' %}active{% endif %}">
+            <a href="{% url 'profile_cancelled_orders' %}">Đơn Đã Huỷ</a>
+        </li>
 
                 <!-- Địa chỉ nhận hàng -->
                 <li class="{% if active_section == 'address' %}active{% endif %}">
@@ -183,18 +187,27 @@
                                 <td>{{ item.product.name }}</td>
                                 <td>{{ item.quantity }}</td>
                                 <td>{{ item.formatted_price}}</td>
-                                <td>
-             {% if order.status == "Đã thanh toán" or order.status == "hoàn thành" %}
-                         {% if not item.has_reviewed %}
+                               <td>
+    {% if order.status == "Đang xử lý" %}
+        <form method="post" action="{% url 'cancel_order' order.id %}"
+              onsubmit="return confirm('Bạn có chắc muốn huỷ đơn hàng này không?');">
+            {% csrf_token %}
+            <button type="submit" class="btn-cancel">
+                Huỷ đơn hàng
+            </button>
+        </form>
+
+    {% elif order.status == "Đã thanh toán" or order.status == "hoàn thành" %}
+        {% if not item.has_reviewed %}
             <a href="{% url 'productDetail' item.product.id %}"
                class="btn-review">
-               Đánh giá
+                Đánh giá
             </a>
-             {% else %}
-                       <span style="color: gray;">Đã đánh giá</span>
-              {% endif %}
-                  {% endif %}
-                                </td>
+        {% else %}
+            <span style="color: gray;">Đã đánh giá</span>
+        {% endif %}
+    {% endif %}
+</td>
                             </tr>
                             {% endfor %}
                         </table>
@@ -208,6 +221,35 @@
 
             </div>
             {% endfor %}
+        </section>
+            <!-- Đơn đã huỷ -->
+<section class="section orders-section
+{% if active_section == 'cancelled_orders' %}active{% endif %}">
+
+    <div class="section-header">
+        <h2>Đơn Đã Huỷ</h2>
+    </div>
+
+    {% for order in cancelled_orders %}
+    <div class="order-box cancelled">
+        <div class="order-header">
+            <h4>Mã đơn: DH{{ order.id }}</h4>
+            <span class="order-status cancelled">Đã huỷ</span>
+        </div>
+
+        <div class="order-info">
+            <p>Ngày đặt: {{ order.order_date|date:"d/m/Y H:i" }}</p>
+            <p class="order-total">
+                Tổng tiền: {{ order.formatted_price }}
+            </p>
+        </div>
+    </div>
+    {% empty %}
+        <p style="color: gray;">Chưa có đơn hàng nào bị huỷ.</p>
+    {% endfor %}
+
+</section>
+
             <!-- Địa chỉ -->
         </section>
 

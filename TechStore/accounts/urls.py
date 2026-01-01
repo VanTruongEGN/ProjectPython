@@ -27,7 +27,8 @@ urlpatterns = [
     path("profile/address/", views.profile_address_view, name="profile_address"),
     path("profile/address/delete/<str:address_id>/", views.delete_address, name="delete_address"),
     path("profile/address/default/<str:address_id>/", views.set_default_address, name="set_default_address"),
-
+    path("orders/cancel/<str:order_id>/", views.cancel_order, name="cancel_order"),
+    path("profile/orders/cancelled/",views.profile_cancelled_orders,name="profile_cancelled_orders"),
 ]
 
 

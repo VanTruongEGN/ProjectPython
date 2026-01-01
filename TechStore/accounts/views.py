@@ -628,18 +628,36 @@ def profile_address_view(request):
 
 def profile_orders(request):
     customer_id = request.session.get('customer_id')
-
     if not customer_id:
         return redirect('login')
 
     customer = Customer.objects.get(id=customer_id)
-    orders = Order.objects.filter(customer=customer).order_by('-order_date')
-    for o in orders:
-        o.items = OrderItem.objects.filter(order=o)
-        o.shipping_info = Address.objects.filter(order=o).first()
+
+    # Đơn chưa huỷ
+    orders = Order.objects.filter(
+        customer=customer
+    ).exclude(status="Đã huỷ").order_by('-order_date')
+
+    # Đơn đã huỷ
+    cancelled_orders = Order.objects.filter(
+        customer=customer,
+        status="Đã huỷ"
+    ).order_by('-order_date')
+
+    # Gán items + địa chỉ cho từng đơn
+    for order in orders:
+        order.items = OrderItem.objects.filter(order=order)
+        order.shipping_info = Address.objects.filter(order=order).first()
+
+    for order in cancelled_orders:
+        order.items = OrderItem.objects.filter(order=order)
+        order.shipping_info = Address.objects.filter(order=order).first()
+
     return render(request, 'accounts/profile.html', {
         'customer': customer,
         'orders': orders,
+        'cancelled_orders': cancelled_orders,
+        'order_count': orders.count(),
         'active_section': 'orders'
     })
 
@@ -684,6 +702,39 @@ def set_default_address(request, address_id):
         "addresses": addresses,
         "active_section": "address",
         "success": "Đã đặt địa chỉ mặc định thành công."
+    })
+# huỷ đơn hàng
+def cancel_order(request, order_id):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    order = get_object_or_404(Order, id=order_id, customer_id=customer_id)
+
+    # chỉ cho huỷ khi đang xử lý
+    if order.status == "Đang xử lý":
+        order.status = "Đã huỷ"
+        order.save()
+        messages.success(request, "Đã huỷ đơn hàng thành công")
+
+    return redirect("profile_orders")
+def profile_cancelled_orders(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return redirect("login")
+
+    customer = Customer.objects.get(id=customer_id)
+
+    cancelled_orders = Order.objects.filter(
+        customer=customer,
+        status="Đã huỷ"
+    ).order_by("-order_date")
+
+    return render(request, "accounts/profile.html", {
+        "customer": customer,
+        "cancelled_orders": cancelled_orders,
+        "active_section": "cancelled_orders",
+        "order_count": cancelled_orders.count(),
     })
 
 
