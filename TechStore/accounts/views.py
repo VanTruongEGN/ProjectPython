@@ -108,20 +108,28 @@ def logout_view(request):
 
 @transaction.atomic
 def process_checkout(request):
+    print("=== PROCESS_CHECKOUT START ===")
+
     if request.method != "POST":
+        print("❌ Method != POST")
         return redirect("cart")
 
     payment_method = request.POST.get("payment_method", "COD")
+    print("Payment method:", payment_method)
 
     # ===== CUSTOMER =====
     if request.session.get("customer_id"):
         customer = Customer.objects.get(id=request.session["customer_id"])
+        print("Customer logged in:", customer.id, customer.email)
     else:
         email = request.POST.get("guest_email")
+        print("Guest email:", email)
+
         if not email:
+            print("❌ Guest nhưng không có email → redirect login")
             return redirect("login")
 
-        customer, _ = Customer.objects.get_or_create(
+        customer, created = Customer.objects.get_or_create(
             email=email,
             defaults={
                 "full_name": request.POST.get("recipient_name"),
@@ -129,17 +137,22 @@ def process_checkout(request):
                 "password_hash": make_password("guest@123")
             }
         )
+        print("Guest customer:", customer.id, "created:", created)
         merge_session_cart_to_db(request, customer)
 
     # ===== CART =====
     cart = get_or_create_user_cart(customer)
-    cart_items = CartItem.objects.filter(cart=cart).select_related("product")
+    cart_items = CartItem.objects.filter(cart=cart)
+
+    print("Cart items count:", cart_items.count())
     if not cart_items.exists():
+        print("❌ Cart rỗng")
         return redirect("cart")
 
     from promotions.services import PromotionEngine
     cart_totals = PromotionEngine.calculate_cart_totals(cart_items)
     total = cart_totals["total_final"]
+    print("Cart total:", total)
 
     # ===== ADDRESS =====
     address = Address.objects.create(
@@ -151,23 +164,15 @@ def process_checkout(request):
         district=request.POST.get("district", ""),
         ward=request.POST.get("ward", "")
     )
-
-    # ===== SHIPPING =====
-    shipping_cost = 0
-    partner_id = request.POST.get("shipping_partner")
-    if partner_id:
-        partner = ShippingPartner.objects.filter(id=partner_id).first()
-        if partner:
-            shipping_cost = partner.price
-
-    total_with_shipping = total + shipping_cost
+    print("Address created:", address.id)
 
     # ===== PAYMENT =====
     payment = Payment.objects.create(
         method=payment_method,
-        amount=total_with_shipping,
+        amount=total,
         status="Chưa thanh toán"
     )
+    print("Payment created:", payment.id, payment.method)
 
     status_map = {
         "COD": "Đang xử lý",
@@ -179,13 +184,14 @@ def process_checkout(request):
         customer=customer,
         address=address,
         payment=payment,
-        total_amount=total_with_shipping,
-        shipping_cost=shipping_cost,
+        total_amount=total,
+        shipping_cost=0,
         status=status_map[payment_method],
         note=request.POST.get("note", "")
     )
+    print("Order created:", order.id)
 
-    # ===== ORDER ITEMS ===== (Tạo HẾT items trước)
+    # ===== ORDER ITEMS =====
     items_map = {i["item_id"]: i for i in cart_totals["items_details"]}
     for item in cart_items:
         d = items_map[item.id]
@@ -196,35 +202,18 @@ def process_checkout(request):
             unit_price=d["final_single_price"],
             discount_amount=d["original_single_price"] - d["final_single_price"]
         )
+        print("OrderItem added:", item.product.name)
 
-    # ===== XỬ LÝ THEO PAYMENT METHOD ===== (Sau khi tạo xong items)
+    # ===== PAYMENT FLOW =====
     if payment_method == "VNPAY":
-        from .vnpay import VNPay
+        request.session["vnpay_order_id"] = order.id
+        print("➡ Redirect to VNPAY | order_id:", order.id)
+        return redirect("create_vnpay_payment")
 
-        vnp = VNPay(
-            tmn_code=settings.VNPAY_TMN_CODE,
-            hash_secret=settings.VNPAY_HASH_SECRET,
-            payment_url=settings.VNPAY_URL,
-            return_url=settings.VNPAY_RETURN_URL
-        )
-
-        payment_url = vnp.create_payment_url(
-            request,
-            order_id=order.id,
-            amount=order.total_amount,
-            order_desc=f"Thanh toan don hang {order.id}"
-        )
-
-        # KHÔNG xóa giỏ hàng ở đây, chỉ xóa khi callback thành công
-        return redirect(payment_url)
-
-    # COD và BANK: xóa giỏ hàng ngay
     cart_items.delete()
-
-    if payment_method == "BANK":
-        return redirect("bank_transfer_info", order_id=order.id)
-
+    print("Cart cleared (non-VNPAY)")
     return redirect("home")
+
 
 import hmac
 import hashlib
@@ -242,7 +231,18 @@ from .vnpay import VNPay  # Giả sử bạn để class trong file vnpay.py
 
 
 def create_vnpay_payment(request):
-    # Khởi tạo class với thông tin từ settings
+    print("=== CREATE_VNPAY_PAYMENT ===")
+
+    order_id = request.session.get("vnpay_order_id")
+    print("Session order_id:", order_id)
+
+    if not order_id:
+        print("❌ Không có order_id trong session")
+        return redirect("cart")
+
+    order = Order.objects.get(id=order_id)
+    print("Order:", order.id, "amount:", order.total_amount)
+
     vnp = VNPay(
         tmn_code=settings.VNPAY_TMN_CODE,
         hash_secret=settings.VNPAY_HASH_SECRET,
@@ -250,11 +250,6 @@ def create_vnpay_payment(request):
         return_url=settings.VNPAY_RETURN_URL
     )
 
-    # Lấy thông tin đơn hàng
-    order_id = request.session.get("vnpay_order_id")
-    order = Order.objects.get(id=order_id)
-
-    # Tạo URL và redirect
     payment_url = vnp.create_payment_url(
         request,
         order_id=order.id,
@@ -262,7 +257,11 @@ def create_vnpay_payment(request):
         order_desc=f"Thanh toan don hang {order.id}"
     )
 
+    print("VNPAY URL:")
+    print(payment_url)
+
     return redirect(payment_url)
+
 
 
 def clear_cart(customer):
@@ -276,49 +275,83 @@ from django.conf import settings
 from django.shortcuts import redirect
 import hmac, hashlib
 
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.conf import settings
+import hmac
+import hashlib
+
+from orders.models import Order
+from accounts.models import CartItem
+
+
 def vnpay_return(request):
+    print("=== VNPAY_RETURN ===")
+    print("RAW QUERY:", request.GET.dict())
+
     vnp_response_code = request.GET.get("vnp_ResponseCode")
     order_id = request.GET.get("vnp_TxnRef")
     vnp_secure_hash = request.GET.get("vnp_SecureHash")
 
-    # ===== verify chữ ký =====
+    if not all([vnp_response_code, order_id, vnp_secure_hash]):
+        print("❌ Missing params")
+        return redirect("home")
+
+    # ===== VERIFY HASH (ĐÚNG CHUẨN VNPAY) =====
     input_data = request.GET.dict()
     input_data.pop("vnp_SecureHash", None)
     input_data.pop("vnp_SecureHashType", None)
 
-    sorted_data = sorted(input_data.items())
-    query_string = "&".join(f"{k}={v}" for k, v in sorted_data)
+    # ⚠️ SORT + URLENCODE (QUAN TRỌNG)
+    sorted_items = sorted(input_data.items())
+    encoded_query = urllib.parse.urlencode(sorted_items)
 
-    secure_hash = hmac.new(
+    calc_hash = hmac.new(
         settings.VNPAY_HASH_SECRET.encode(),
-        query_string.encode(),
+        encoded_query.encode(),
         hashlib.sha512
     ).hexdigest()
 
-    if secure_hash != vnp_secure_hash:
-        return redirect("order_failed")
+    print("ENCODED QUERY:", encoded_query)
+    print("CALC HASH:", calc_hash)
+    print("VNP HASH :", vnp_secure_hash)
 
-    # ===== xử lý đơn hàng =====
+    if calc_hash != vnp_secure_hash:
+        print("❌ HASH NOT MATCH")
+        return redirect("home")
+
+    # ===== LẤY ĐƠN =====
     order = Order.objects.select_related("payment").get(id=order_id)
 
     if vnp_response_code == "00":
+        print("✅ PAYMENT SUCCESS")
+
         order.status = "Đã thanh toán"
         order.payment.status = "Đã thanh toán"
+        order.payment.transaction_id = request.GET.get("vnp_TransactionNo")
         order.payment.save()
         order.save()
 
-        # xóa giỏ hàng SAU khi thanh toán thành công
+        # 🔥 PHỤC HỒI SESSION (CỰC KỲ QUAN TRỌNG)
+        request.session["customer_id"] = order.customer.id
+        request.session["customer_email"] = order.customer.email
+
         CartItem.objects.filter(cart__customer=order.customer).delete()
+        print("🗑 Cart cleared")
 
-        return redirect("order_success")
+        return redirect("home")
 
-    else:
-        order.status = "Thanh toán thất bại"
-        order.payment.status = "Thất bại"
-        order.payment.save()
-        order.save()
 
-        return redirect("order_failed")
+    print("❌ PAYMENT FAILED:", vnp_response_code)
+    order.status = "Thanh toán thất bại"
+    order.payment.status = "Thất bại"
+    order.payment.save()
+    order.save()
+
+    return redirect("cart")
+
+
+
 
 
 
