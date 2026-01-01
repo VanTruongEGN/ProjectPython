@@ -139,3 +139,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+VNPAY_TMN_CODE = "J4X8OO7F"  # ← Mới, thay thế cái cũ 4A6W4HB2
+VNPAY_HASH_SECRET = "GET0FWM9GA9V8W0PSDIE09S5M7S3MJAN"  # ← Secret mới, chính chủ
+VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"  # Giữ nguyên
+VNPAY_RETURN_URL = "http://127.0.0.1:8000/accounts/vnpay_return/"  # Giữ nguyên, có dấu / cuối

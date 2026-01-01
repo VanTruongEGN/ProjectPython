@@ -3,7 +3,7 @@ import datetime
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError, transaction
-from .models import Customer, CartItem, Address
+from .models import Customer, CartItem, Address, Cart
 from django.contrib.auth.hashers import check_password
 from accounts.services import merge_session_cart_to_db, get_or_create_user_cart
 from .models import Customer, CartItem, Address
@@ -111,103 +111,69 @@ def process_checkout(request):
     if request.method != "POST":
         return redirect("cart")
 
-    customer = None
+    payment_method = request.POST.get("payment_method", "COD")
+
+    # ===== CUSTOMER =====
     if request.session.get("customer_id"):
         customer = Customer.objects.get(id=request.session["customer_id"])
     else:
         email = request.POST.get("guest_email")
         if not email:
-            return redirect("login") 
-        
-        customer = Customer.objects.filter(email=email).first()
-        if not customer:
-            customer = Customer(
-                email=email,
-                full_name=request.POST.get("recipient_name"),
-                phone=request.POST.get("phone"),
-                password_hash=make_password("guest@123")
-            )
-            customer.save()
-        
+            return redirect("login")
+
+        customer, _ = Customer.objects.get_or_create(
+            email=email,
+            defaults={
+                "full_name": request.POST.get("recipient_name"),
+                "phone": request.POST.get("phone"),
+                "password_hash": make_password("guest@123")
+            }
+        )
         merge_session_cart_to_db(request, customer)
 
+    # ===== CART =====
     cart = get_or_create_user_cart(customer)
     cart_items = CartItem.objects.filter(cart=cart).select_related("product")
-    
     if not cart_items.exists():
         return redirect("cart")
 
-    total = 0
-    # Refactored: Use PromotionEngine to calculate current totals
     from promotions.services import PromotionEngine
     cart_totals = PromotionEngine.calculate_cart_totals(cart_items)
-    
-    # Sử dụng total_final từ PromotionEngine
-    total = cart_totals['total_final']
+    total = cart_totals["total_final"]
 
-    items_map = { detail['item_id']: detail for detail in cart_totals['items_details'] }
+    # ===== ADDRESS =====
+    address = Address.objects.create(
+        customer=customer,
+        recipient_name=request.POST.get("recipient_name"),
+        phone=request.POST.get("phone"),
+        address_line=request.POST.get("address_line"),
+        city=request.POST.get("city", ""),
+        district=request.POST.get("district", ""),
+        ward=request.POST.get("ward", "")
+    )
 
-    address = None
-    delivery_method = request.POST.get("delivery_method", "home")
-    pickup_store = None
-
-    if delivery_method == "home":
-        address_id = request.POST.get("address_id")
-        
-        if address_id:
-            address = Address.objects.filter(id=address_id, customer=customer).first()
-        if not address:
-            recipient_name = request.POST.get("recipient_name")
-            phone = request.POST.get("phone")
-            address_line = request.POST.get("address_line")
-            city = request.POST.get("city")
-            district = request.POST.get("district")
-            ward = request.POST.get("ward")
-
-            if recipient_name and phone and address_line:
-                address = Address.objects.create(
-                    customer=customer,
-                    recipient_name=recipient_name,
-                    phone=phone,
-                    address_line=address_line,
-                    city=city or "",
-                    district=district or "",
-                    ward=ward or ""
-                )
-            else:
-                address = Address.objects.filter(customer=customer, is_default=True).first() \
-                or Address.objects.filter(customer=customer).first()
-
-        if not address:
-            return redirect("cart")
-            
-    elif delivery_method == "store":
-        store_id = request.POST.get("pickup_store_id")
-        if store_id:
-            from stores.models import Store
-            pickup_store = Store.objects.filter(id=store_id).first()
-        
-        if not pickup_store:
-            return redirect("cart")
-
-
-    shipping_partner_id = request.POST.get("shipping_partner")
-    shipping_partner = None
+    # ===== SHIPPING =====
     shipping_cost = 0
-    if shipping_partner_id:
-        try:
-             shipping_partner = ShippingPartner.objects.get(id=shipping_partner_id)
-             shipping_cost = shipping_partner.price
-        except ShippingPartner.DoesNotExist:
-             pass
+    partner_id = request.POST.get("shipping_partner")
+    if partner_id:
+        partner = ShippingPartner.objects.filter(id=partner_id).first()
+        if partner:
+            shipping_cost = partner.price
 
     total_with_shipping = total + shipping_cost
 
+    # ===== PAYMENT =====
     payment = Payment.objects.create(
-        method=request.POST.get("payment_method", "COD"),
+        method=payment_method,
         amount=total_with_shipping,
         status="Chưa thanh toán"
     )
+
+    status_map = {
+        "COD": "Đang xử lý",
+        "BANK": "Chờ xác nhận chuyển khoản",
+        "VNPAY": "Chờ thanh toán",
+    }
 
     order = Order.objects.create(
         customer=customer,
@@ -215,67 +181,144 @@ def process_checkout(request):
         payment=payment,
         total_amount=total_with_shipping,
         shipping_cost=shipping_cost,
-        status="Đang xử lý",
-        note=request.POST.get("note", ""),
-        pickup_store_id=pickup_store
+        status=status_map[payment_method],
+        note=request.POST.get("note", "")
     )
 
-    if shipping_partner:
-        OrderShipping.objects.create(
-            order=order,
-            partner=shipping_partner,
-            shipping_fee=shipping_cost,
-            status="Đang xử lý"
-        )
-    
-
-
-
+    # ===== ORDER ITEMS ===== (Tạo HẾT items trước)
+    items_map = {i["item_id"]: i for i in cart_totals["items_details"]}
     for item in cart_items:
-        # Lấy thông tin giá đã tính toán
-        detail = items_map.get(item.id)
-        final_price = detail['final_single_price'] if detail else item.price_at_add
-        
+        d = items_map[item.id]
         OrderItem.objects.create(
             order=order,
             product=item.product,
             quantity=item.quantity,
-            unit_price=final_price,
-            discount_amount=detail['original_single_price'] - detail['final_single_price'] if detail else 0
-    )
-
-    if delivery_method == "store" and pickup_store:
-        inventory = StoreInventory.objects.select_for_update().filter(
-            store=pickup_store,
-            product=item.product
-        ).first()
-
-        if not inventory:
-            raise Exception("Không có hàng tại cửa hàng")
-
-        if inventory.stock - inventory.reserved_stock < item.quantity:
-            raise Exception("Không đủ hàng")
-
-        inventory.reserved_stock = F("reserved_stock") + item.quantity
-        inventory.save(update_fields=["reserved_stock"])
-
-        StoreReservation.objects.create(
-            order=order,
-            store=pickup_store,
-            customer=customer,
-            product=item.product,
-            quantity=item.quantity,
-            status="Pending"
+            unit_price=d["final_single_price"],
+            discount_amount=d["original_single_price"] - d["final_single_price"]
         )
 
+    # ===== XỬ LÝ THEO PAYMENT METHOD ===== (Sau khi tạo xong items)
+    if payment_method == "VNPAY":
+        from .vnpay import VNPay
 
+        vnp = VNPay(
+            tmn_code=settings.VNPAY_TMN_CODE,
+            hash_secret=settings.VNPAY_HASH_SECRET,
+            payment_url=settings.VNPAY_URL,
+            return_url=settings.VNPAY_RETURN_URL
+        )
 
+        payment_url = vnp.create_payment_url(
+            request,
+            order_id=order.id,
+            amount=order.total_amount,
+            order_desc=f"Thanh toan don hang {order.id}"
+        )
+
+        # KHÔNG xóa giỏ hàng ở đây, chỉ xóa khi callback thành công
+        return redirect(payment_url)
+
+    # COD và BANK: xóa giỏ hàng ngay
     cart_items.delete()
 
-    if not request.session.get("customer_id"):
-        request.session["cart"] = {}
-        
+    if payment_method == "BANK":
+        return redirect("bank_transfer_info", order_id=order.id)
+
     return redirect("home")
+
+import hmac
+import hashlib
+import urllib.parse
+from datetime import datetime, timedelta
+from django.conf import settings
+from django.shortcuts import redirect, render
+from orders.models import Order
+
+def _normalize_vnp_value(v: str) -> str:
+    return str(v).strip()
+
+
+from .vnpay import VNPay  # Giả sử bạn để class trong file vnpay.py
+
+
+def create_vnpay_payment(request):
+    # Khởi tạo class với thông tin từ settings
+    vnp = VNPay(
+        tmn_code=settings.VNPAY_TMN_CODE,
+        hash_secret=settings.VNPAY_HASH_SECRET,
+        payment_url=settings.VNPAY_URL,
+        return_url=settings.VNPAY_RETURN_URL
+    )
+
+    # Lấy thông tin đơn hàng
+    order_id = request.session.get("vnpay_order_id")
+    order = Order.objects.get(id=order_id)
+
+    # Tạo URL và redirect
+    payment_url = vnp.create_payment_url(
+        request,
+        order_id=order.id,
+        amount=order.total_amount,
+        order_desc=f"Thanh toan don hang {order.id}"
+    )
+
+    return redirect(payment_url)
+
+
+def clear_cart(customer):
+    try:
+        cart = Cart.objects.get(customer=customer)
+        cart.cartitem_set.all().delete()
+    except Cart.DoesNotExist:
+        pass
+
+from django.conf import settings
+from django.shortcuts import redirect
+import hmac, hashlib
+
+def vnpay_return(request):
+    vnp_response_code = request.GET.get("vnp_ResponseCode")
+    order_id = request.GET.get("vnp_TxnRef")
+    vnp_secure_hash = request.GET.get("vnp_SecureHash")
+
+    # ===== verify chữ ký =====
+    input_data = request.GET.dict()
+    input_data.pop("vnp_SecureHash", None)
+    input_data.pop("vnp_SecureHashType", None)
+
+    sorted_data = sorted(input_data.items())
+    query_string = "&".join(f"{k}={v}" for k, v in sorted_data)
+
+    secure_hash = hmac.new(
+        settings.VNPAY_HASH_SECRET.encode(),
+        query_string.encode(),
+        hashlib.sha512
+    ).hexdigest()
+
+    if secure_hash != vnp_secure_hash:
+        return redirect("order_failed")
+
+    # ===== xử lý đơn hàng =====
+    order = Order.objects.select_related("payment").get(id=order_id)
+
+    if vnp_response_code == "00":
+        order.status = "Đã thanh toán"
+        order.payment.status = "Đã thanh toán"
+        order.payment.save()
+        order.save()
+
+        # xóa giỏ hàng SAU khi thanh toán thành công
+        CartItem.objects.filter(cart__customer=order.customer).delete()
+
+        return redirect("order_success")
+
+    else:
+        order.status = "Thanh toán thất bại"
+        order.payment.status = "Thất bại"
+        order.payment.save()
+        order.save()
+
+        return redirect("order_failed")
 
 
 
@@ -686,4 +729,10 @@ def set_default_address(request, address_id):
         "success": "Đã đặt địa chỉ mặc định thành công."
     })
 
+
+def get_logged_in_customer(request):
+    customer_id = request.session.get("customer_id")
+    if not customer_id:
+        return None
+    return Customer.objects.filter(id=customer_id).first()
 
