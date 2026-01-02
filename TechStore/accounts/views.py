@@ -108,10 +108,7 @@ def logout_view(request):
 
 @transaction.atomic
 def process_checkout(request):
-    print("=== PROCESS_CHECKOUT START ===")
-
     if request.method != "POST":
-        print("❌ Method != POST")
         return redirect("cart")
 
     payment_method = request.POST.get("payment_method", "COD")
@@ -120,11 +117,8 @@ def process_checkout(request):
     # ===== CUSTOMER =====
     if request.session.get("customer_id"):
         customer = Customer.objects.get(id=request.session["customer_id"])
-        print("Customer logged in:", customer.id, customer.email)
     else:
         email = request.POST.get("guest_email")
-        print("Guest email:", email)
-
         if not email:
             print("❌ Guest nhưng không có email → redirect login")
             return redirect("login")
@@ -142,17 +136,70 @@ def process_checkout(request):
 
     # ===== CART =====
     cart = get_or_create_user_cart(customer)
-    cart_items = CartItem.objects.filter(cart=cart)
-
-    print("Cart items count:", cart_items.count())
+    cart_items = CartItem.objects.filter(cart=cart).select_related("product")
+    
     if not cart_items.exists():
-        print("❌ Cart rỗng")
         return redirect("cart")
 
+    total = 0
+    # Refactored: Use PromotionEngine to calculate current totals
     from promotions.services import PromotionEngine
     cart_totals = PromotionEngine.calculate_cart_totals(cart_items)
-    total = cart_totals["total_final"]
-    print("Cart total:", total)
+    promotion_event = None
+    for item in cart_totals['items_details']:
+        rule = item.get('applied_rule')
+        if rule:
+            promotion_event = rule.event
+            break
+
+    # Sử dụng total_final từ PromotionEngine
+    total = cart_totals['total_final']
+
+
+    items_map = { detail['item_id']: detail for detail in cart_totals['items_details'] }
+
+    address = None
+    delivery_method = request.POST.get("delivery_method", "home")
+    pickup_store = None
+
+    if delivery_method == "home":
+        address_id = request.POST.get("address_id")
+        
+        if address_id:
+            address = Address.objects.filter(id=address_id, customer=customer).first()
+        if not address:
+            recipient_name = request.POST.get("recipient_name")
+            phone = request.POST.get("phone")
+            address_line = request.POST.get("address_line")
+            city = request.POST.get("city")
+            district = request.POST.get("district")
+            ward = request.POST.get("ward")
+
+            if recipient_name and phone and address_line:
+                address = Address.objects.create(
+                    customer=customer,
+                    recipient_name=recipient_name,
+                    phone=phone,
+                    address_line=address_line,
+                    city=city or "",
+                    district=district or "",
+                    ward=ward or ""
+                )
+            else:
+                address = Address.objects.filter(customer=customer, is_default=True).first() \
+                or Address.objects.filter(customer=customer).first()
+
+        if not address:
+            return redirect("cart")
+            
+    elif delivery_method == "store":
+        store_id = request.POST.get("pickup_store_id")
+        if store_id:
+            from stores.models import Store
+            pickup_store = Store.objects.filter(id=store_id).first()
+        
+        if not pickup_store:
+            return redirect("cart")
 
     # ===== ADDRESS =====
     address = Address.objects.create(
@@ -187,9 +234,11 @@ def process_checkout(request):
         total_amount=total,
         shipping_cost=0,
         status=status_map[payment_method],
-        note=request.POST.get("note", "")
+        note=request.POST.get("note", ""),
+        pickup_store_id=pickup_store,
+        promotion = promotion_event
+
     )
-    print("Order created:", order.id)
 
     # ===== ORDER ITEMS =====
     items_map = {i["item_id"]: i for i in cart_totals["items_details"]}
@@ -211,7 +260,10 @@ def process_checkout(request):
         return redirect("create_vnpay_payment")
 
     cart_items.delete()
-    print("Cart cleared (non-VNPAY)")
+
+    if not request.session.get("customer_id"):
+        request.session["cart"] = {}
+        
     return redirect("home")
 
 
@@ -402,6 +454,7 @@ def cart_view(request):
         cart = get_or_create_user_cart(customer)
         cart_items = CartItem.objects.filter(cart=cart).select_related("product")
 
+        from promotions.services import PromotionEngine
         cart_totals = PromotionEngine.calculate_cart_totals(cart_items)
         total = cart_totals['total_final']
         total_original = cart_totals['total_original']
@@ -703,6 +756,7 @@ def profile_address_view(request):
 
 def profile_orders(request):
     customer_id = request.session.get('customer_id')
+
     if not customer_id:
         return redirect('login')
 
