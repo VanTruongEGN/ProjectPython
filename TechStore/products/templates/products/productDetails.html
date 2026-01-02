@@ -97,9 +97,11 @@
     </div>
 </div>
 <div class="product-section comment">
-    <div class="manage-review">
-        <button id="writeReviewBtn">Viết đánh giá</button>
-    </div>
+   {% if can_comment %}
+<div class="manage-review">
+    <button id="writeReviewBtn">Viết đánh giá</button>
+</div>
+{% endif %}
 
 {% if can_comment %}
     <form id="reviewForm" method="post" action="{% url 'addComment' product.id %}">
