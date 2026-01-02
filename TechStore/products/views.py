@@ -81,22 +81,31 @@ def product_detail(request, pk):
 # check đã mua hàng chưa
     customer = None
     can_comment = False
+    has_commented = False
+
     customer_id = request.session.get("customer_id")
     if customer_id:
         customer = Customer.objects.filter(id=customer_id).first()
         if customer:
-            can_comment = has_purchased_product(customer, product)
+            has_commented = Comment.objects.filter(
+                customer=customer,
+                product=product
+            ).exists()
+
+            if has_purchased_product(customer, product) and not has_commented:
+                can_comment = True
 
     return render(request, 'products/productDetails.html', {
         'product': product,
-        'images': images,
-        'main_image': main_image,
-        'attributes': attributes,
-        'discount': discount,
-        'comments': comments,
-        'ratingAVG': ratingAVG_int,
-        'ajax': True,
-        'can_comment': can_comment,
+    'images': images,
+    'main_image': main_image,
+    'attributes': attributes,
+    'discount': discount,
+    'comments': comments,
+    'ratingAVG': ratingAVG_int,
+    'ajax': True,
+    'can_comment': can_comment,
+    'has_commented': has_commented,
     })
 
 def addComment(request, pk):
