@@ -99,11 +99,8 @@
 <div class="product-section comment">
     <div class="manage-review">
         <button id="writeReviewBtn">Viết đánh giá</button>
-        <button id="analysis">Thống kê đánh giá</button>
     </div>
-    <div id="chartContainer" style="margin-top:20px; display:none;">
-        <img id="reviewChartImg" src="" alt="Biểu đồ đánh giá">
-    </div>
+
 {% if can_comment %}
     <form id="reviewForm" method="post" action="{% url 'addComment' product.id %}">
         <h3>Viết đánh giá</h3>
@@ -163,20 +160,8 @@
 {% block js %}
 <script>
     const btn = document.getElementById('analysis');
-    const chartContainer = document.getElementById('chartContainer');
-    const chartImg = document.getElementById('reviewChartImg');
 
-    // URL view review_chart
-    const reviewChartUrl = "{% url 'review_chart' product.pk %}";
 
-    btn.addEventListener('click', () => {
-        if (chartContainer.style.display === "block") {
-            chartContainer.style.display = "none";
-        } else {
-            chartContainer.style.display = "block";
-            chartImg.src = reviewChartUrl + "?t=" + new Date().getTime(); // tránh cache
-        }
-    });
     document.getElementById('ratingFilter').addEventListener('change', function () {
         const rating = this.value;
         const url = "{% url 'productDetail' product.id %}?rating=" + rating;

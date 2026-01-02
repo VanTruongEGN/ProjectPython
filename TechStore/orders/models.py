@@ -1,5 +1,9 @@
 
 from django.db import models
+
+from promotions.models import PromotionEvent
+
+
 # Create your models here.
 
 
@@ -43,6 +47,9 @@ class Order(models.Model):
     shipping_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Phí vận chuyển")
     note = models.TextField(null=True, blank=True, verbose_name="Ghi chú")
     pickup_store_id = models.ForeignKey('stores.Store', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Cửa hàng nhận hàng")
+    promotion= models.ForeignKey(PromotionEvent,null=True,blank=True,on_delete=models.SET_NULL,related_name='orders',
+        verbose_name="Sự kiện khuyến mãi"
+    )
 
     class Meta:
         verbose_name = "Đơn hàng"
