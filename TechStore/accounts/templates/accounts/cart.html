@@ -174,16 +174,16 @@
                 <div class="section-header">Phương thức thanh toán</div>
                 <div class="payment-options">
                     <label class="payment-option selected">
-                        <input type="radio" name="payment_ui" value="COD" checked onchange="updatePaymentMethod(this)">
+                        <input type="radio" name="payment_ui" value="COD" onchange="updatePaymentMethod(this)">
                         <div class="payment-details">
                             <span class="payment-name">Thanh toán khi nhận hàng</span>
                         </div>
                     </label>
                     <label class="payment-option">
-                        <input type="radio" name="payment_ui" value="Chuyển khoản" onchange="updatePaymentMethod(this)">
+                        <input type="radio" name="payment_ui" value="VNPAY" onchange="updatePaymentMethod(this)">
                         <div class="payment-details">
-                            <span class="payment-name">Chuyển khoản ngân hàng</span>
-                            <span class="payment-desc">Quét mã QR hoặc chuyển khoản trực tiếp</span>
+                            <span class="payment-name">VNPAY</span>
+                            <span class="payment-desc">Quét mã QR</span>
                         </div>
                     </label>
                 </div>
@@ -290,6 +290,7 @@
     </div>
 </div>
 <script>
+
     var modal = document.getElementById("addressModal");
 
     function openAddressModal() {
@@ -325,14 +326,14 @@
         closeAddressModal();
     }
 
-    function updatePaymentMethod(radio) {
-        document.getElementById("hidden_payment_method").value = radio.value;
+ function updatePaymentMethod(radio) {
+    document.getElementById("hidden_payment_method").value = radio.value;
 
-        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
-        if (radio.checked) {
-            radio.closest('.payment-option').classList.add('selected');
-        }
-    }
+    document.querySelectorAll(".payment-option")
+        .forEach(opt => opt.classList.remove("selected"));
+
+    radio.closest(".payment-option").classList.add("selected");
+}
 
     const deliveryRadios = document.getElementsByName('delivery_method');
     const addressSection = document.querySelector('.address-section');

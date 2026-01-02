@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-
 from accounts.models import Customer, Address
 from orders.models import Order
 

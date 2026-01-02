@@ -19,8 +19,8 @@ from comments.models import Comment
 from sentiment.services import predict_sentiment
 from .models import Product, Category, ProductAttribute
 from promotions.services import PromotionEngine
-
-
+from orders.models import OrderItem
+from orders.utils import has_purchased_product
 def product_page(request,category_name):
     images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
     category = Category.objects.filter(name__iexact=category_name).first()
@@ -78,6 +78,14 @@ def product_detail(request, pk):
     rating = request.GET.get('rating')
     if rating:
         comments = comments.filter(rating=rating)
+# check đã mua hàng chưa
+    customer = None
+    can_comment = False
+    customer_id = request.session.get("customer_id")
+    if customer_id:
+        customer = Customer.objects.filter(id=customer_id).first()
+        if customer:
+            can_comment = has_purchased_product(customer, product)
 
     return render(request, 'products/productDetails.html', {
         'product': product,
@@ -88,6 +96,7 @@ def product_detail(request, pk):
         'comments': comments,
         'ratingAVG': ratingAVG_int,
         'ajax': True,
+        'can_comment': can_comment,
     })
 
 def addComment(request, pk):
@@ -96,28 +105,38 @@ def addComment(request, pk):
 
     customer_id = request.session.get("customer_id")
     if not customer_id:
-        return redirect('login')  # nếu chưa login
+        return redirect('login')
+
+    customer = get_object_or_404(Customer, id=customer_id)
+    product = get_object_or_404(Product, id=pk)
+
+    # CHECK ĐÃ MUA TRƯỚC
+    if not has_purchased_product(customer, product):
+        return JsonResponse(
+            {"error": "Bạn phải mua sản phẩm này trước khi đánh giá"},
+            status=403
+        )
 
     content = request.POST.get("content")
     rating = request.POST.get("rating")
 
-    if not content:
-        # có thể thêm message báo lỗi
+    if not content or not rating:
         return redirect('productDetail', pk=pk)
 
-    customer = get_object_or_404(Customer, id=customer_id)
-    product = get_object_or_404(Product, id=pk)
     result = predict_sentiment(content)
-    label=result["label"]
+    label = result["label"]
 
+    # CHỈ TẠO COMMENT SAU KHI ĐÃ CHECK
+    if Comment.objects.filter(customer=customer, product=product).exists():
+        return redirect('productDetail', pk=pk)
     Comment.objects.create(
         customer=customer,
         product=product,
         content=content,
         rating=rating,
         label=label,
-        created_at=datetime.now().strftime("%d/%m/%Y"),
     )
+
     comments = Comment.objects.filter(product=product).order_by('-created_at')
 
     return render(request, 'products/productDetails.html', {
@@ -233,3 +252,4 @@ def review_chart(request, pk):
     plt.close()
     buf.seek(0)
     return HttpResponse(buf.getvalue(), content_type='image/png')
+
