@@ -1,22 +1,16 @@
-from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models.functions import TruncMonth, ExtractMonth, ExtractYear, datetime
 from django.shortcuts import render
 from django.db.models import Sum, Count
 from django.utils import timezone
 
-from comments.models import Comment
-from orders.models import Order, OrderItem
-from datetime import datetime, date
+from datetime import datetime
 
 from django.db.models import Sum, F
-from django.utils.timezone import now
 from orders.models import Order, OrderItem
-from products.models import Product
 from promotions.models import PromotionEvent
 
 
 
-@staff_member_required
 def dashboard_day(request):
     today = timezone.now().date()
 
@@ -28,6 +22,8 @@ def dashboard_day(request):
         end_date = today
     if not end_date:
         end_date = today
+    if not start_date:
+        start_date = None
 
     date_filter = {}
     if start_date:
