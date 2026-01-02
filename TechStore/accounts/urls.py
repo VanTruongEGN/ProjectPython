@@ -29,6 +29,9 @@ urlpatterns = [
     path("profile/address/default/<str:address_id>/", views.set_default_address, name="set_default_address"),
     path("orders/cancel/<str:order_id>/", views.cancel_order, name="cancel_order"),
     path("profile/orders/cancelled/",views.profile_cancelled_orders,name="profile_cancelled_orders"),
+    path("create-vnpay-payment/", views.create_vnpay_payment, name="create_vnpay_payment"),
+    path("vnpay_return/", views.vnpay_return, name="vnpay_return"),
+
 ]
 
 
