@@ -104,7 +104,7 @@
     <div id="chartContainer" style="margin-top:20px; display:none;">
         <img id="reviewChartImg" src="" alt="Biểu đồ đánh giá">
     </div>
-
+{% if can_comment %}
     <form id="reviewForm" method="post" action="{% url 'addComment' product.id %}">
         <h3>Viết đánh giá</h3>
         {% csrf_token %}
@@ -118,7 +118,11 @@
         <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..." name="content" required></textarea>
         <button type="submit" id="submitReview">Hoàn thành</button>
     </form>
-
+{% else %}
+<p style="color:red; margin-top:10px;">
+     Bạn chỉ có thể đánh giá khi đã mua sản phẩm này !
+</p>
+{% endif %}
 
     <div class="sort-area">
         <select id="ratingFilter">
