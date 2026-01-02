@@ -30,9 +30,10 @@
     margin-bottom: 30px;
 
 }
-.filter-box form{
+.filter-box .header-site{
     display: flex;
     flex-direction: column;
+    justify-content: start;
     margin-left: 0;
     padding-left: 0;
 }
@@ -62,6 +63,11 @@
 .admin-table th {
     background: #f0f0f0;
 }
-.button.default{
-    padding:5px 10px
+.filter.default {
+    max-width: 37px;
+    max-height: 32px;
+    border-radius: 5px;
+    background-color: #0D47A1;
+    color: #f5dd5d;
+    border: none;
 }

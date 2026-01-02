@@ -1,0 +1,426 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load currency %}
+{% load humanize %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'admin_dashboard/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<h1>📊 Dashboard quản trị hệ thống</h1>
+
+<!-- ===== CHỌN KIỂU THỐNG KÊ ===== -->
+<div class="filter-box">
+    <div style="display:flex; gap:15px;" class="header-site">
+
+        <!-- ===== RADIO CHỌN VIEW (ĐỔI URL) ===== -->
+        <div class="radio-filter">
+            <label>
+                <input type="radio" name="view_type"
+                       {% if view_type == 'day' %}checked{% endif %}
+                       data-url="{% url 'dashboard_day' %}">
+                Theo ngày
+            </label>
+
+            <label>
+                <input type="radio" name="view_type"
+                       {% if view_type == 'year' %}checked{% endif %}
+                       data-url="{% url 'dashboard_year' %}">
+                Theo năm
+            </label>
+
+            <label>
+                <input type="radio" name="view_type"
+                       {% if view_type == 'event' %}checked{% endif %}
+                       data-url="{% url 'dashboard_event' %}">
+                Theo sự kiện
+            </label>
+
+            <label>
+                <input type="radio" name="view_type"
+                       {% if view_type == 'comment' %}checked{% endif %}
+                       data-url="{% url 'dashboard_comment' %}">
+                Đánh giá sản phẩm
+            </label>
+        </div>
+
+        <form method="get" class="option-filter" style="display:flex; gap:10px">
+            {% if view_type == 'day' %}
+                <div>
+                    <label>Từ ngày</label>
+                    <input type="date" name="start_date" value="{{ start_date }}">
+                </div>
+                <div>
+                    <label>Đến ngày</label>
+                    <input type="date" name="end_date" value="{{ end_date }}">
+                </div>
+            {% endif %}
+
+            {% if view_type == 'year' %}
+                <div>
+                    <label>Năm</label>
+                    <select name="year">
+                        {% for y in year_list %}
+                            <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+            {% if view_type == 'event' %}
+                <div>
+                    <label>Sự kiện</label>
+                    <div class="event-checkbox-list">
+                        {% for e in promotions %}
+                            <label>
+                                <input type="checkbox"
+                                       name="promotion_ids"
+                                       value="{{ e.id }}"
+                                       {% if e.id|stringformat:"s" in selected_promotion_ids %}checked{% endif %}>
+                                {{ e.name }}
+                            </label><br>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if view_type == 'comment' %}
+                <div>
+                    <label>Sản phẩm</label>
+                    <select name="product_ids" multiple size="5">
+                        {% for p in products %}
+                            <option value="{{ p.id }}"
+                                {% if p.id in selected_product_ids %}selected{% endif %}>
+                                {{ p.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+            <button class="filter default">Lọc</button>
+        </form>
+    </div>
+</div>
+
+{% if view_type == 'day' %}
+<section class="dashboard-section">
+    <h2>📅 Thống kê theo ngày</h2>
+
+    <div class="dashboard-cards">
+        <div class="card">
+            {% if start_date and end_date %}
+            {% if start_date == end_date %}
+            <h3>💰 Doanh thu ngày {{ start_date|date:"d/m/Y" }}</h3>
+            {% else %}
+            <h3>💰 Doanh thu từ {{ start_date|date:"d/m/Y" }} đến {{ end_date|date:"d/m/Y" }}</h3>
+            {% endif %}
+            {% elif start_date and not end_date %}
+            <h3>💰 Doanh thu từ {{ start_date|date:"d/m/Y" }} trở đi</h3>
+            {% elif not start_date and end_date %}
+            <h3>💰 Doanh thu đến {{ end_date|date:"d/m/Y" }}</h3>
+            {% else %}
+            <h3>💰 Doanh thu hôm nay</h3>
+            {% endif %}
+            <strong>{{ daily_revenue|vnd }}</strong>
+        </div>
+        <div class="card">
+            <h3>📦 Tổng đơn</h3>
+            <strong>{{ daily_orders }}</strong>
+        </div>
+    </div>
+
+    <h3>🔥 Top sản phẩm bán chạy</h3>
+    <table class="admin-table">
+        <tr>
+            <th>Mã sản phẩm</th>
+            <th>Sản phẩm</th>
+            <th>Số lượng bán</th>
+        </tr>
+        {% for p in daily_top_products %}
+        <tr>
+            <td>{{ p.product__id }}</td>
+            <td>{{ p.product__name }}</td>
+            <td>{{ p.total_sold }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>👑 Khách hàng mua nhiều nhất</h3>
+    <table class="admin-table">
+        <tr>
+            <th>Khách hàng</th>
+            <th>Mã khách hàng</th>
+            <th>Số đơn</th>
+            <th>Tổng chi</th>
+        </tr>
+        {% for c in daily_top_customers %}
+        <tr>
+            <td>{{ c.customer__id }}</td>
+            <td>{{ c.customer__full_name }}</td>
+            <td>{{ c.total_orders }}</td>
+            <td>{{ c.total_spent|vnd }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</section>
+{% endif %}
+
+{% if view_type == 'year' %}
+<section class="dashboard-section">
+    <h2>📆 Thống kê theo năm ({{ year }})</h2>
+
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>🏦 Tổng doanh thu</h3>
+            <strong>{{ total_revenue|vnd }}</strong>
+        </div>
+        <div class="card">
+            <h3>📦 Tổng đơn</h3>
+            <strong>{{ total_orders }}</strong>
+        </div>
+    </div>
+
+    <h3>📈 Doanh thu theo tháng</h3>
+    <canvas id="revenueChart" height="90"></canvas>
+
+    <h3>🔥 Top sản phẩm bán chạy</h3>
+    <table class="admin-table">
+        <tr>
+            <th>Mã sản phẩm</th>
+            <th>Sản phẩm</th>
+            <th>Số lượng bán</th>
+        </tr>
+        {% for p in top_products %}
+        <tr>
+            <td>{{ p.product__id }}</td>
+            <td>{{ p.product__name }}</td>
+            <td>{{ p.total_sold }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>👑 Khách hàng mua nhiều nhất</h3>
+    <table class="admin-table">
+        <tr>
+            <th>Khách hàng</th>
+            <th>Mã khách hàng</th>
+            <th>Số đơn</th>
+            <th>Tổng chi</th>
+        </tr>
+        {% for c in top_customers %}
+        <tr>
+            <td>{{ c.customer__id }}</td>
+            <td>{{ c.customer__full_name }}</td>
+            <td>{{ c.total_orders }}</td>
+            <td>{{ c.total_spent|vnd }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</section>
+{% endif %}
+
+{% if view_type == 'event' %}
+<section class="dashboard-section">
+    <h2>🎯 Thống kê theo sự kiện</h2>
+
+    {% if event_chart %}
+
+        <div class="dashboard-cards">
+            {% for s in event_stats %}
+            <div class="card">
+                <h3>{{ s.event.name }}</h3>
+                <p>📦 Tổng đơn: <strong>{{ s.total_orders }}</strong></p>
+                <p>💰 Doanh thu: <strong>{{ s.revenue|vnd }}</strong></p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <canvas id="eventRevenueChart" height="90" ></canvas>
+
+    {% else %}
+        <p>Vui lòng chọn ít nhất 1 sự kiện</p>
+    {% endif %}
+</section>
+{% endif %}
+
+{% if view_type == 'comment' %}
+<section class="dashboard-section">
+    <h2>💬 Thống kê đánh giá sản phẩm</h2>
+
+    <!-- FILTER -->
+
+    <!-- CARD -->
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>📝 Tổng đánh giá</h3>
+            <strong>{{ total_comments }}</strong>
+        </div>
+        <div class="card">
+            <h3>👍 Tích cực</h3>
+            <strong>{{ positive_count }}</strong>
+        </div>
+        <div class="card">
+            <h3>👎 Tiêu cực</h3>
+            <strong>{{ negative_count }}</strong>
+        </div>
+    </div>
+
+    <!-- BIỂU ĐỒ SAO -->
+    <h3>⭐ Phân bố số sao</h3>
+    <div class="card chart-container">
+        <h3>Biểu đồ đánh giá sao</h3>
+        <canvas id="ratingChart" height="300"></canvas>
+    </div>
+</section>
+{% endif %}
+
+{% if view_type == 'year' %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script>
+const ctx = document.getElementById('revenueChart');
+if (ctx) {
+    new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: {{ month_labels|safe }},
+            datasets: [{
+                label: 'Doanh thu theo tháng (đ)',
+                data: {{ month_values|safe }},
+                backgroundColor: '#4CAF50'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#333',
+                    font: { weight: 'bold', size: 12 },
+                    formatter: function(value) {
+                        if (value === 0) return '';
+                        return value.toLocaleString() + ' đ';
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => value.toLocaleString() + ' đ'
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+</script>
+{% endif %}
+
+{% if view_type == 'event' and event_chart %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script>
+const ctxEvent = document.getElementById('eventRevenueChart');
+if (ctxEvent) {
+    new Chart(ctxEvent.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: {{ event_labels|safe }},
+            datasets: [{
+                label: 'Doanh thu theo sự kiện (đ)',
+                data: {{ event_values|safe }},
+                backgroundColor: '#62ff00',
+                barThickness:60,
+                maxBarThickness:65,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: v => v.toLocaleString() + ' đ'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: v => v.toLocaleString() + ' đ'
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+</script>
+{% endif %}
+
+
+{% if view_type == 'comment' and comment_chart %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('ratingChart');
+    if (!ctx) {
+        console.log("Không tìm thấy canvas ratingChart");
+        return;
+    }
+
+    new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['1 sao', '2 sao', '3 sao', '4 sao', '5 sao'],
+            datasets: [{
+                label: 'Số lượt đánh giá',
+                data: {{ rating_counts|safe }},
+                backgroundColor: '#4CAF50',
+                borderRadius: 6,
+                barThickness: 30,
+                maxBarThickness: 35
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+
+{% endif %}
+<script>
+    document.querySelectorAll('input[name="view_type"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const url = this.dataset.url;
+            if (url) {
+                window.location.href = url;
+            }
+        });
+    });
+</script>
+
+{% endblock %}

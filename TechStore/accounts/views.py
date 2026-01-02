@@ -141,9 +141,16 @@ def process_checkout(request):
     # Refactored: Use PromotionEngine to calculate current totals
     from promotions.services import PromotionEngine
     cart_totals = PromotionEngine.calculate_cart_totals(cart_items)
+    promotion_event = None
+    for item in cart_totals['items_details']:
+        rule = item.get('applied_rule')
+        if rule:
+            promotion_event = rule.event
+            break
     
     # Sử dụng total_final từ PromotionEngine
     total = cart_totals['total_final']
+
 
     items_map = { detail['item_id']: detail for detail in cart_totals['items_details'] }
 
@@ -217,7 +224,8 @@ def process_checkout(request):
         shipping_cost=shipping_cost,
         status="Đang xử lý",
         note=request.POST.get("note", ""),
-        pickup_store_id=pickup_store
+        pickup_store_id=pickup_store,
+        promotion = promotion_event
     )
 
     if shipping_partner:

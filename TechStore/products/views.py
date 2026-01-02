@@ -63,7 +63,6 @@ def product_detail(request, pk):
     attributes = ProductAttribute.objects.filter(product=product)
 
     # Khuyến mãi
-    # Khuyến mãi
     price, rule, orig_price = PromotionEngine.calculate_best_price(product)
     discount = None
     if rule:
@@ -90,6 +89,7 @@ def product_detail(request, pk):
         'ratingAVG': ratingAVG_int,
         'ajax': True,
     })
+
 def addComment(request, pk):
     if request.method != "POST":
         return redirect('productDetail', pk=pk)
