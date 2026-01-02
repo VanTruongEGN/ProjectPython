@@ -71,6 +71,7 @@
     </div>
 
 </div>
+
 <div class="product-section info">
 
     <div class="description-part">
@@ -97,28 +98,37 @@
     </div>
 </div>
 <div class="product-section comment">
+
+{% if can_comment %}
     <div class="manage-review">
         <button id="writeReviewBtn">Viết đánh giá</button>
     </div>
 
-{% if can_comment %}
     <form id="reviewForm" method="post" action="{% url 'addComment' product.id %}">
-        <h3>Viết đánh giá</h3>
         {% csrf_token %}
-        <select id="reviewStars" name="rating">
+        <h3>Viết đánh giá</h3>
+
+        <select name="rating" required>
             <option value="5">★★★★★</option>
             <option value="4">★★★★</option>
             <option value="3">★★★</option>
             <option value="2">★★</option>
             <option value="1">★</option>
         </select>
-        <textarea id="reviewText" rows="4" placeholder="Nội dung đánh giá..." name="content" required></textarea>
-        <button type="submit" id="submitReview">Hoàn thành</button>
+
+        <textarea name="content" rows="4" placeholder="Nội dung đánh giá..." required></textarea>
+        <button type="submit">Hoàn thành</button>
     </form>
+
+{% elif has_commented %}
+    <p style="color: green; font-weight: 500; margin-top: 10px;">
+         Bạn đã đánh giá sản phẩm này rồi !
+    </p>
+
 {% else %}
-<p style="color:red; margin-top:10px;">
-     Bạn chỉ có thể đánh giá khi đã mua sản phẩm này !
-</p>
+    <p style="color: red; margin-top: 10px;">
+         Bạn chỉ có thể đánh giá khi đã mua sản phẩm này !
+    </p>
 {% endif %}
 
     <div class="sort-area">
