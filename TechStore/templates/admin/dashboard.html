@@ -39,12 +39,7 @@
                 Theo sự kiện
             </label>
 
-            <label>
-                <input type="radio" name="view_type"
-                       {% if view_type == 'comment' %}checked{% endif %}
-                       data-url="{% url 'dashboard_comment' %}">
-                Đánh giá sản phẩm
-            </label>
+
         </div>
 
         <form method="get" class="option-filter" style="display:flex; gap:10px">
@@ -87,19 +82,6 @@
                 </div>
             {% endif %}
 
-            {% if view_type == 'comment' %}
-                <div>
-                    <label>Sản phẩm</label>
-                    <select name="product_ids" multiple size="5">
-                        {% for p in products %}
-                            <option value="{{ p.id }}"
-                                {% if p.id in selected_product_ids %}selected{% endif %}>
-                                {{ p.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            {% endif %}
             <button class="filter default">Lọc</button>
         </form>
     </div>
@@ -246,37 +228,6 @@
 </section>
 {% endif %}
 
-{% if view_type == 'comment' %}
-<section class="dashboard-section">
-    <h2>💬 Thống kê đánh giá sản phẩm</h2>
-
-    <!-- FILTER -->
-
-    <!-- CARD -->
-    <div class="dashboard-cards">
-        <div class="card">
-            <h3>📝 Tổng đánh giá</h3>
-            <strong>{{ total_comments }}</strong>
-        </div>
-        <div class="card">
-            <h3>👍 Tích cực</h3>
-            <strong>{{ positive_count }}</strong>
-        </div>
-        <div class="card">
-            <h3>👎 Tiêu cực</h3>
-            <strong>{{ negative_count }}</strong>
-        </div>
-    </div>
-
-    <!-- BIỂU ĐỒ SAO -->
-    <h3>⭐ Phân bố số sao</h3>
-    <div class="card chart-container">
-        <h3>Biểu đồ đánh giá sao</h3>
-        <canvas id="ratingChart" height="300"></canvas>
-    </div>
-</section>
-{% endif %}
-
 {% if view_type == 'year' %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
@@ -365,52 +316,6 @@ if (ctxEvent) {
     });
 }
 </script>
-{% endif %}
-
-
-{% if view_type == 'comment' and comment_chart %}
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const ctx = document.getElementById('ratingChart');
-    if (!ctx) {
-        console.log("Không tìm thấy canvas ratingChart");
-        return;
-    }
-
-    new Chart(ctx.getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: ['1 sao', '2 sao', '3 sao', '4 sao', '5 sao'],
-            datasets: [{
-                label: 'Số lượt đánh giá',
-                data: {{ rating_counts|safe }},
-                backgroundColor: '#4CAF50',
-                borderRadius: 6,
-                barThickness: 30,
-                maxBarThickness: 35
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1,
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });
-});
-</script>
-
 {% endif %}
 <script>
     document.querySelectorAll('input[name="view_type"]').forEach(radio => {

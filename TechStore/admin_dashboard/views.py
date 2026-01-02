@@ -171,31 +171,3 @@ def dashboard_event(request):
     }
 
     return render(request, 'admin/dashboard.html', context)
-@staff_member_required
-def dashboard_comment(request):
-    selected_product_ids = request.GET.getlist('product_ids')
-
-    comment_qs = Comment.objects.all()
-
-    if selected_product_ids:
-        comment_qs = comment_qs.filter(product_id__in=selected_product_ids)
-
-    total_comments = comment_qs.count()
-    positive_count = comment_qs.filter(label='tích cực').count()
-    negative_count = comment_qs.filter(label='tiêu cực').count()
-
-    rating_map = {i: 0 for i in range(1, 6)}
-    for r in comment_qs.values('rating').annotate(total=Count('id')):
-        rating_map[r['rating']] = r['total']
-
-    context = {
-        'view_type': 'comment',
-        'products': Product.objects.all(),
-        'selected_product_ids': selected_product_ids,
-        'total_comments': total_comments,
-        'positive_count': positive_count,
-        'negative_count': negative_count,
-        'rating_map': rating_map,
-    }
-
-    return render(request, 'admin/dashboard.html', context)
