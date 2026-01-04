@@ -709,14 +709,13 @@ def add_address(request):
             phone=request.POST.get("phone"),
             address_line=request.POST.get("address_line"),
             ward=request.POST.get("ward"),
-            district=request.POST.get("district"),
             city=request.POST.get("city"),
-            postal_code=request.POST.get("postal_code"),
             is_default=request.POST.get("is_default") == "on"
         )
         return redirect("profile")
 
     return render(request, "accounts/add_addresses.html")
+
 
 def profile_address_view(request):
     customer_id = request.session.get("customer_id")
@@ -735,9 +734,7 @@ def profile_address_view(request):
                 phone=request.POST.get("phone"),
                 address_line=request.POST.get("address_line"),
                 ward=request.POST.get("ward"),
-                district=request.POST.get("district"),
                 city=request.POST.get("city"),
-                postal_code=request.POST.get("postal_code"),
                 is_default=request.POST.get("is_default") == "on"
             )
             success = "Thêm địa chỉ thành công."
