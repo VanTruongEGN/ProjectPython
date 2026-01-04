@@ -78,7 +78,19 @@ def product_detail(request, pk):
     rating = request.GET.get('rating')
     if rating:
         comments = comments.filter(rating=rating)
-# check đã mua hàng chưa
+    # thống kê số sao
+    rating_stats = (
+            Comment.objects
+            .filter(product=product)
+            .values('rating')
+            .annotate(total=Count('id'))
+        )
+
+    rating_count = {i: 0 for i in range(1, 6)}
+    for r in rating_stats:
+        rating_count[r['rating']] = r['total']
+
+    # check đã mua hàng chưa
     customer = None
     can_comment = False
     has_commented = False
@@ -106,6 +118,7 @@ def product_detail(request, pk):
     'ajax': True,
     'can_comment': can_comment,
     'has_commented': has_commented,
+    'rating_count': rating_count,
     })
 
 def addComment(request, pk):

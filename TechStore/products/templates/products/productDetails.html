@@ -133,10 +133,14 @@
 
     <div class="sort-area">
         <select id="ratingFilter">
-            <option value="">Tất cả</option>
-            {% for i in "12345" %}
-            <option value="{{ i }}">{{ i }} sao</option>
-            {% endfor %}
+    <option value="">
+        Tất cả ({{ comments|length }})
+    </option>
+    <option value="5">5 sao ({{ rating_count.5 }})</option>
+    <option value="4">4 sao ({{ rating_count.4 }})</option>
+    <option value="3">3 sao ({{ rating_count.3 }})</option>
+    <option value="2">2 sao ({{ rating_count.2 }})</option>
+    <option value="1">1 sao ({{ rating_count.1 }})</option>
         </select>
     </div>
     <div id="commentSection">
