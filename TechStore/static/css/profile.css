@@ -323,4 +323,62 @@ label input[type="checkbox"] {
   box-shadow: none;
 }
 
+/* ===== Address action buttons ===== */
+.address-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 10px;
+}
+
+/* Base button style */
+.address-actions .btn {
+    padding: 6px 14px;
+    font-size: 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+/* Đặt mặc định */
+.address-actions .btn-default {
+    background-color: #f1f5ff;
+    color: #2563eb;
+    border-color: #c7d2fe;
+}
+
+.address-actions .btn-default:hover {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+/* Xóa */
+.address-actions .btn-delete {
+    background-color: #fff5f5;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.address-actions .btn-delete:hover {
+    background-color: #dc2626;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .address-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .address-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
 
