@@ -17,7 +17,7 @@
     <aside class="sidebar">
         <div class="user-info">
             <div class="avatar-wrapper">
-                <img src="{% static 'TechStore/media/avt/avatar.png' %}" class="avatar-img">
+                <img src="{% static 'TechStore/media/avt/s.png' %}" class="avatar-img">
                 <span class="avatar-camera"><i class="bi bi-camera-fill"></i></span>
             </div>
             <p class="username">{{ customer.full_name }}</p>
@@ -271,18 +271,22 @@
                         <label>Địa chỉ</label>
                         <input type="text" name="address_line" required>
                     </div>
-                    <div class="form-group">
-                        <label>Phường/Xã</label>
-                        <input type="text" name="ward">
-                    </div>
-                    <div class="form-group">
-                        <label>Quận/Huyện</label>
-                        <input type="text" name="district">
-                    </div>
-                    <div class="form-group">
-                        <label>Thành phố</label>
-                        <input type="text" name="city">
-                    </div>
+                  <div class="form-group">
+                  <label>Tỉnh / Thành phố</label>
+                  <select name="city" id="province" required>
+                    <option value="">-- Chọn tỉnh/thành --</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Xã / Phường</label>
+                  <select name="ward" id="ward" required>
+                    <option value="">-- Chọn xã/phường --</option>
+                  </select>
+                </div>
+                <input type="hidden" id="provinceCodeInput" name="province_code">
+                <input type="hidden" id="wardCodeInput" name="ward_code">
+
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="is_default" id="defaultCheck">
                         <label class="form-check-label" for="defaultCheck">
@@ -293,26 +297,138 @@
                 </form>
 
                 <!-- Danh sách địa chỉ -->
-                <h4>Danh sách địa chỉ đã lưu</h4>
+              <h4>Danh sách địa chỉ đã lưu</h4>
+
                 <ul class="address-list">
-                    {% for addr in addresses %}
-                    <li>
-                        <strong>{{ addr.recipient_name }}</strong> - {{ addr.phone }} <br>
-                        {{ addr.address_line }}, {{ addr.ward }}, {{ addr.district }}, {{ addr.city }} ({{
-                        addr.postal_code }})
+                  {% for addr in addresses %}
+                  <li class="address-item {% if addr.is_default %}default{% endif %}">
+
+                    <div class="address-info">
+                      <div class="address-header">
+                        <strong>{{ addr.recipient_name }}</strong>
+                        <span class="phone">{{ addr.phone }}</span>
+
                         {% if addr.is_default %}
-                        <span style="color:blue;">[Mặc định]</span>
+                          <span class="badge-default">Mặc định</span>
                         {% endif %}
-                        <a href="{% url 'set_default_address' addr.id %}" class="default-btn"> Đặt làm mặc định </a>
-                        <a href="{% url 'delete_address' addr.id %}" class="delete-btn"
-                           onclick="return confirm('Bạn có chắc muốn xóa địa chỉ này không?')"> Xóa </a></li>
-                    {% empty %}
-                    <li>Chưa có địa chỉ nào.</li>
-                    {% endfor %}
+                      </div>
+
+                      <div class="address-text">
+                        {{ addr.address_line }}, {{ addr.ward }}, {{ addr.city }}
+                      </div>
+                    </div>
+
+                    <div class="address-actions">
+                      {% if not addr.is_default %}
+                        <a href="{% url 'set_default_address' addr.id %}" class="btn btn-default">
+                          Đặt mặc định
+                        </a>
+                      {% endif %}
+
+                      <a href="{% url 'delete_address' addr.id %}"
+                         class="btn btn-delete"
+                         onclick="return confirm('Bạn có chắc muốn xóa địa chỉ này không?')">
+                         Xóa
+                      </a>
+                    </div>
+
+                  </li>
+                  {% empty %}
+                  <li class="empty">Chưa có địa chỉ nào.</li>
+                  {% endfor %}
                 </ul>
+
             </section>
     </main>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  // ================ API V2 (2025) - CHỈ CÓ 2 CẤP ================
+  const API_BASE = "https://provinces.open-api.vn/api/v2";
+
+  const provinceSelect = document.getElementById("province");
+  const wardSelect = document.getElementById("ward");
+
+  if (!provinceSelect || !wardSelect) {
+    console.error("❌ Không tìm thấy select province / ward");
+    return;
+  }
+
+  // 1️⃣ Load danh sách Tỉnh/Thành phố
+  fetch(`${API_BASE}/p/`)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(provinces => {
+      provinces.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.name;        // ✅ VALUE LÀ TÊN
+        opt.textContent = p.name;
+        opt.dataset.code = p.code;
+        provinceSelect.appendChild(opt);
+      });
+    })
+    .catch(err => {
+      console.error("Lỗi load tỉnh:", err);
+      alert("Không thể tải danh sách tỉnh/thành phố");
+    });
+
+  // 2️⃣ Khi chọn Tỉnh → load Phường/Xã
+  provinceSelect.addEventListener("change", () => {
+
+    const selectedOption = provinceSelect.options[provinceSelect.selectedIndex];
+    const code = selectedOption?.dataset.code;
+
+    document.getElementById("provinceCodeInput").value = code || "";
+
+    wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+    wardSelect.disabled = true;
+    document.getElementById("wardCodeInput").value = "";
+
+    if (!code) return;
+
+    fetch(`${API_BASE}/p/${code}?depth=2`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+
+        // ⚠️ API này CHỈ CHẠY nếu data.wards tồn tại
+        if (data.wards && data.wards.length > 0) {
+
+          data.wards.forEach(w => {
+            const opt = document.createElement("option");
+            opt.value = w.name;
+            opt.textContent = w.name;
+            opt.dataset.code = w.code;
+            wardSelect.appendChild(opt);
+          });
+
+          wardSelect.disabled = false;
+
+        } else {
+          alert("Không có phường/xã cho tỉnh này");
+        }
+      })
+      .catch(err => {
+        console.error("Lỗi load phường/xã:", err);
+        alert("Không thể tải danh sách phường/xã");
+      });
+  });
+
+  // 3️⃣ Cập nhật ward_code
+  wardSelect.addEventListener("change", () => {
+    const opt = wardSelect.options[wardSelect.selectedIndex];
+    document.getElementById("wardCodeInput").value = opt?.dataset.code || "";
+  });
+
+});
+</script>
+
 
 {% endblock %}
+
 
