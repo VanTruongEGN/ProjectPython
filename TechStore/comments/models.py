@@ -10,9 +10,10 @@ class Comment(models.Model):
     rating = models.IntegerField(verbose_name="Số sao")
     content = models.TextField(null=True, blank=True, verbose_name="Nội dung")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo")
-    label = models.CharField(max_length=20,verbose_name="Cảm xúc")
+    label = models.CharField(max_length=20, null=True, blank=True, verbose_name="Cảm xúc")
     is_approved = models.BooleanField(default=True, verbose_name="Đã duyệt")
-
+    is_spam = models.BooleanField(default=False)
+    spam_score = models.FloatField(default=0, verbose_name="Điểm spam")
     class Meta:
         verbose_name = "Bình luận"
         verbose_name_plural = "Danh sách bình luận"

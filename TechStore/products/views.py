@@ -19,7 +19,7 @@ from comments.models import Comment
 from sentiment.services import predict_sentiment
 from .models import Product, Category, ProductAttribute
 from promotions.services import PromotionEngine
-
+from spam_detector.services.comment_pipeline import process_comment
 
 def product_page(request,category_name):
     images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
@@ -90,41 +90,58 @@ def product_detail(request, pk):
         'ratingAVG': ratingAVG_int,
         'ajax': True,
     })
+
+SPAM_THRESHOLD = 0.7
+
 def addComment(request, pk):
     if request.method != "POST":
         return redirect('productDetail', pk=pk)
 
     customer_id = request.session.get("customer_id")
     if not customer_id:
-        return redirect('login')  # nếu chưa login
+        return redirect('login')
 
     content = request.POST.get("content")
-    rating = request.POST.get("rating")
+    rating = request.POST.get("rating") or 5
 
     if not content:
-        # có thể thêm message báo lỗi
         return redirect('productDetail', pk=pk)
 
     customer = get_object_or_404(Customer, id=customer_id)
     product = get_object_or_404(Product, id=pk)
-    result = predict_sentiment(content)
-    label=result["label"]
+
+    # ===== comment pipeline (spam + sentiment) =====
+    res = process_comment(content)
+    is_spam = res.get("is_spam", False)
+    spam_score = res.get("spam_prob", 0)
+    if res.get("spam_source") == "rule":
+        spam_score = 1.0
+
+    label = None
+    if not is_spam:
+        label = res.get("sentiment", {}).get("label")
 
     Comment.objects.create(
         customer=customer,
         product=product,
         content=content,
         rating=rating,
+        is_spam=is_spam,
+        spam_score=spam_score,
         label=label,
-        created_at=datetime.now().strftime("%d/%m/%Y"),
     )
+
     comments = Comment.objects.filter(product=product).order_by('-created_at')
 
-    return render(request, 'products/productDetails.html', {
-        'product': product,
-        'comments': comments,
-        'ajax': True
-    })
+    # ===== AJAX: render FULL PAGE =====
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return render(request, "products/productDetails.html", {
+            "product": product,
+            "comments": comments,
+            "ajax": True,
+        })
+
+    return redirect('productDetail', pk=pk)
 
 def product_list(request):
     images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]

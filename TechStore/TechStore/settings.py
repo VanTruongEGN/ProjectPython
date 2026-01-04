@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'shippings',
     'comments',
     'admin_dashboard',
-
+    'spam_detector',
 ]
 
 MIDDLEWARE = [
@@ -150,4 +150,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 VNPAY_TMN_CODE = "EJ5C0155"  # ← Mới, thay thế cái cũ 4A6W4HB2
 VNPAY_HASH_SECRET = "38D2Y04F2OCZOPXYAUN0T9P5IHMLLX0Q"  # ← Secret mới, chính chủ
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"  # Giữ nguyên
-VNPAY_RETURN_URL = "https://synostotic-overplentifully-houston.ngrok-free.dev/accounts/vnpay_return/"  # Giữ nguyên, có dấu / cuối
+VNPAY_RETURN_URL = "http://localhost:8000/accounts/vnpay_return/"  # Giữ nguyên, có dấu / cuối

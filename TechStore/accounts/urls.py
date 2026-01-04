@@ -6,7 +6,7 @@ from .views import signup_view, login_view, profile_view, logout_view, cart_view
     profile_address_view,profile_orders
 from products.views import product_detail
 from . import views
-from .views import signup_view, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, update_cart_quantity, process_checkout, change_password, profile_password_view, add_address
+from .views import signup_view,vnpay_return, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, update_cart_quantity, process_checkout, change_password, profile_password_view, add_address
 urlpatterns = [
     path("signup/", signup_view, name="signup"),
     path("login/", login_view, name="login"),
@@ -28,7 +28,7 @@ urlpatterns = [
     path("profile/address/delete/<str:address_id>/", views.delete_address, name="delete_address"),
     path("profile/address/default/<str:address_id>/", views.set_default_address, name="set_default_address"),
     path("create-vnpay-payment/", views.create_vnpay_payment, name="create_vnpay_payment"),
-    path("vnpay_return/", views.vnpay_return, name="vnpay_return"),
+    path("vnpay_return/", vnpay_return, name="vnpay_return"),
 
 ]
 

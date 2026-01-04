@@ -148,6 +148,9 @@
                     "{{ comment.content }}"
                 </p>
                 <p>{{ comment.label }}</p>
+                {% if comment.is_spam %}
+                    <span style="color:red; font-weight:bold;">[SPAM]</span>
+                {% endif %}
             </div>
             {% empty %}
             <p>Chưa có bình luận nào cho sản phẩm này.</p>
@@ -205,19 +208,16 @@
                     return res.text();
                 })
                 .then(html => {
-                    // Parse HTML trả về
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
 
-                    // Lấy lại đúng section comment
                     const newComments = doc.querySelector('#commentSection').innerHTML;
                     document.getElementById('commentSection').innerHTML = newComments;
 
-                    // Reset form
                     form.reset();
-                    const formReview = document.getElementById('reviewForm');
-                    formReview.style.display='none';
+                    document.getElementById('reviewForm').style.display='none';
                 })
+
                 .catch(err => {
                     alert("Gửi đánh giá thất bại");
                     console.error(err);
