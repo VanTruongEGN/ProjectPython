@@ -167,7 +167,11 @@
                 <p class="comment-text">
                     "{{ comment.content }}"
                 </p>
-                <p>{{ comment.label }}</p>
+                {% if comment.is_spam %}
+                    <span style="color:red; font-weight:bold;">[SPAM]</span>
+                {% else %}
+                    <p>{{ comment.label }}</p>
+                {% endif %}
             </div>
             {% empty %}
             <p>Chưa có bình luận nào cho sản phẩm này.</p>

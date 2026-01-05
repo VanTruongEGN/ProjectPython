@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'shippings',
     'comments',
     'admin_dashboard',
+    'spam_detector',
 
 ]
 
