@@ -21,6 +21,7 @@ from .models import Product, Category, ProductAttribute
 from promotions.services import PromotionEngine
 from orders.models import OrderItem
 from orders.utils import has_purchased_product
+from spam_detector.services.comment_pipeline import process_comment
 def product_page(request,category_name):
     images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
     category = Category.objects.filter(name__iexact=category_name).first()
@@ -134,6 +135,8 @@ def product_detail(request, pk):
     'negative_count': negative_count,
     })
 
+SPAM_THRESHOLD = 0.7
+
 def addComment(request, pk):
     if request.method != "POST":
         return redirect('productDetail', pk=pk)
@@ -153,23 +156,33 @@ def addComment(request, pk):
         )
 
     content = request.POST.get("content")
-    rating = request.POST.get("rating")
-
+    rating = request.POST.get("rating") or 5
     if not content or not rating:
         return redirect('productDetail', pk=pk)
 
     result = predict_sentiment(content)
     label = result["label"]
 
-    # CHỈ TẠO COMMENT SAU KHI ĐÃ CHECK
     if Comment.objects.filter(customer=customer, product=product).exists():
         return redirect('productDetail', pk=pk)
+
+    res = process_comment(content)
+    is_spam = res.get("is_spam", False)
+    spam_score = res.get("spam_prob", 0)
+    if res.get("spam_source") == "rule":
+        spam_score = 1.0
+
+    label = None
+    if not is_spam:
+        label = res.get("sentiment", {}).get("label")
     Comment.objects.create(
         customer=customer,
         product=product,
         content=content,
         rating=rating,
         label=label,
+        is_spam=is_spam,
+        spam_score=spam_score,
     )
 
     comments = Comment.objects.filter(product=product).order_by('-created_at')
@@ -210,12 +223,6 @@ def product_list(request):
                  def formatted_priceD(self): return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
                  def formatted_price(self): return f"{int(self.original_price):,} VNĐ".replace(",", ".")
              discount_map[p.id] = DiscountObj(p, price, orig)
-             
-    # Clean up unused code
-    discounts = []
-
-
-
 
     return render(request, "products/product.html", {
         "products": products,
