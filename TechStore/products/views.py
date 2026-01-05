@@ -1,8 +1,11 @@
 import io
 import math
+import os
+import pickle
 from datetime import datetime
 
 import numpy as np
+from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.db.models import Avg, Q, Count
 from django.http import JsonResponse, HttpResponse
@@ -11,13 +14,17 @@ from django.utils import timezone
 import matplotlib
 from matplotlib.ticker import MaxNLocator
 
+from image_search.yolo.detector import detect_category
+from image_search.yolo.image_feature import extract_feature
+from image_search.yolo.similarity import calc_similarity
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from accounts.models import Customer, Address
 from comments.models import Comment
 from sentiment.services import predict_sentiment
-from .models import Product, Category, ProductAttribute
+from .models import Product, Category, ProductAttribute, ProductImage
 from promotions.services import PromotionEngine
 from orders.models import OrderItem
 from orders.utils import has_purchased_product
@@ -194,42 +201,116 @@ def addComment(request, pk):
     })
 
 def product_list(request):
-    images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
+    images = [
+        "products/images/img1.png",
+        "products/images/img2.png",
+        "products/images/img3.png",
+    ]
 
     keyword = request.GET.get("q", "").strip()
-    now = timezone.now()
+    upload_image = request.FILES.get("image")
 
-    products = Product.objects.all()
+    # Base queryset
+    products_qs = Product.objects.filter(status=True)
 
-    if keyword:
-        products = products.filter(
-            Q(name__icontains=keyword)
+    if upload_image:
+        # 1️⃣ Lưu ảnh tạm
+        tmp_path = default_storage.save(f"tmp/{upload_image.name}", upload_image)
+        full_path = default_storage.path(tmp_path)
+
+        # 2️⃣ Detect category từ YOLO
+        detected_categories = detect_category(full_path)
+
+        if not detected_categories:
+            products = []
+        else:
+            # 3️⃣ Extract feature ảnh query
+            query_feature = extract_feature(full_path)
+
+            best_scores = {}
+
+            # 4️⃣ Lấy tất cả ảnh sản phẩm có feature
+            product_images = (
+                ProductImage.objects
+                .filter(
+                    product__status=True,
+                    product__category__name__in=detected_categories,
+                    image_feature__isnull=False
+                )
+                .select_related("product")
+            )
+
+            for img in product_images:
+                try:
+                    product_feature = pickle.loads(img.image_feature)
+                    score = calc_similarity(query_feature, product_feature)
+
+                    pid = img.product.id
+                    if pid not in best_scores or score > best_scores[pid]["score"]:
+                        best_scores[pid] = {
+                            "product": img.product,
+                            "score": score
+                        }
+                except Exception:
+                    continue
+
+            # 5️⃣ Sort & lấy TOP 10
+            products = [
+                v["product"]
+                for v in sorted(
+                    best_scores.values(),
+                    key=lambda x: x["score"],
+                    reverse=True
+                )[:10]
+            ]
+
+    # ==========================
+    # 🔎 SEARCH BY TEXT
+    # ==========================
+    elif keyword:
+        products = products_qs.filter(
+            Q(name__icontains=keyword) |
+            Q(brand__icontains=keyword) |
+            Q(model__icontains=keyword)
         )
 
-    paginator = Paginator(products, 10)
-    pageNumber = request.GET.get('page')
-    pageObj = paginator.get_page(pageNumber)
 
-    # Fix Logic: Calculate discounts for products in the current page
+    else:
+        products = products_qs
+
+    if isinstance(products, list):
+        pageObj = products
+    else:
+        paginator = Paginator(products, 10)
+        page_number = request.GET.get("page")
+        pageObj = paginator.get_page(page_number)
+
+
     discount_map = {}
+
     for p in pageObj:
-         price, rule, orig = PromotionEngine.calculate_best_price(p)
-         if rule:
-             class DiscountObj:
-                 def __init__(self, p, pr, o):
-                     self.product_id = p.id
-                     self.discounted_price = pr
-                     self.original_price = o
-                 def formatted_priceD(self): return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
-                 def formatted_price(self): return f"{int(self.original_price):,} VNĐ".replace(",", ".")
-             discount_map[p.id] = DiscountObj(p, price, orig)
+        price, rule, orig = PromotionEngine.calculate_best_price(p)
+        if rule:
+            class DiscountObj:
+                def __init__(self, p, pr, o):
+                    self.product_id = p.id
+                    self.discounted_price = pr
+                    self.original_price = o
+
+                def formatted_priceD(self):
+                    return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
+
+                def formatted_price(self):
+                    return f"{int(self.original_price):,} VNĐ".replace(",", ".")
+
+            discount_map[p.id] = DiscountObj(p, price, orig)
 
     return render(request, "products/product.html", {
-        "products": products,
-        "discount_map": discount_map,
-        "keyword": keyword,
-        "images": images,
+        "products": pageObj,
         "pageObj": pageObj,
+        "keyword": keyword,
+        "discount_map": discount_map,
+        "images": images,
     })
 
 def add_address(request):

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'comments',
     'admin_dashboard',
     'spam_detector',
+    'image_search',
 
 ]
 
