@@ -86,9 +86,7 @@ def product_detail(request, pk):
         label__iexact='tiêu cực'
     ).count()
 
-    rating = request.GET.get('rating')
-    if rating:
-        comments = comments.filter(rating=rating)
+
     # thống kê số sao
     rating_stats = (
             Comment.objects
@@ -118,20 +116,31 @@ def product_detail(request, pk):
             if has_purchased_product(customer, product) and not has_commented:
                 can_comment = True
 
+
+    # lọc theo sao hoặc tích cực / tiêu cực
+    filter_value = request.GET.get('filter')
+
+    if filter_value:
+        if filter_value.isdigit():  # 1–5 sao
+            comments = comments.filter(rating=int(filter_value))
+        elif filter_value == 'positive':
+            comments = comments.filter(label__iexact='tích cực')
+        elif filter_value == 'negative':
+            comments = comments.filter(label__iexact='tiêu cực')
     return render(request, 'products/productDetails.html', {
-    'product': product,
-    'images': images,
-    'main_image': main_image,
-    'attributes': attributes,
-    'discount': discount,
-    'comments': comments,
-    'ratingAVG': ratingAVG_int,
-    'ajax': True,
-    'can_comment': can_comment,
-    'has_commented': has_commented,
-    'rating_count': rating_count,
-    'positive_count': positive_count,
-    'negative_count': negative_count,
+        'product': product,
+        'images': images,
+        'main_image': main_image,
+        'attributes': attributes,
+        'discount': discount,
+        'comments': comments,
+        'ratingAVG': ratingAVG_int,
+        'ajax': True,
+        'can_comment': can_comment,
+        'has_commented': has_commented,
+        'rating_count': rating_count,
+        'positive_count': positive_count,
+        'negative_count': negative_count,
     })
 
 def addComment(request, pk):

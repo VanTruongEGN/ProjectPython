@@ -131,18 +131,20 @@
     </p>
 {% endif %}
 
-    <div class="sort-area">
-        <select id="ratingFilter">
-    <option value="">
-        Tất cả ({{ comments|length }})
-    </option>
-    <option value="5">5 sao ({{ rating_count.5 }})</option>
-    <option value="4">4 sao ({{ rating_count.4 }})</option>
-    <option value="3">3 sao ({{ rating_count.3 }})</option>
-    <option value="2">2 sao ({{ rating_count.2 }})</option>
-    <option value="1">1 sao ({{ rating_count.1 }})</option>
-        </select>
-    </div>
+   <div class="sort-area">
+    <select id="ratingFilter">
+        <option value="">Tất cả ({{ comments|length }})</option>
+
+        <option value="5">5 sao ({{ rating_count.5 }})</option>
+        <option value="4">4 sao ({{ rating_count.4 }})</option>
+        <option value="3">3 sao ({{ rating_count.3 }})</option>
+        <option value="2">2 sao ({{ rating_count.2 }})</option>
+        <option value="1">1 sao ({{ rating_count.1 }})</option>
+
+        <option value="positive">Tích cực</option>
+        <option value="negative">Tiêu cực</option>
+    </select>
+</div>
     <div id="commentSection">
         <div class="comment-list">
             <h3>
@@ -178,24 +180,30 @@
 {% endblock %}
 {% block js %}
 <script>
-    const btn = document.getElementById('analysis');
+/*  lọc comment */
+document.getElementById('ratingFilter').addEventListener('change', function () {
+    const value = this.value;
+
+    let url = "{% url 'productDetail' product.id %}";
+    if (value) {
+        url += "?filter=" + value;
+    }
+
+    fetch(url)
+        .then(res => res.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newComments = doc.querySelector('#commentSection').innerHTML;
+            document.getElementById('commentSection').innerHTML = newComments;
+        });
+});
 
 
-    document.getElementById('ratingFilter').addEventListener('change', function () {
-        const rating = this.value;
-        const url = "{% url 'productDetail' product.id %}?rating=" + rating;
-
-        fetch(url)
-                .then(res => res.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newComments = doc.querySelector('#commentSection').innerHTML;
-
-                    document.getElementById('commentSection').innerHTML = newComments;
-                });
-    });
-    document.getElementById('reviewForm').addEventListener('submit', function (e) {
+/* gửi đánh giá*/
+const reviewForm = document.getElementById('reviewForm');
+if (reviewForm) {
+    reviewForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const form = this;
@@ -208,29 +216,26 @@
             },
             body: formData
         })
-                .then(res => {
-                    if (!res.ok) throw new Error("Submit failed");
-                    return res.text();
-                })
-                .then(html => {
-                    // Parse HTML trả về
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
+        .then(res => {
+            if (!res.ok) throw new Error("Submit failed");
+            return res.text();
+        })
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newComments = doc.querySelector('#commentSection').innerHTML;
 
-                    // Lấy lại đúng section comment
-                    const newComments = doc.querySelector('#commentSection').innerHTML;
-                    document.getElementById('commentSection').innerHTML = newComments;
+            document.getElementById('commentSection').innerHTML = newComments;
 
-                    // Reset form
-                    form.reset();
-                    const formReview = document.getElementById('reviewForm');
-                    formReview.style.display='none';
-                })
-                .catch(err => {
-                    alert("Gửi đánh giá thất bại");
-                    console.error(err);
-                });
+            form.reset();
+            form.style.display = 'none';
+        })
+        .catch(err => {
+            alert("Gửi đánh giá thất bại");
+            console.error(err);
+        });
     });
+}
 </script>
 <script src="{% static 'products/js/productDetails.js' %}"></script>
 {% endblock %}
