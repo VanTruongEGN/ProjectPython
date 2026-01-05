@@ -75,10 +75,33 @@ def product_detail(request, pk):
 
 
     comments = Comment.objects.filter(product=product).order_by('-created_at')
+    # thống kê tích cực, tiêu cực
+    positive_count = Comment.objects.filter(
+        product=product,
+        label__iexact='tích cực'
+    ).count()
+
+    negative_count = Comment.objects.filter(
+        product=product,
+        label__iexact='tiêu cực'
+    ).count()
+
     rating = request.GET.get('rating')
     if rating:
         comments = comments.filter(rating=rating)
-# check đã mua hàng chưa
+    # thống kê số sao
+    rating_stats = (
+            Comment.objects
+            .filter(product=product)
+            .values('rating')
+            .annotate(total=Count('id'))
+        )
+
+    rating_count = {i: 0 for i in range(1, 6)}
+    for r in rating_stats:
+        rating_count[r['rating']] = r['total']
+
+    # check đã mua hàng chưa
     customer = None
     can_comment = False
     has_commented = False
@@ -96,7 +119,7 @@ def product_detail(request, pk):
                 can_comment = True
 
     return render(request, 'products/productDetails.html', {
-        'product': product,
+    'product': product,
     'images': images,
     'main_image': main_image,
     'attributes': attributes,
@@ -106,6 +129,9 @@ def product_detail(request, pk):
     'ajax': True,
     'can_comment': can_comment,
     'has_commented': has_commented,
+    'rating_count': rating_count,
+    'positive_count': positive_count,
+    'negative_count': negative_count,
     })
 
 def addComment(request, pk):
