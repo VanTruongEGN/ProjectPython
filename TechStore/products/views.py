@@ -75,6 +75,17 @@ def product_detail(request, pk):
 
 
     comments = Comment.objects.filter(product=product).order_by('-created_at')
+    # thống kê tích cực, tiêu cực
+    positive_count = Comment.objects.filter(
+        product=product,
+        label__iexact='tích cực'
+    ).count()
+
+    negative_count = Comment.objects.filter(
+        product=product,
+        label__iexact='tiêu cực'
+    ).count()
+
     rating = request.GET.get('rating')
     if rating:
         comments = comments.filter(rating=rating)
@@ -108,7 +119,7 @@ def product_detail(request, pk):
                 can_comment = True
 
     return render(request, 'products/productDetails.html', {
-        'product': product,
+    'product': product,
     'images': images,
     'main_image': main_image,
     'attributes': attributes,
@@ -119,6 +130,8 @@ def product_detail(request, pk):
     'can_comment': can_comment,
     'has_commented': has_commented,
     'rating_count': rating_count,
+    'positive_count': positive_count,
+    'negative_count': negative_count,
     })
 
 def addComment(request, pk):

@@ -145,7 +145,12 @@
     </div>
     <div id="commentSection">
         <div class="comment-list">
-            <h3>Đánh giá</h3>
+            <h3>
+      Đánh giá
+    <span style="font-size: 14px; font-weight: normal; color: #555;">
+        (Tích cực: {{ positive_count }}, Tiêu cực: {{ negative_count }})
+    </span>
+            </h3>
             {% for comment in comments %}
             <div class="comment-item">
                 <div class="comment-header">
