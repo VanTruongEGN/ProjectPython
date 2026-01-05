@@ -21,19 +21,26 @@
     </div>
 
     <div class="form-group">
-      <label>Xã/Phường</label>
-      <input type="text" name="ward">
-    </div>
+  <label>Tỉnh / Thành phố</label>
+  <select name="city" id="city" required>
+    <option value="">-- Chọn tỉnh/thành --</option>
+  </select>
+</div>
 
-    <div class="form-group">
-      <label>Quận/Huyện</label>
-      <input type="text" name="district" required>
-    </div>
+<div class="form-group">
+  <label>Quận / Huyện</label>
+  <select name="district" id="district" required>
+    <option value="">-- Chọn quận/huyện --</option>
+  </select>
+</div>
 
-    <div class="form-group">
-      <label>Thành phố</label>
-      <input type="text" name="city" required>
-    </div>
+<div class="form-group">
+  <label>Xã / Phường</label>
+  <select name="ward" id="ward">
+    <option value="">-- Chọn xã/phường --</option>
+  </select>
+</div>
+
 
     <label>
       <input type="checkbox" name="is_default"> Đặt làm địa chỉ mặc định
@@ -41,3 +48,4 @@
   </div>
   <button type="submit" class="save-btn">Lưu thay đổi</button>
 </form>
+
