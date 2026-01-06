@@ -2,17 +2,22 @@
 <link rel="stylesheet" href="{% static 'css/carousel-event.css' %}">
 
 <div class="main-carousel">
-    <div id="mainCarousel" class="carousel-box">
-        <div class="carousel-inner">
-            {% for img in images %}
+        <div id="mainCarousel" class="carousel-box">
+            <div class="carousel-inner">
+                {% for img in images %}
+
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <img src="{% static img %}" class="carousel-img" alt="carousel">
+                    <a href="{% url 'productList' 'Laptop' %}">
+                    <img src="{% static img %}" class="carousel-img" alt="carousel">  </a>
+
                 </div>
-            {% endfor %}
+                {% endfor %}
+
+            </div>
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
         </div>
-        <button class="prev">&#10094;</button>
-        <button class="next">&#10095;</button>
-    </div>
+
 </div>
 
 <script src="{% static 'js/carousel.js' %}"></script>
