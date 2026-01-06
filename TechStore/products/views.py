@@ -1,23 +1,21 @@
-import io
 import math
-from datetime import datetime
+import pickle
 
-import numpy as np
+from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.db.models import Avg, Q, Count
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
-import matplotlib
-from matplotlib.ticker import MaxNLocator
 
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+from image_search.yolo.detector import detect_category
+from image_search.yolo.image_feature import extract_feature
+from image_search.yolo.similarity import calc_similarity
+
 
 from accounts.models import Customer, Address
 from comments.models import Comment
 from sentiment.services import predict_sentiment
-from .models import Product, Category, ProductAttribute
+from .models import Product, Category, ProductAttribute, ProductImage
 from promotions.services import PromotionEngine
 from orders.models import OrderItem
 from orders.utils import has_purchased_product
@@ -87,9 +85,7 @@ def product_detail(request, pk):
         label__iexact='tiêu cực'
     ).count()
 
-    rating = request.GET.get('rating')
-    if rating:
-        comments = comments.filter(rating=rating)
+
     # thống kê số sao
     rating_stats = (
             Comment.objects
@@ -119,20 +115,30 @@ def product_detail(request, pk):
             if has_purchased_product(customer, product) and not has_commented:
                 can_comment = True
 
+
+    # lọc theo sao hoặc tích cực / tiêu cực
+    filter_value = request.GET.get('filter')
+
+    if filter_value:
+        if filter_value.isdigit():  # 1–5 sao
+            comments = comments.filter(rating=int(filter_value))
+        elif filter_value == 'positive':
+            comments = comments.filter(label__iexact='tích cực')
+        elif filter_value == 'negative':
+            comments = comments.filter(label__iexact='tiêu cực')
     return render(request, 'products/productDetails.html', {
-    'product': product,
-    'images': images,
-    'main_image': main_image,
-    'attributes': attributes,
-    'discount': discount,
-    'comments': comments,
-    'ratingAVG': ratingAVG_int,
-    'ajax': True,
-    'can_comment': can_comment,
-    'has_commented': has_commented,
-    'rating_count': rating_count,
-    'positive_count': positive_count,
-    'negative_count': negative_count,
+        'product': product,
+        'images': images,
+        'main_image': main_image,
+        'attributes': attributes,
+        'discount': discount,
+        'comments': comments,
+        'ratingAVG': ratingAVG_int,
+        'ajax': True,
+        'can_comment': can_comment,
+        'has_commented': has_commented,
+        'rating_count': rating_count,
+
     })
 
 SPAM_THRESHOLD = 0.7
@@ -194,42 +200,113 @@ def addComment(request, pk):
     })
 
 def product_list(request):
-    images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
+    images = [
+        "products/images/img1.png",
+        "products/images/img2.png",
+        "products/images/img3.png",
+    ]
 
-    keyword = request.GET.get("q", "").strip()
-    now = timezone.now()
+    keyword = request.POST.get("q", "").strip()
+    upload_image = request.FILES.get("image")
 
-    products = Product.objects.all()
+    # Base queryset
+    products_qs = Product.objects.filter(status=True)
 
-    if keyword:
-        products = products.filter(
-            Q(name__icontains=keyword)
+    if upload_image:
+        #  Lưu ảnh tạm
+        tmp_path = default_storage.save(f"tmp/{upload_image.name}", upload_image)
+        full_path = default_storage.path(tmp_path)
+
+        # Detect category từ YOLO
+        detected_categories = detect_category(full_path)
+
+        if not detected_categories:
+            products = []
+        else:
+            #  Extract feature ảnh query
+            query_feature = extract_feature(full_path)
+
+            best_scores = {}
+
+            # Lấy tất cả ảnh sản phẩm có feature
+            product_images = (
+                ProductImage.objects
+                .filter(
+                    product__status=True,
+                    product__category__name__in=detected_categories,
+                    image_feature__isnull=False
+                )
+                .select_related("product")
+            )
+
+            for img in product_images:
+                try:
+                    product_feature = pickle.loads(img.image_feature)
+                    score = calc_similarity(query_feature, product_feature)
+
+                    pid = img.product.id
+                    if pid not in best_scores or score > best_scores[pid]["score"]:
+                        best_scores[pid] = {
+                            "product": img.product,
+                            "score": score
+                        }
+                except Exception:
+                    continue
+
+            products = [
+                v["product"]
+                for v in sorted(
+                    best_scores.values(),
+                    key=lambda x: x["score"],
+                    reverse=True
+                )[:5]
+            ]
+
+
+    elif keyword:
+        products = products_qs.filter(
+            Q(name__icontains=keyword) |
+            Q(brand__icontains=keyword) |
+            Q(model__icontains=keyword)
         )
 
-    paginator = Paginator(products, 10)
-    pageNumber = request.GET.get('page')
-    pageObj = paginator.get_page(pageNumber)
 
-    # Fix Logic: Calculate discounts for products in the current page
+    else:
+        products = products_qs
+
+    if isinstance(products, list):
+        pageObj = products
+    else:
+        paginator = Paginator(products, 10)
+        page_number = request.GET.get("page")
+        pageObj = paginator.get_page(page_number)
+
+
     discount_map = {}
+
     for p in pageObj:
-         price, rule, orig = PromotionEngine.calculate_best_price(p)
-         if rule:
-             class DiscountObj:
-                 def __init__(self, p, pr, o):
-                     self.product_id = p.id
-                     self.discounted_price = pr
-                     self.original_price = o
-                 def formatted_priceD(self): return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
-                 def formatted_price(self): return f"{int(self.original_price):,} VNĐ".replace(",", ".")
-             discount_map[p.id] = DiscountObj(p, price, orig)
+        price, rule, orig = PromotionEngine.calculate_best_price(p)
+        if rule:
+            class DiscountObj:
+                def __init__(self, p, pr, o):
+                    self.product_id = p.id
+                    self.discounted_price = pr
+                    self.original_price = o
+
+                def formatted_priceD(self):
+                    return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
+
+                def formatted_price(self):
+                    return f"{int(self.original_price):,} VNĐ".replace(",", ".")
+
+            discount_map[p.id] = DiscountObj(p, price, orig)
 
     return render(request, "products/product.html", {
-        "products": products,
-        "discount_map": discount_map,
-        "keyword": keyword,
-        "images": images,
+        "products": pageObj,
         "pageObj": pageObj,
+        "keyword": keyword,
+        "discount_map": discount_map,
+        "images": images,
     })
 
 def add_address(request):
