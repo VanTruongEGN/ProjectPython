@@ -52,6 +52,7 @@ class Product(models.Model):
         blank=True,
         null=True
     )
+    image_feature = models.BinaryField(null=True, blank=True)
 
     warranty_month = models.IntegerField("Bảo hành (tháng)", default=12)
     created_at = models.DateTimeField("Ngày tạo", auto_now_add=True, editable=False)
@@ -106,6 +107,7 @@ class ProductImage(models.Model):
         blank=True,
         null=True
     )
+    image_feature = models.BinaryField(null=True, blank=True)
     is_main = models.BooleanField("Đặt làm ảnh chính", default=False)
     uploaded_at = models.DateTimeField("Ngày đăng", auto_now_add=True)
 

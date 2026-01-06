@@ -4,7 +4,9 @@ register = template.Library()
 
 @register.filter
 def dict_key(d, key):
-    return d.get(key)
+    if isinstance(d, dict):
+        return d.get(key)
+    return None
 
 @register.filter
 def currency(value):
