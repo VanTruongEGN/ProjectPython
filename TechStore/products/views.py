@@ -107,13 +107,22 @@ def product_detail(request, pk):
     if customer_id:
         customer = Customer.objects.filter(id=customer_id).first()
         if customer:
-            has_commented = Comment.objects.filter(
+            purchased_count = OrderItem.objects.filter(
+                order__customer=customer,
+                product=product,
+                order__status__in=['Đã thanh toán', 'hoàn thành']
+            ).count()
+
+            comment_count = Comment.objects.filter(
                 customer=customer,
                 product=product
-            ).exists()
+            ).count()
 
-            if has_purchased_product(customer, product) and not has_commented:
+            if purchased_count > comment_count:
                 can_comment = True
+
+            if comment_count > 0:
+                has_commented = True
 
 
     # lọc theo sao hoặc tích cực / tiêu cực
@@ -169,8 +178,22 @@ def addComment(request, pk):
     result = predict_sentiment(content)
     label = result["label"]
 
-    if Comment.objects.filter(customer=customer, product=product).exists():
-        return redirect('productDetail', pk=pk)
+    purchased_count = OrderItem.objects.filter(
+        order__customer=customer,
+        product=product,
+        order__status__in=['Đã thanh toán', 'hoàn thành']
+    ).count()
+
+    comment_count = Comment.objects.filter(
+        customer=customer,
+        product=product
+    ).count()
+
+    if comment_count >= purchased_count:
+        return JsonResponse(
+            {"error": "Bạn đã đánh giá đủ số lần cho sản phẩm này"},
+            status=403
+        )
 
     res = process_comment(content)
     is_spam = res.get("is_spam", False)
