@@ -10,11 +10,26 @@
                 <a href="{% url 'home' %}"><img src="{% static 'img/img.png' %}" alt="logo"></a>
             </div>
             <div class="search-box">
-                <form method="get" action="{% url 'search' %}">
+                <form method="POST" action="{% url 'search' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="search">
                         <i class="bi bi-search"></i>
+
                         <input type="text" name="q" placeholder="Tìm sản phẩm..." value="{{ keyword }}">
+
                         <button type="submit">Tìm</button>
+
+                        <button type="button" onclick="openCamera()">
+                            <i class="bi bi-camera"></i>
+                        </button>
+
+                        <input type="file"
+                               id="cameraInput"
+                               name="image"
+                               accept="image/*"
+                               capture="environment"
+                               style="display:none"
+                               onchange="this.form.submit()">
                     </div>
                 </form>
 
@@ -67,4 +82,10 @@
         </div>
     </div>
 </div>
+<script>
+function openCamera() {
+    document.getElementById("cameraInput").click();
+}
+</script>
+
 

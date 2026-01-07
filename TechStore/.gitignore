@@ -8,3 +8,4 @@ __pycache__/
 TechStore/sentiment/
 *.safetensors
 *.bin
+spam_detector/
