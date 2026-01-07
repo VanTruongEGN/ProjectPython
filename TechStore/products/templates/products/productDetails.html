@@ -148,7 +148,11 @@
             <h3>
       Đánh giá
     <span style="font-size: 14px; font-weight: normal; color: #555;">
-        (Tích cực: {{ positive_count }}, Tiêu cực: {{ negative_count }})
+        {% if positive_count > 0 or negative_count > 0 %}
+            (Tích cực: {{ positive_count }}, Tiêu cực: {{ negative_count }})
+        {% else %}
+            (Tích cực: 0, Tiêu cực: 0)
+        {% endif %}
     </span>
             </h3>
             {% for comment in comments %}
