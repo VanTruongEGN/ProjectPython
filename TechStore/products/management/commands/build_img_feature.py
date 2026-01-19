@@ -15,8 +15,6 @@ class Command(BaseCommand):
         qs = ProductImage.objects.filter(
             image__isnull=False
         ).select_related("product")
-
-
         self.stdout.write(f"Found {qs.count()} images")
 
         ok = 0

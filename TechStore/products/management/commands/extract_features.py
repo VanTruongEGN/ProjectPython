@@ -9,7 +9,6 @@ from image_search.yolo.model import model  # YOLOv8m instance
 # Device
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Load CLIP với open_clip (load 1 lần)
 clip_model, _, preprocess = open_clip.create_model_and_transforms(
     'ViT-B-32',
     pretrained='openai'

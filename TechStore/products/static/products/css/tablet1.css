@@ -143,7 +143,7 @@ body {
 }
 
 /* nút sắp xếp */
-.sort-group button {
+.sort-group a {
     background: #fff;
     border: 1px solid var(--border-color);
     padding: 6px 12px;
@@ -156,14 +156,14 @@ body {
 }
 
 /* hover */
-.sort-group button:hover {
+.sort-group a:hover {
     background: var(--primary-color);
     color: #fff;
     border-color: var(--primary-color);
 }
 
 /* trạng thái active */
-.sort-group button.active {
+.sort-group a.active {
     background: var(--primary-color);
     color: #fff;
     border-color: var(--primary-color);
@@ -184,6 +184,10 @@ body {
 
 .pagination .active {
     background: #4CAF50;
+    color: white;
+}
+.btn-sort.active {
+    background: #0d6efd;
     color: white;
 }
 
