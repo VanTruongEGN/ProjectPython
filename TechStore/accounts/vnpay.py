@@ -15,7 +15,7 @@ class VNPay:
             "vnp_Version": "2.1.0",
             "vnp_Command": "pay",
             "vnp_TmnCode": self.tmn_code,
-            "vnp_Amount": int(amount * 100),  # BẮT BUỘC *100
+            "vnp_Amount": int(amount * 100),
             "vnp_CurrCode": "VND",
             "vnp_TxnRef": str(order_id),
             "vnp_OrderInfo": order_desc,

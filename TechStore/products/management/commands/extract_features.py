@@ -1,55 +1,42 @@
-from django.core.management.base import BaseCommand
-from products.models import ProductImage
-import os
-import pickle
-from image_search.yolo.image_feature import extract_feature
+import torch
+import numpy as np
+from PIL import Image
+import open_clip
+
+from image_search.yolo.model import model  # YOLOv8m instance
 
 
-class Command(BaseCommand):
-    help = "Extract image features for product images"
+# Device
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    def handle(self, *args, **kwargs):
-        qs = ProductImage.objects.filter(
-            image__isnull=False
-        ).select_related("product")
+# Load CLIP với open_clip (load 1 lần)
+clip_model, _, preprocess = open_clip.create_model_and_transforms(
+    'ViT-B-32',
+    pretrained='openai'
+)
+clip_model = clip_model.to(device)
+clip_model.eval()
 
-        self.stdout.write(f"Found {qs.count()} images")
 
-        success = 0
-        fail = 0
+def extract_feature(image_path):
+    img = Image.open(image_path).convert("RGB")
 
-        for img in qs:
-            try:
-                path = img.image.path
+    results = model(image_path)
 
-                if not os.path.exists(path):
-                    self.stdout.write(
-                        self.style.WARNING(f"Missing file: {path}")
-                    )
-                    continue
+    if results and len(results[0].boxes) > 0:
+        # lấy box có confidence cao nhất
+        boxes = results[0].boxes
+        best_box = max(boxes, key=lambda b: float(b.conf[0]))
 
-                # 1️⃣ Extract feature (numpy array)
-                feature = extract_feature(path)
+        x1, y1, x2, y2 = map(int, best_box.xyxy[0].cpu().numpy())
+        img = img.crop((x1, y1, x2, y2))
 
-                # 2️⃣ Pickle → bytes
-                img.image_feature = pickle.dumps(feature)
+    img_tensor = preprocess(img).unsqueeze(0).to(device)
 
-                # 3️⃣ Save vào ProductImage ✅
-                img.save(update_fields=["image_feature"])
+    with torch.no_grad():
+        feature = clip_model.encode_image(img_tensor)
 
-                success += 1
-                self.stdout.write(
-                    self.style.SUCCESS(f"OK image {img.id} of {img.product.id}")
-                )
+    feature = feature.cpu().numpy().flatten()
+    feature = feature / np.linalg.norm(feature)
 
-            except Exception as e:
-                fail += 1
-                self.stdout.write(
-                    self.style.ERROR(f"ERROR image {img.id}: {str(e)}")
-                )
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Done. Success: {success}, Failed: {fail}"
-            )
-        )
+    return feature
