@@ -8,11 +8,11 @@
 {% block content %}
 <div class="sort-group">
     <span class="filter-label">Sắp xếp theo:</span>
-    <button>Nổi bật</button>
-    <button>Bán chạy</button>
-    <button>Giảm giá</button>
-    <button>Mới</button>
-    <button>Giá</button>
+    <a href="?sort=best" class="btn-sort">Bán chạy</a>
+    <a href="?sort=discount" class="btn-sort">Giảm giá</a>
+    <a href="?sort=new" class="btn-sort">Mới</a>
+    <a href="?sort=price_asc" class="btn-sort">Giá tăng dần</a>
+    <a href="?sort=price_desc" class="btn-sort">Giá giảm dần</a>
 </div>
 
 <div class="container mt-4">

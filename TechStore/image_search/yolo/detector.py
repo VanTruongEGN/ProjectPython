@@ -6,6 +6,7 @@ YOLO_TO_CATEGORY = {
     "kite": "Mouse",
     "keyboard": "Keyboard",
     "tablet": "Tablet",
+    "cell phone": "Tablet",
     "monitor": "Monitor",
     "tv": "Monitor",
     "usb-flash-drive": "Accessories",

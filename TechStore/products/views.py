@@ -20,11 +20,35 @@ from promotions.services import PromotionEngine
 from orders.models import OrderItem
 from orders.utils import has_purchased_product
 from spam_detector.services.comment_pipeline import process_comment
-def product_page(request,category_name):
+def product_page(request, category_name):
     images = ["products/images/img1.png", "products/images/img2.png", "products/images/img3.png"]
+
     category = Category.objects.filter(name__iexact=category_name).first()
 
-    products = Product.objects.filter(category=category, status=True)
+    sort = request.GET.get('sort', '')
+
+    products = Product.objects.filter(
+        category=category,
+        status=True
+    )
+
+    if sort == 'new':
+        products = products.order_by('-created_at')
+
+    elif sort == 'price_asc':
+        products = products.order_by('price')
+
+    elif sort == 'price_desc':
+        products = products.order_by('-price')
+
+    elif sort == 'discount':
+        products = [
+            p for p in products
+            if PromotionEngine.calculate_best_price(p)[1] is not None
+        ]
+
+    elif sort == 'best':
+        products = products.order_by('-created_at')
 
     paginator = Paginator(products, 10)
     pageNumber = request.GET.get('page')
@@ -34,21 +58,23 @@ def product_page(request,category_name):
     for p in pageObj:
         price, rule, orig = PromotionEngine.calculate_best_price(p)
         if rule:
-             class DiscountObj: 
-                 def __init__(self, p, pr, o):
-                     self.discounted_price = pr
-                     self.original_price = o
-                     self.product = p
-                 def formatted_priceD(self): return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
-                 def formatted_price(self): return f"{int(self.original_price):,} VNĐ".replace(",", ".")
+            class DiscountObj:
+                def __init__(self, p, pr, o):
+                    self.discounted_price = pr
+                    self.original_price = o
+                    self.product = p
+                def formatted_priceD(self):
+                    return f"{int(self.discounted_price):,} VNĐ".replace(",", ".")
+                def formatted_price(self):
+                    return f"{int(self.original_price):,} VNĐ".replace(",", ".")
 
-             discountMap[p.id] = DiscountObj(p, price, orig)
+            discountMap[p.id] = DiscountObj(p, price, orig)
 
     return render(request, 'products/product.html', {
-        'products': products,
-        'discount_map': discountMap,
         'images': images,
         'pageObj': pageObj,
+        'discount_map': discountMap,
+        'sort': sort,
     })
 
 def product_detail(request, pk):
@@ -73,7 +99,7 @@ def product_detail(request, pk):
         discount = DiscountObj(product, price, orig_price)
 
 
-    comments = Comment.objects.filter(product=product).order_by('-created_at')
+    comments = Comment.objects.filter(product=product,  label__isnull=False).order_by('-created_at')
     # thống kê tích cực, tiêu cực
     positive_count = Comment.objects.filter(
         product=product,
