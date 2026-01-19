@@ -147,6 +147,8 @@ def product_detail(request, pk):
         'can_comment': can_comment,
         'has_commented': has_commented,
         'rating_count': rating_count,
+        'positive_count':positive_count,
+        'negative_count':negative_count,
 
     })
 

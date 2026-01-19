@@ -16,6 +16,7 @@ class Command(BaseCommand):
             image__isnull=False
         ).select_related("product")
 
+
         self.stdout.write(f"Found {qs.count()} images")
 
         ok = 0
@@ -31,13 +32,10 @@ class Command(BaseCommand):
                     )
                     continue
 
-                # 1️⃣ Extract feature (numpy array)
                 feature = extract_feature(path)
 
-                # 2️⃣ Convert → bytes
                 feature_bytes = pickle.dumps(feature)
 
-                # 3️⃣ Save vào ProductImage (QUAN TRỌNG)
                 img.image_feature = feature_bytes
                 img.save(update_fields=["image_feature"])
 

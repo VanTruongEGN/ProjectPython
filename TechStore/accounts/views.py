@@ -227,16 +227,19 @@ def process_checkout(request):
         "VNPAY": "Chờ thanh toán",
     }
 
+    shipping_partner_id = request.POST.get('shipping_partner')  # ID của đơn vị vận chuyển được chọn
+    shipping_partner = ShippingPartner.objects.get(id=shipping_partner_id)
+    shipping_cost = shipping_partner.price
     order = Order.objects.create(
         customer=customer,
         address=address,
         payment=payment,
-        total_amount=total,
-        shipping_cost=0,
+        total_amount=total + shipping_cost,
+        shipping_cost=shipping_cost,
         status=status_map[payment_method],
         note=request.POST.get("note", ""),
         pickup_store_id=pickup_store,
-        promotion = promotion_event
+        promotion=promotion_event
 
     )
 
