@@ -798,6 +798,110 @@ def delete_address(request, address_id):
         return redirect("login")
 
     customer = Customer.objects.get(id=customer_id)
+    customer.delete()
+    return redirect("login")
+
+import random
+from django.core.mail import send_mail
+from django.conf import settings
+
+def forgot_password_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        try:
+            customer = Customer.objects.get(email=email)
+            
+            # Generate 6-digit OTP
+            otp = str(random.randint(100000, 999999))
+            customer.otp = otp
+            customer.otp_created_at = timezone.now()
+            customer.save()
+            
+            # Send Email
+            subject = "Mã xác nhận OTP - TechStore"
+            message = f"Mã OTP của bạn là: {otp}. Mã này sẽ hết hạn trong 10 phút."
+            from_email = settings.EMAIL_HOST_USER
+            recipient_list = [email]
+            
+            send_mail(subject, message, from_email, recipient_list)
+            
+            request.session["reset_email"] = email
+            return redirect("verify_otp")
+            
+        except Customer.DoesNotExist:
+            return render(request, "accounts/forgot_password.html", {
+                "error": "Email không tồn tại trong hệ thống."
+            })
+            
+    return render(request, "accounts/forgot_password.html")
+
+def verify_otp_view(request):
+    email = request.session.get("reset_email")
+    if not email:
+        return redirect("forgot_password")
+        
+    if request.method == "POST":
+        otp_input = request.POST.get("otp")
+        try:
+            customer = Customer.objects.get(email=email)
+            
+            # Check OTP match
+            if customer.otp != otp_input:
+                return render(request, "accounts/verify_otp.html", {
+                    "email": email,
+                    "error": "Mã OTP không chính xác."
+                })
+                
+            # Check expiry (10 minutes)
+            if not customer.otp_created_at or (timezone.now() - customer.otp_created_at) > timedelta(minutes=10):
+                return render(request, "accounts/verify_otp.html", {
+                    "email": email,
+                    "error": "Mã OTP đã hết hạn. Vui lòng yêu cầu lại."
+                })
+            
+            # Success
+            request.session["otp_verified"] = True
+            return redirect("reset_new_password")
+            
+        except Customer.DoesNotExist:
+            return redirect("forgot_password")
+
+    return render(request, "accounts/verify_otp.html", {"email": email})
+
+def reset_new_password_view(request):
+    email = request.session.get("reset_email")
+    otp_verified = request.session.get("otp_verified")
+    
+    if not email or not otp_verified:
+        return redirect("forgot_password")
+        
+    if request.method == "POST":
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+        
+        if new_password != confirm_password:
+             return render(request, "accounts/reset_new_password.html", {
+                "error": "Mật khẩu xác nhận không khớp."
+            })
+            
+        try:
+            customer = Customer.objects.get(email=email)
+            customer.password_hash = make_password(new_password)
+            customer.otp = None # Clear OTP
+            customer.otp_created_at = None
+            customer.save()
+            
+            # Clear session
+            del request.session["reset_email"]
+            del request.session["otp_verified"]
+            
+            messages.success(request, "Đổi mật khẩu thành công. Vui lòng đăng nhập.")
+            return redirect("login")
+            
+        except Customer.DoesNotExist:
+             return redirect("forgot_password")
+             
+    return render(request, "accounts/reset_new_password.html")
     address = get_object_or_404(Address, id=address_id, customer=customer)
 
     address.delete()

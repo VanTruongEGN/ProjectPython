@@ -1,13 +1,14 @@
 # accounts/urls.py
 from django.urls import path
-
-from .views import signup_view, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, \
-    update_cart_quantity, process_checkout, change_password, profile_password_view, add_address, delete_address, \
-    profile_address_view,profile_orders
+from .views import signup_view, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, update_cart_quantity, process_checkout, change_password, profile_password_view, add_address, forgot_password_view, verify_otp_view, reset_new_password_view, delete_address, profile_address_view, profile_orders
 from products.views import product_detail
 from . import views
-from .views import signup_view, login_view, profile_view, logout_view, cart_view, add_to_cart, buy_now, cart_remove, update_cart_quantity, process_checkout, change_password, profile_password_view, add_address
+
 urlpatterns = [
+    # Password Reset (OTP Flow)
+    path("forgot-password/", forgot_password_view, name="forgot_password"),
+    path("verify-otp/", verify_otp_view, name="verify_otp"),
+    path("reset-new-password/", reset_new_password_view, name="reset_new_password"),
     path("signup/", signup_view, name="signup"),
     path("login/", login_view, name="login"),
     path("profile/", profile_view, name="profile"),
