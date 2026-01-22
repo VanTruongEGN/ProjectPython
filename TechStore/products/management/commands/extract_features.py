@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import open_clip
 
-from image_search.yolo.model import model  # YOLOv8m instance
+from image_search.yolo.model import model
 
 
 # Device

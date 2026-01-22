@@ -4,7 +4,7 @@ import pickle
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.db.models import Avg, Q, Count
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
 from image_search.yolo.detector import detect_category
