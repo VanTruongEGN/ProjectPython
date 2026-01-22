@@ -150,3 +150,13 @@ VNPAY_TMN_CODE = "J4X8OO7F"  # ← Mới, thay thế cái cũ 4A6W4HB2
 VNPAY_HASH_SECRET = "VZ86VQVECYRG7F2UF79AQM9IEE1I8EM2"  # ← Secret mới, chính chủ
 VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"  # Giữ nguyên
 VNPAY_RETURN_URL = "http://localhost:8000/accounts/vnpay_return/"
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'skydronevn.buy@gmail.com'
+EMAIL_HOST_PASSWORD = 'pzvx rdkt cqrw sdhv'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

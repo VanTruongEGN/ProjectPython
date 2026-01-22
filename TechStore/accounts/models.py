@@ -13,6 +13,8 @@ class Customer(models.Model):
     gender = models.CharField(verbose_name="Giới tính", max_length=10, null=True, blank=True)
     status = models.CharField(verbose_name="Trạng thái", default="Hoạt động")
     created_at = models.DateTimeField(verbose_name="Ngày tạo", auto_now_add=True, null=True)
+    otp = models.CharField(max_length=6, null=True, blank=True)
+    otp_created_at = models.DateTimeField(null=True, blank=True)
 
 
 
@@ -110,3 +112,6 @@ class CartItem(models.Model):
 
     class Meta:
         unique_together = ('cart', 'product')
+
+
+
