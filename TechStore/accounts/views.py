@@ -60,7 +60,6 @@ def signup_view(request):
 
 
 
-
 def login_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -85,7 +84,11 @@ def profile_view(request):
     if not customer_id:
         return redirect("login")
 
-    customer = Customer.objects.get(id=customer_id)
+    customer = Customer.objects.filter(id=customer_id).first()
+    if not customer:
+        request.session.flush()
+        return redirect("login")
+
     addresses = Address.objects.filter(customer=customer)
 
     if request.method == "POST":
@@ -201,17 +204,7 @@ def process_checkout(request):
         if not pickup_store:
             return redirect("cart")
 
-    # ===== ADDRESS =====
-    address = Address.objects.create(
-        customer=customer,
-        recipient_name=request.POST.get("recipient_name"),
-        phone=request.POST.get("phone"),
-        address_line=request.POST.get("address_line"),
-        city=request.POST.get("city", ""),
-        district=request.POST.get("district", ""),
-        ward=request.POST.get("ward", "")
-    )
-    print("Address created:", address.id)
+
 
     # ===== PAYMENT =====
     payment = Payment.objects.create(
@@ -790,16 +783,20 @@ def profile_orders(request):
         'active_section': 'orders'
     })
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 
 def delete_address(request, address_id):
     customer_id = request.session.get("customer_id")
     if not customer_id:
         return redirect("login")
 
-    customer = Customer.objects.get(id=customer_id)
-    customer.delete()
-    return redirect("login")
+    customer = get_object_or_404(Customer, id=customer_id)
+    address = get_object_or_404(Address, id=address_id, customer=customer)
+
+    address.delete()
+
+    return redirect("profile")
+
 
 import random
 from django.core.mail import send_mail
