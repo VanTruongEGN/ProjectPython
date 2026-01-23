@@ -84,7 +84,6 @@ def product_detail(request, pk):
     images = product.images.all()
     main_image = product.image_main or (images.first().image if images else None)
 
-    # Thông số kỹ thuật
     attributes = ProductAttribute.objects.filter(product=product)
 
     # Khuyến mãi
@@ -124,7 +123,6 @@ def product_detail(request, pk):
     for r in rating_stats:
         rating_count[r['rating']] = r['total']
 
-    # check đã mua hàng chưa
     customer = None
     can_comment = False
     has_commented = False
@@ -242,7 +240,7 @@ def addComment(request, pk):
         spam_score=spam_score,
     )
 
-    comments = Comment.objects.filter(product=product).order_by('-created_at')
+    comments = Comment.objects.filter(product=product, label__isnull=False).order_by('-created_at')
 
     return render(request, 'products/productDetails.html', {
         'product': product,
@@ -264,7 +262,6 @@ def product_list(request):
     products_qs = Product.objects.filter(status=True)
 
     if upload_image:
-        #  Lưu ảnh tạm
         tmp_path = default_storage.save(f"tmp/{upload_image.name}", upload_image)
         full_path = default_storage.path(tmp_path)
 
@@ -274,12 +271,11 @@ def product_list(request):
         if not detected_categories:
             products = []
         else:
-            #  Extract feature ảnh query
+
             query_feature = extract_feature(full_path)
 
             best_scores = {}
 
-            # Lấy tất cả ảnh sản phẩm có feature
             product_images = (
                 ProductImage.objects
                 .filter(
