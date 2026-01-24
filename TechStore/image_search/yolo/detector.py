@@ -3,7 +3,6 @@ from .model import model
 YOLO_TO_CATEGORY = {
     "laptop": "Laptop",
     "mouse": "Mouse",
-    "kite": "Mouse",
     "keyboard": "Keyboard",
     "tablet": "Tablet",
     "cell phone": "Tablet",

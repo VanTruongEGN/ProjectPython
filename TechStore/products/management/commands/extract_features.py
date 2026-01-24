@@ -23,7 +23,6 @@ def extract_feature(image_path):
     results = model(image_path)
 
     if results and len(results[0].boxes) > 0:
-        # lấy box có confidence cao nhất
         boxes = results[0].boxes
         best_box = max(boxes, key=lambda b: float(b.conf[0]))
 
